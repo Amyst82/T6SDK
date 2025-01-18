@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{eb536807-409f-4754-9d72-fa1d245bbcce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{817dba06-4758-4ebd-9060-3d0eeca4f8bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{ece86553-7d66-4312-8b1c-bbe1422ca260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dvars">
+      <UniqueIdentifier>{dd1f5cae-5a44-455b-a4ee-3219964c6365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StructsAndEnums">
+      <UniqueIdentifier>{0508a94a-3f00-48e8-a587-f1cb21871369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Events">
+      <UniqueIdentifier>{dee03eb7-a477-4f5c-bab3-519005636fba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InternalFunctions">
+      <UniqueIdentifier>{6b11424f-f181-47cb-8728-632782416204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{2e778242-c959-4dbe-9e42-b0c925288421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drawing">
+      <UniqueIdentifier>{947504ca-d7fe-4ce5-a0ab-70b609bd5433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Theater">
+      <UniqueIdentifier>{1ccc38ff-e368-4f9b-a9dc-759bead17755}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="T6SDK.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="CrossVersion.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryAddress.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryHook.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleLog.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Dvars.h">
+      <Filter>Dvars</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs.h">
+      <Filter>StructsAndEnums</Filter>
+    </ClInclude>
+    <ClInclude Include="StdInclude.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Events.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Addresses.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>StructsAndEnums</Filter>
+    </ClInclude>
+    <ClInclude Include="InternalFunctions.h">
+      <Filter>InternalFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPatch.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="InputKey.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawing.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_ClickableButton.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_CheckBoxButton.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Slider.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="Theater.h">
+      <Filter>Theater</Filter>
+    </ClInclude>
+    <ClInclude Include="detour.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_RadioButton.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_EnumButton.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_KeyReactiveText.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleLog.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="T6SDK.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Events.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
