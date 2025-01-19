@@ -245,6 +245,13 @@ namespace T6SDK
         j_mainroot = 190,
         tag_origin = 189
     };
+    enum class GfxDrawSceneMethod
+    {
+        GFX_DRAW_SCENE_NONE,
+        GFX_DRAW_SCENE_FULLBRIGHT,
+        GFX_DRAW_SCENE_DEBUGSHADER,
+        GFX_DRAW_SCENE_STANDARD
+    };
     enum class EventType
     {
         OnGameLoaded,

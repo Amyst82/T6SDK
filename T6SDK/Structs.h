@@ -862,3 +862,10 @@ typedef struct FxSprite_t
 	float minScreenRadius;
 	int flags;
 }FxSprite_t;
+
+typedef struct GfxDrawMethod_t
+{
+	T6SDK::GfxDrawSceneMethod drawScene;
+	BYTE baseTechType;
+	BYTE emissiveTechType;
+};

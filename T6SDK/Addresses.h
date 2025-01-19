@@ -201,6 +201,8 @@ namespace T6SDK::Addresses
     inline static T6SDK::MemoryAddress<demoPlayback*> DemoPlayback(T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2D83A00, T6SDK::Addresses::t6mp + 0x2DA4A00,
         T6SDK::Addresses::t6zmv41 + 0x2D53A80, T6SDK::Addresses::t6zm + 0x2D7A100).GetValue());
 
+    inline static T6SDK::MemoryAddress<GfxDrawMethod_t> GfxDrawMethod(T6SDK::Addresses::t6mpv43 + 0x363EAB0, T6SDK::Addresses::t6mp + 0x365FAB0, T6SDK::Addresses::t6zmv41 + 0x360E8B0, T6SDK::Addresses::t6zm + 0x3635130);
+
     inline static T6SDK::MemoryAddress<bool> IsDemoPaused(T6SDK::Addresses::t6mpv43 + 0x264C960, T6SDK::Addresses::t6mp + 0x264C960, T6SDK::Addresses::t6zmv41 + 0x261D140, T6SDK::Addresses::t6zm + 0x2622740);
     inline static T6SDK::MemoryAddress<UiContext_t> UiContext(T6SDK::Addresses::t6mpv43 + 0x2556228, T6SDK::Addresses::t6mp + 0x2556228, T6SDK::Addresses::t6zmv41 + 0x2526558, T6SDK::Addresses::t6zm + 0x252BB58);
 
