@@ -21,6 +21,7 @@
 #include "MemoryPatch.h"
 #include "Addresses.h"
 #include "Events.h"
+#include "DvarTrie.h"
 #include "Dvars.h"
 #include "InternalFunctions.h"
 #include "InputKey.h"

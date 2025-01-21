@@ -126,6 +126,9 @@
     <ClInclude Include="UI_KeyReactiveText.h">
       <Filter>Drawing</Filter>
     </ClInclude>
+    <ClInclude Include="DvarTrie.h">
+      <Filter>Dvars</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

@@ -1,7 +1,6 @@
 #pragma once
 #include "StdInclude.h"
 
-
 namespace T6SDK::Typedefs
 {
 	//8B 44 24 ? 85 C0 74 ? 80 38 ? 74 ? E9
@@ -63,6 +62,7 @@ namespace T6SDK
 {
 	namespace Dvars
 	{
+		inline static DvarTrie _DvarTrie{};
 		static dvar_s* FindDvar(const char* name)
 		{
 			return T6SDK::Typedefs::Dvar_FindVar(name);
@@ -70,34 +70,46 @@ namespace T6SDK
 		static dvar_s* RegisterBool(const char* name, bool value, const char* description)
 		{
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of BOOL", name);
-			return T6SDK::Typedefs::Dvar_RegisterBool(name, value, 1, description);
+			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterBool(name, value, 1, description);
+			T6SDK::Dvars::_DvarTrie.insert(ret);
+			return ret;
 		}
 		static dvar_s* RegisterFloat(const char* name, float value, float min, float max, const char* description)
 		{
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of FLOAT", name);
-			return T6SDK::Typedefs::Dvar_RegisterFloat(name, value, min, max, 1, description);
+			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterFloat(name, value, min, max, 1, description);
+			T6SDK::Dvars::_DvarTrie.insert(ret);
+			return ret;
 		}
 		static dvar_s* RegisterVec3(const char* name, float x, float y, float z, float min, float max, const char* description)
 		{
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of VEC3", name);
-			return T6SDK::Typedefs::Dvar_RegisterVec3(name, x, y, z, min, max, 1, description);
+			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterVec3(name, x, y, z, min, max, 1, description);
+			T6SDK::Dvars::_DvarTrie.insert(ret);
+			return ret;
 		}
 		static dvar_s* RegisterString(const char* name, const char* value, const char* description)
 		{
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of STRING", name);
-			return T6SDK::Typedefs::Dvar_RegisterString(name, value, 1, description);
+			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterString(name, value, 1, description);
+			T6SDK::Dvars::_DvarTrie.insert(ret);
+			return ret;
 		}
 
 		static dvar_s* RegisterInt(const char* name, int value, int min, int max, const char* description)
 		{
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of INT", name);
-			return T6SDK::Typedefs::Dvar_RegisterInt(name, value, min, max, 1, description);
+			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterInt(name, value, min, max, 1, description);
+			T6SDK::Dvars::_DvarTrie.insert(ret);
+			return ret;
 		}
 
 		static dvar_s* RegisterEnum(const char* name, const char** valueList, int defaultIndex, const char* description)
 		{
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of ENUM", name);
-			return T6SDK::Typedefs::Dvar_RegisterEnum(name, valueList, defaultIndex, 1, description);
+			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterEnum(name, valueList, defaultIndex, 1, description);
+			T6SDK::Dvars::_DvarTrie.insert(ret);
+			return ret;
 		}
 		static void Cmd_AddCommandInternal(const char* cmdName, void(*function)(), cmd_function_s* allocedCmd)
 		{

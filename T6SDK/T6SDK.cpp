@@ -345,7 +345,6 @@ namespace T6SDK
         }
         return T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.call_original<const char*, T6SDK::Typedefs::UI_SafeTranslateString_t, const char*>(string);
     }
-
 	void T6SDK::MAIN::Initialize()
 	{
         T6SDK::Drawing::normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
@@ -385,6 +384,26 @@ namespace T6SDK
         T6SDK::Addresses::Patches::AllowRollPatch.Patch();
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch.Patch();
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch2.Patch();
+        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "%i items IS GOING TO BE inserted!", *T6SDK::Addresses::g_dvarCount);
+        
+        //Add dvars to dvar trie
+        for (int i = 0; i < *T6SDK::Addresses::g_dvarCount; i++)
+        {
+            if(*(int*)(T6SDK::Addresses::dvarPool + (i * 0x60)))
+            {
+                T6SDK::Dvars::_DvarTrie.insert((dvar_s*)(T6SDK::Addresses::dvarPool + (i * 0x60)));
+                //T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Dvar inserted!");
+            }
+        }
+        //test dvar trie
+        //std::string prefix = "cg_f";
+        //std::vector<dvar_s*> words = T6SDK::Dvars::_DvarTrie.searchByPrefix(prefix);
+        //
+        //std::cout << "Words with prefix '" << prefix << "':" << std::endl;
+        //for (dvar_s* word : words) 
+        //{
+        //    std::cout << word->dvarName << std::endl;
+        //}
 	}
 	void T6SDK::MAIN::DeInitialize()
 	{
