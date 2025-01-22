@@ -103,7 +103,7 @@ namespace T6SDK
 
 		static std::vector<dvar_s*> FoundDvars{};
 		static float bgHeight = 25.0f;
-		static float bgY = 35.0f;
+		static float bgY = 10.0f;
 		static void DrawConsole()
 		{
 			if (!IsConsoleOpened)
@@ -113,10 +113,10 @@ namespace T6SDK
 			RECT bgRect{};
 
 			//Drawing background outline
-			if (!T6SDK::Drawing::DrawRectAbsolute(10.0f, bgY, T6SDK::Addresses::ScreenWidth.Value() - 20.0f, bgHeight, T6SDK::Drawing::WHITECOLOR, T6SDK::AnchorPoint::TopLeft, &bgRect))
+			if (!T6SDK::Drawing::DrawRectAbsolute(10.0f, bgY, T6SDK::Addresses::ScreenWidth.Value() - 20.0f, bgHeight, tColor{ 0.31f, 0.31f, 0.35f, 1.0f}, T6SDK::AnchorPoint::TopLeft, &bgRect))
 				return;
 			//Drawing background
-			T6SDK::Drawing::DrawRectAbsolute(11.0f, bgY+1.0f, T6SDK::Addresses::ScreenWidth.Value() - 22.0f, bgHeight - 2.0f, T6SDK::Drawing::T_BLACKCOLOR, T6SDK::AnchorPoint::TopLeft, 0x00);
+			T6SDK::Drawing::DrawRectAbsolute(11.0f, bgY+1.0f, T6SDK::Addresses::ScreenWidth.Value() - 22.0f, bgHeight - 2.0f, tColor{ 0.09f, 0.11f, 0.16f, 1.0f}, T6SDK::AnchorPoint::TopLeft, 0x00);
 			//Drawing text (test)
 			float height = (float)T6SDK::Drawing::consoleFont->pixelHeight;
 			T6SDK::Typedefs::R_AddCmdDrawTextInternal("^5t6sdk^7> ", 256, T6SDK::Drawing::consoleFont, bgRect.left + 5.0f, bgRect.top + height + 5.0f, 1.0f, 1.0f, 0, T6SDK::Drawing::WHITECOLOR, 0);
@@ -139,6 +139,9 @@ namespace T6SDK
 			{
 				if(i<FoundDvars.size())
 				{
+					char buffer[256];
+					
+					sprintf_s(buffer, "%s		^9%s", FoundDvars[i]->dvarName, FoundDvars[i]->dvarDesc);
 					T6SDK::Typedefs::R_AddCmdDrawTextInternal(FoundDvars[i]->dvarName, 256, T6SDK::Drawing::consoleFont, bgRect.left + 70.0f, foundDvarsY, 1.0f, 1.0f, 0, T6SDK::Drawing::WHITECOLOR, 0);
 					foundDvarsY += 25.0f;
 				}

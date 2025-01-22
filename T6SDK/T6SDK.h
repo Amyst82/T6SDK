@@ -14,6 +14,7 @@ namespace T6SDK
 		inline static bool DEBUG = false;
 		static void Initialize();
 		static void DeInitialize();
+		static void InitializeDevConsole();
 		inline static std::vector<int> RegisteredCameraModes{};
 		inline static std::vector<int> RegisteredRadioButtons{};
 		inline static std::map<BYTE, int> CharKeys{};

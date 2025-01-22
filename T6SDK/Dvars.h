@@ -196,6 +196,8 @@ namespace T6SDK
 		{
 			_dvar->current = _dvar->reset;
 		}
+
+
 		static class DvarList
 		{
 		public:

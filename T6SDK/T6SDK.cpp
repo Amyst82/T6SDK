@@ -344,6 +344,14 @@ namespace T6SDK
         }
         return T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.call_original<const char*, T6SDK::Typedefs::UI_SafeTranslateString_t, const char*>(string);
     }
+    void T6SDK::MAIN::InitializeDevConsole()
+    {
+        T6SDK::DevConsole::Initialize();
+        //Bind console events
+        T6SDK::Events::RegisterListener(T6SDK::EventType::OnEndFrameDrawn, (uintptr_t)&T6SDK::DevConsole::DrawConsole);
+        T6SDK::Events::RegisterListener(T6SDK::EventType::OnKeyPressed, (uintptr_t)&T6SDK::DevConsole::OnInputKey);
+
+    }
 	void T6SDK::MAIN::Initialize()
 	{
         T6SDK::Drawing::normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
@@ -387,11 +395,7 @@ namespace T6SDK
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch2.Patch();
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "%i items IS GOING TO BE inserted!", *T6SDK::Addresses::g_dvarCount);
         
-        T6SDK::DevConsole::Initialize();
-        //Bind console events
-        T6SDK::Events::RegisterListener(T6SDK::EventType::OnEndFrameDrawn, (uintptr_t)&T6SDK::DevConsole::DrawConsole);
-        T6SDK::Events::RegisterListener(T6SDK::EventType::OnKeyPressed, (uintptr_t)&T6SDK::DevConsole::OnInputKey);
-
+        
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "CharKeys registered size: %i", T6SDK::MAIN::CharKeys.size());
 	}
 	void T6SDK::MAIN::DeInitialize()
