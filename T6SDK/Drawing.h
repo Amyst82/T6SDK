@@ -7,6 +7,7 @@ namespace T6SDK
 	{
 		#pragma region Definitions
 		static Font_s* normalFont;
+		static Font_s* consoleFont;
 		static void* WhiteMaterial;
 		static void* headicontalkballoon;
 		static void* LightDef;
@@ -36,6 +37,12 @@ namespace T6SDK
 				T6SDK::ConsoleLog::LogFormatted(12, "normalFont restored: 0x%X", *normalFont);
 				return false;
 			}
+			if (!consoleFont)
+			{
+				consoleFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/consoleFont", 1);
+				T6SDK::ConsoleLog::LogFormatted(12, "consoleFont restored: 0x%X", *consoleFont);
+				return false;
+			}
 			if(!WhiteMaterial)
 			{
 				WhiteMaterial = T6SDK::InternalFunctions::Material_RegisterHandle("white", (int)T6SDK::XAssetType::MATERIAL);
@@ -61,7 +68,7 @@ namespace T6SDK
 			{
 				FxCameraSelect = T6SDK::InternalFunctions::DB_FindXAssetHeader(T6SDK::XAssetType::FX, "misc/fx_theater_mode_camera_head_select");
 			}
-			if (normalFont && WhiteMaterial && headicontalkballoon)
+			if (normalFont && consoleFont && WhiteMaterial && headicontalkballoon)
 			{
 				//T6SDK::ConsoleLog::LogFormatted(12, "Drawing resources are alright!");
 				return true;

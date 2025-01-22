@@ -129,6 +129,9 @@
     <ClInclude Include="DvarTrie.h">
       <Filter>Dvars</Filter>
     </ClInclude>
+    <ClInclude Include="DevConsole.h">
+      <Filter>Dvars</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

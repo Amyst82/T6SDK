@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
     <ClInclude Include="detour.h" />
+    <ClInclude Include="DevConsole.h" />
     <ClInclude Include="DvarTrie.h" />
     <ClInclude Include="Theater.h" />
     <ClInclude Include="UI_CheckBoxButton.h" />

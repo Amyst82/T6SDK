@@ -27,6 +27,7 @@
 #include "InputKey.h"
 #include "Input.h"
 #include "Drawing.h"
+#include "DevConsole.h"
 #include "UI_ClickableButton.h"
 #include "UI_CheckBoxButton.h"
 #include "UI_Slider.h"
@@ -34,5 +35,6 @@
 #include "UI_EnumButton.h"
 #include "UI_KeyReactiveText.h"
 #include "Theater.h"
+
 
 

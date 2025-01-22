@@ -193,7 +193,8 @@ namespace T6SDK::Addresses
 			T6SDK::Addresses::t6mpv43 + 0x16A42D, T6SDK::Addresses::t6mp + FILLIN,
 			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
 
-        
+        //FF D0 47 8D 76 ? 3B FB 75 ? A1
+        inline static T6SDK::MemoryPatch DisableRedactedConsole((uintptr_t)GetModuleHandle("ExtendedConsole.Red32n") + 0x420A, { 0x90, 0x90});
     }
 #pragma region Addresses
     inline static cg_t* cg = (cg_t*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2E048C80, T6SDK::Addresses::t6mp + 0x2E048C80, T6SDK::Addresses::t6zmv41 + 0x2E048C80, T6SDK::Addresses::t6zm + 0x2E048C80).GetValue();
@@ -239,6 +240,8 @@ namespace T6SDK::Addresses
     inline static T6SDK::MemoryAddress<float> Demo_timescale_step(t6mpv43 + 0x85E7C8, t6mp + 0x85D35C, t6zmv41 + 0x8348E4, t6zm + 0x7EA744); //float value of demo timescale step //0.200000003
     inline static T6SDK::MemoryAddress<bool> PlaybackInitedFlag(T6SDK::Addresses::t6mpv43 + 0x2D83A04, T6SDK::Addresses::t6mp + 0x2DA4A04,
         T6SDK::Addresses::t6zmv41 + 0x2D53A84, T6SDK::Addresses::t6zm + 0x2D7A104);
+
+    inline static T6SDK::MemoryAddress<int> CurrentKeyCatcher(t6mpv43 + 0xDC7844, t6mp + FILLIN, t6zmv41 + FILLIN, t6zm + FILLIN);
 #pragma endregion
 
 }

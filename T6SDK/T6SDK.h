@@ -1,10 +1,13 @@
 #pragma once
+#include <vector>
 #pragma warning(disable:4996)
 
 namespace T6SDK
 {
 	class MAIN
 	{
+	private:
+
 	public:
 		static void PreInit();
 		inline static bool GameLoaded = false;
@@ -13,5 +16,6 @@ namespace T6SDK
 		static void DeInitialize();
 		inline static std::vector<int> RegisteredCameraModes{};
 		inline static std::vector<int> RegisteredRadioButtons{};
+		inline static std::map<BYTE, int> CharKeys{};
 	};
 }

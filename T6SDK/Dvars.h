@@ -72,6 +72,10 @@ namespace T6SDK
 			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of BOOL", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterBool(name, value, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
+			for (dvar_s*& word : T6SDK::Dvars::_DvarTrie.searchByPrefix(name))
+			{
+				T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "dvar %s present", word->dvarName);
+			}
 			return ret;
 		}
 		static dvar_s* RegisterFloat(const char* name, float value, float min, float max, const char* description)

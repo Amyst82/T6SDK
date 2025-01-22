@@ -62,7 +62,6 @@ namespace T6SDK
     {
         //T6SDK::ConsoleLog::Log("Pressed!");
         T6SDK::Events::InvokeByteParam(T6SDK::EventType::OnKeyPressed, keyCode);
-
         if (keyCode == 0xCD) //MouseWheel Up
         {
             T6SDK::Input::MouseWheelDelta = 1.0f;
@@ -349,6 +348,8 @@ namespace T6SDK
 	{
         T6SDK::Drawing::normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "Normal Font registered: 0x%X->0x%X", T6SDK::Drawing::normalFont, *T6SDK::Drawing::normalFont);
+        T6SDK::Drawing::consoleFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/consoleFont", 1);
+        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "Console Font registered: 0x%X->0x%X", T6SDK::Drawing::consoleFont, *T6SDK::Drawing::consoleFont);
         T6SDK::Drawing::WhiteMaterial = T6SDK::InternalFunctions::Material_RegisterHandle("white", (int)T6SDK::XAssetType::MATERIAL);
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "White Material registered: 0x%X", T6SDK::Drawing::WhiteMaterial);
         T6SDK::Drawing::headicontalkballoon = T6SDK::InternalFunctions::Material_RegisterHandle("headicontalkballoon", (int)T6SDK::XAssetType::MATERIAL);
@@ -386,24 +387,12 @@ namespace T6SDK
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch2.Patch();
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "%i items IS GOING TO BE inserted!", *T6SDK::Addresses::g_dvarCount);
         
-        //Add dvars to dvar trie
-        for (int i = 0; i < *T6SDK::Addresses::g_dvarCount; i++)
-        {
-            if(*(int*)(T6SDK::Addresses::dvarPool + (i * 0x60)))
-            {
-                T6SDK::Dvars::_DvarTrie.insert((dvar_s*)(T6SDK::Addresses::dvarPool + (i * 0x60)));
-                //T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Dvar inserted!");
-            }
-        }
-        //test dvar trie
-        //std::string prefix = "cg_f";
-        //std::vector<dvar_s*> words = T6SDK::Dvars::_DvarTrie.searchByPrefix(prefix);
-        //
-        //std::cout << "Words with prefix '" << prefix << "':" << std::endl;
-        //for (dvar_s* word : words) 
-        //{
-        //    std::cout << word->dvarName << std::endl;
-        //}
+        T6SDK::DevConsole::Initialize();
+        //Bind console events
+        T6SDK::Events::RegisterListener(T6SDK::EventType::OnEndFrameDrawn, (uintptr_t)&T6SDK::DevConsole::DrawConsole);
+        T6SDK::Events::RegisterListener(T6SDK::EventType::OnKeyPressed, (uintptr_t)&T6SDK::DevConsole::OnInputKey);
+
+        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "CharKeys registered size: %i", T6SDK::MAIN::CharKeys.size());
 	}
 	void T6SDK::MAIN::DeInitialize()
 	{

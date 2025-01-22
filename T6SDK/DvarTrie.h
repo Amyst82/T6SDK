@@ -3,6 +3,8 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <algorithm>
+#include <cctype>   
 namespace T6SDK::Dvars
 {
     class DvarTrieNode 
@@ -37,7 +39,8 @@ namespace T6SDK::Dvars
         void insert(dvar_s* dvar)
         {
             DvarTrieNode* current = root;
-            const std::string& word = dvar->dvarName;
+            std::string word = dvar->dvarName;
+            std::transform(word.begin(), word.end(), word.begin(), ::tolower);
             for (char ch : word)
             {
                 if (current->children.find(ch) == current->children.end())

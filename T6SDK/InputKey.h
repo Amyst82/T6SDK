@@ -1,22 +1,28 @@
 #pragma once
 #include "pch.h"
 #include "StdInclude.h"
+#include "T6SDK.h"
 namespace T6SDK::Input
 {
+
     class InputKey
     {
+
     private:
         bool ReturnedTrue = false;
         DWORD BaseAddress{};
     public:
         BYTE KeyCode = 0x00;
-        InputKey(DWORD baseAddress, BYTE keycode)
+        char KeyChar = '\0';
+        InputKey(DWORD baseAddress, BYTE keycode, char keyChar)
         {
             BaseAddress = baseAddress;
             KeyCode = keycode;
+			KeyChar = keyChar;
+            T6SDK::MAIN::CharKeys.emplace(keycode, (int)this);
         }
 #pragma region CrossVersion 
-        InputKey(DWORD v43BaseAddress, DWORD mpBaseAddress, DWORD v41BaseAddress, DWORD zmBaseAddress, BYTE keycode)
+        InputKey(DWORD v43BaseAddress, DWORD mpBaseAddress, DWORD v41BaseAddress, DWORD zmBaseAddress, BYTE keycode, char keyChar)
         {
             switch (T6SDK::CrossVersion::GetGameVersion())
             {
@@ -34,6 +40,8 @@ namespace T6SDK::Input
                 break;
             }
             KeyCode = keycode;
+			KeyChar = keyChar;
+            T6SDK::MAIN::CharKeys.emplace(keycode, (int)this);
         }
 #pragma endregion
         bool IsValid()
