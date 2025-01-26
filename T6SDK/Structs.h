@@ -600,8 +600,10 @@ public:
 
 typedef struct demoPlayback
 {
+public:
+	bool overridePause;
 private:
-	int ukn0;//0x00
+	char _0x02[0x3];
 	float timescale;//0x04
 public:
 	float fov;//0x08

@@ -198,6 +198,15 @@ namespace T6SDK::Addresses
 			T6SDK::Addresses::t6mpv43 + 0x16A42D, T6SDK::Addresses::t6mp + FILLIN,
 			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
 
+        //B9 3E 00 00 00 F3 A5 E8 ? ? ? ? 83 8D
+        inline static T6SDK::MemoryPatch CamoChangingCinePatch(T6SDK::CrossVersion::CrossValue<DWORD>(
+			T6SDK::Addresses::t6mpv43 + 0x3075C3, T6SDK::Addresses::t6mp + FILLIN,
+			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90});
+
+        inline static T6SDK::MemoryPatch InitialTickSTOP(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x16C2D1, T6SDK::Addresses::t6mp + 0x14F521, 
+            T6SDK::Addresses::t6zmv41 + 0x1614B1, T6SDK::Addresses::t6zm + 0x170801).GetValue(), { 0x8B });//What writes to inital tick; Replace with 0xB8
+
         //FF D0 47 8D 76 ? 3B FB 75 ? A1
         inline static T6SDK::MemoryPatch DisableRedactedConsole((uintptr_t)GetModuleHandle("ExtendedConsole.Red32n") + 0x420A, { 0x90, 0x90});
     }
@@ -216,6 +225,8 @@ namespace T6SDK::Addresses
     inline static T6SDK::MemoryAddress<UiContext_t> UiContext(T6SDK::Addresses::t6mpv43 + 0x2556228, T6SDK::Addresses::t6mp + 0x2556228, T6SDK::Addresses::t6zmv41 + 0x2526558, T6SDK::Addresses::t6zm + 0x252BB58);
 
     inline static T6SDK::MemoryAddress<int> Tick(T6SDK::Addresses::t6mpv43 + 0xDC7EE0, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    
+    static MemoryAddress<int> InitialTick(t6mpv43 + 0xDC7D74, t6mp + 0xDC7D74, t6zmv41 + 0xD9CB84, t6zm + 0xD9DC04, { 0x2AA4 }); //Use for go to first marker feature //8B 87 A4 2A 00 00 2B 87 B0 2A 00 00 5F 5E 83 E8 05 5D
 
     inline static T6SDK::MemoryAddress<BYTE> IsInputLocked(T6SDK::Addresses::t6mpv43 + 0x30053B8, T6SDK::Addresses::t6mp + 0x30263B8, T6SDK::Addresses::t6zmv41 + 0x2FD5228, T6SDK::Addresses::t6zm + 0x2FFBAA8);
 

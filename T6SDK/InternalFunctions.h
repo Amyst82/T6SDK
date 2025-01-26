@@ -1,6 +1,10 @@
 #pragma once
 #include "StdInclude.h"
+#include <shobjidl.h> // For IFileDialog
 #include <commdlg.h>
+#include <filesystem>
+#include <sstream>
+#pragma comment(lib, "ole32.lib") // Link against Ole32 library
 #define FILLIN 0x00
 namespace T6SDK::Typedefs
 {
@@ -757,6 +761,143 @@ namespace T6SDK
 			else {
 				return false;
 			}
+		}
+		static void CreateDirectoryForFile(std::string filename)
+		{
+			std::wstring wide_string(filename.begin(), filename.end());
+
+			wchar_t* path = (wchar_t*)wide_string.c_str();
+
+			wchar_t folder[MAX_PATH];
+			wchar_t* end;
+			ZeroMemory(folder, MAX_PATH * sizeof(wchar_t));
+
+			end = wcschr(path, L'\\');
+
+			while (end != NULL)
+			{
+				wcsncpy(folder, path, end - path + 1);
+				if (!CreateDirectory((LPTSTR)folder, NULL))
+				{
+					DWORD err = GetLastError();
+
+					if (err != ERROR_ALREADY_EXISTS)
+					{
+						// do whatever handling you'd like
+					}
+				}
+				end = wcschr(++end, L'\\');
+			}
+		}
+
+		static bool CreateNewDirectory(const char* fullPath)
+		{
+			// Call CreateDirectoryA to create the directory
+			if (CreateDirectory(fullPath, NULL)) 
+			{
+				T6SDK::ConsoleLog::LogFormatted("Directory %s created successfully.", fullPath);
+				return true;
+			}
+			else 
+			{
+				// Get the error code if the function fails
+				DWORD error = GetLastError();
+				if (error == ERROR_ALREADY_EXISTS)
+				{
+					T6SDK::ConsoleLog::LogFormatted("Directory %s already exists.", fullPath);
+					return true;
+				}
+				else
+				{
+					T6SDK::ConsoleLog::LogFormatted("Failed to create directory %s. Error code: .", fullPath, error);
+				}
+				return false;
+			}
+		}
+		static std::string getCurrentDateTimeString() 
+		{
+			// Get the current time
+			auto now = std::chrono::system_clock::now();
+			auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+			// Format the time as a string (e.g., "2023-10-05_14-30-45")
+			std::stringstream ss{};
+			ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d_%H-%M-%S");
+			return ss.str();
+		}
+
+		// Function to open a folder dialog and return the selected folder path
+		static bool OpenFolderDialog(std::string& folderPath) 
+		{
+			ShowCursor(true);
+			// Initialize the COM library
+			HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+			if (FAILED(hr)) {
+				std::cerr << "Failed to initialize COM library." << std::endl;
+				return false;
+			}
+
+			// Create the File Open Dialog object
+			IFileOpenDialog* pFileOpen = nullptr;
+			hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+			if (FAILED(hr)) {
+				std::cerr << "Failed to create File Open Dialog." << std::endl;
+				CoUninitialize();
+				return false;
+			}
+
+			// Set options to select folders instead of files
+			DWORD dwOptions;
+			pFileOpen->GetOptions(&dwOptions);
+			pFileOpen->SetOptions(dwOptions | FOS_PICKFOLDERS);
+
+			// Show the dialog
+			hr = pFileOpen->Show(NULL);
+			if (FAILED(hr)) {
+				std::cerr << "User canceled the dialog or an error occurred." << std::endl;
+				pFileOpen->Release();
+				CoUninitialize();
+				return false;
+			}
+
+			// Get the selected folder
+			IShellItem* pItem = nullptr;
+			hr = pFileOpen->GetResult(&pItem);
+			if (FAILED(hr)) {
+				std::cerr << "Failed to get selected folder." << std::endl;
+				pFileOpen->Release();
+				CoUninitialize();
+				return false;
+			}
+
+			// Get the folder path
+			PWSTR pszFilePath = nullptr;
+			hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+			if (SUCCEEDED(hr)) {
+				// Convert the wide string to a std::string
+				char buffer[MAX_PATH];
+				WideCharToMultiByte(CP_UTF8, 0, pszFilePath, -1, buffer, MAX_PATH, NULL, NULL);
+				folderPath = buffer;
+
+				// Free the memory allocated for the path
+				CoTaskMemFree(pszFilePath);
+			}
+			else {
+				std::cerr << "Failed to get folder path." << std::endl;
+				pItem->Release();
+				pFileOpen->Release();
+				CoUninitialize();
+				return false;
+			}
+
+			// Release COM objects
+			pItem->Release();
+			pFileOpen->Release();
+
+			// Uninitialize the COM library
+			CoUninitialize();
+
+			return true;
 		}
 	}
 }

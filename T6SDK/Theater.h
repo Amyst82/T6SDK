@@ -45,6 +45,17 @@ namespace T6SDK
 		{
 			T6SDK::Typedefs::Demo_Back();
 		}
+		static void Demo_JumpToTick(int tick)
+		{
+			if (IsInTheater() == false) return;
+			while (T6SDK::Addresses::Tick.Value() > tick && T6SDK::Addresses::Tick.Value() != 0)
+			{
+				Demo_Back();
+			}
+			T6SDK::Addresses::DemoPlayback.Value()->overridePause = true;
+			T6SDK::Addresses::Tick.SetValueSafe(tick);
+			T6SDK::Addresses::DemoPlayback.Value()->overridePause = false;
+		}
 		static void Demo_JumpToDollyCamMarkerTime(int markerNum)
 		{
 			T6SDK::Typedefs::Demo_JumpToDollyCamMarkerTime(0, markerNum);
