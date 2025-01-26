@@ -83,6 +83,11 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryHook h_UnlockCameraRollHook(T6SDK::CrossVersion::CrossValue<DWORD>(
 			T6SDK::Addresses::t6mpv43 + 0x143276, T6SDK::Addresses::t6mp + 0x1246C6,
 			T6SDK::Addresses::t6zmv41 + 0x18B5C6, T6SDK::Addresses::t6zm + 0x10A1A6).GetValue(), 6);
+
+        //89 8F 8C ? ? ? 8B 86 ? ? ? ? 50
+        inline static T6SDK::MemoryHook h_PovCamoWritingHook(T6SDK::CrossVersion::CrossValue<DWORD>(
+			T6SDK::Addresses::t6mpv43 + 0x5406DD, T6SDK::Addresses::t6mp + FILLIN,
+			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
     }
     namespace DetoursAddresses
     {

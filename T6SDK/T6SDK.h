@@ -11,6 +11,7 @@ namespace T6SDK
 	public:
 		static void PreInit();
 		inline static bool GameLoaded = false;
+		inline static bool DevConsoleOpened = false;
 		inline static bool DEBUG = false;
 		static void Initialize();
 		static void DeInitialize();

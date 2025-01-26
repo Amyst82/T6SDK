@@ -23,6 +23,8 @@ namespace T6SDK
 
 		static void OpenBlankMenu()
 		{
+			if (T6SDK::MAIN::DevConsoleOpened == true)
+				return;
 			T6SDK::InternalFunctions::UI_CloseAll();
 			T6SDK::Addresses::DemoPlayback.Value()->DemoHudHidden = true;
 			T6SDK::Addresses::DemoPlayback.Value()->GameHudHidden = true;
@@ -33,6 +35,8 @@ namespace T6SDK
 		}
 		static void CloseBlankMenu()
 		{
+			if (T6SDK::MAIN::DevConsoleOpened == true)
+				return;
 			T6SDK::Addresses::DemoPlayback.Value()->DemoHudHidden = false;
 			T6SDK::Addresses::DemoPlayback.Value()->GameHudHidden = true;
 			T6SDK::Addresses::IsDemoPaused.Value() = true;

@@ -197,6 +197,155 @@ namespace T6SDK
 			_dvar->current = _dvar->reset;
 		}
 
+		static std::string GetCurrentValueAsString(dvar_s* _dvar)
+		{
+			try
+			{
+				std::string result = "";
+				switch (_dvar->type)
+				{
+					case Dvar_Bool:
+						result = std::string(_dvar->current.enabled ? "true" : "false");
+						break;
+					case Dvar_Float:
+						result = std::to_string(_dvar->current.value);
+						break;
+					case Dvar_Vec2:
+						result = std::to_string(_dvar->current.vector[0]) + ", " + std::to_string(_dvar->current.vector[1]);
+						break;
+					case Dvar_LinearColorRGB:
+						result = std::to_string(_dvar->current.vector[0]) + ", " + std::to_string(_dvar->current.vector[1]) + ", " + std::to_string(_dvar->current.vector[2]);
+						break;
+					case Dvar_ColorXYZ:
+						result = std::to_string(_dvar->current.vector[0]) + ", " + std::to_string(_dvar->current.vector[1]) + ", " + std::to_string(_dvar->current.vector[2]);
+						break;
+					case Dvar_Vec3:
+						result = std::to_string(_dvar->current.vector[0]) + ", " + std::to_string(_dvar->current.vector[1]) + ", " + std::to_string(_dvar->current.vector[2]);
+						break;
+					case Dvar_Vec4:
+						result = std::to_string(_dvar->current.vector[0]) + ", " + std::to_string(_dvar->current.vector[1]) + ", " + std::to_string(_dvar->current.vector[2]) + ", " + std::to_string(_dvar->current.vector[3]);
+						break;
+					case Dvar_Color:
+						result = std::to_string(_dvar->current.vector[0]) + ", " + std::to_string(_dvar->current.vector[1]) + ", " + std::to_string(_dvar->current.vector[2]) + ", " + std::to_string(_dvar->current.vector[3]);
+						break;
+					case Dvar_Int:
+						result = std::to_string(_dvar->current.integer);
+						break;
+					case Dvar_Enum:
+						result = std::to_string(_dvar->current.value);
+						break;
+					case Dvar_String:
+						result =  std::string(_dvar->current.string);
+						break;
+				}
+				return result;
+			}
+			catch (const char* e)
+			{
+				T6SDK::ConsoleLog::LogErrorFormatted("Failed to get current value of dvar %s: %s", _dvar->dvarName, e);
+				return std::string("");
+			}
+		}
+
+		static std::string GetResetValueAsString(dvar_s* _dvar)
+		{
+			try
+			{
+				std::string result = "";
+				switch (_dvar->type)
+				{
+				case Dvar_Bool:
+					result = std::string(_dvar->reset.enabled ? "true" : "false");
+					break;
+				case Dvar_Float:
+					result = std::to_string(_dvar->reset.value);
+					break;
+				case Dvar_Vec2:
+					result = std::to_string(_dvar->reset.vector[0]) + ", " + std::to_string(_dvar->reset.vector[1]);
+					break;
+				case Dvar_LinearColorRGB:
+					result = std::to_string(_dvar->reset.vector[0]) + ", " + std::to_string(_dvar->reset.vector[1]) + ", " + std::to_string(_dvar->reset.vector[2]);
+					break;
+				case Dvar_ColorXYZ:
+					result = std::to_string(_dvar->reset.vector[0]) + ", " + std::to_string(_dvar->reset.vector[1]) + ", " + std::to_string(_dvar->reset.vector[2]);
+					break;
+				case Dvar_Vec3:
+					result = std::to_string(_dvar->reset.vector[0]) + ", " + std::to_string(_dvar->reset.vector[1]) + ", " + std::to_string(_dvar->reset.vector[2]);
+					break;
+				case Dvar_Vec4:
+					result = std::to_string(_dvar->reset.vector[0]) + ", " + std::to_string(_dvar->reset.vector[1]) + ", " + std::to_string(_dvar->reset.vector[2]) + ", " + std::to_string(_dvar->reset.vector[3]);
+					break;
+				case Dvar_Color:
+					result = std::to_string(_dvar->reset.vector[0]) + ", " + std::to_string(_dvar->reset.vector[1]) + ", " + std::to_string(_dvar->reset.vector[2]) + ", " + std::to_string(_dvar->reset.vector[3]);
+					break;
+				case Dvar_Int:
+					result = std::to_string(_dvar->reset.integer);
+					break;
+				case Dvar_Enum:
+					result = std::to_string(_dvar->reset.value);
+					break;
+				case Dvar_String:
+					result = std::string(_dvar->reset.string);
+					break;
+				}
+				return result;
+			}
+			catch (const char* e)
+			{
+				T6SDK::ConsoleLog::LogErrorFormatted("Failed to get reset value of dvar %s: %s", _dvar->dvarName, e);
+				return std::string("");
+			}
+		}
+
+		static const char* GetTypeAsString(dvar_s* _dvar)
+		{
+			try
+			{
+				const char* result = "";
+				switch (_dvar->type)
+				{
+				case Dvar_Bool:
+					result = "Bool";
+					break;
+				case Dvar_Float:
+					result = "Float";
+					break;
+				case Dvar_Vec2:
+					result = "Vec2";
+					break;
+				case Dvar_LinearColorRGB:
+					result = "Linear color RGB";
+					break;
+				case Dvar_ColorXYZ:
+					result = "Color XYZ";
+					break;
+				case Dvar_Vec3:
+					result = "Vec3";
+					break;
+				case Dvar_Vec4:
+					result = "Vec4";
+					break;
+				case Dvar_Color:
+					result = "Color";
+					break;
+				case Dvar_Int:
+					result = "Int";
+					break;
+				case Dvar_Enum:
+					result = "Enum";
+					break;
+				case Dvar_String:
+					result = "String";
+					break;
+				}
+				return result;
+			}
+			catch (const char* e)
+			{
+				T6SDK::ConsoleLog::LogErrorFormatted("Failed to get type of dvar %s: %s", _dvar->dvarName, e);
+				return "???";
+			}
+		}
 
 		static class DvarList
 		{

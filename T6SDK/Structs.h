@@ -33,7 +33,7 @@ union DvarValue {
 
 typedef enum DvarType : int
 {
-	Dvar_Bool = 0x00,
+	Dvar_Bool = 0x01,
 	Dvar_Float = 0x02,
 	Dvar_Vec2 = 0x03,
 	Dvar_Vec3 = 0x04,
@@ -642,12 +642,50 @@ public:
 #pragma endregion
 
 #pragma region cg stuff
+class renderOptions_t
+{
+public:
+	int s;
+};
+class LerpEntityState_t
+{
+private:
+	char _pad[0x7C];
+};
+class playerState_t
+{
+private:
+	char _0x00[0xF4];
+public:
+	int corpseIndex; //0xF4
+private:
+	char _0xF8[0xA8];
+public:
+	int clientNum; //0x1A0
+private:
+	char _0x1A4[0x0A];
+public:
+	renderOptions_t renderOptions; //0x1B0
+private:
+	int _0x1B4; //0x1B4
+public:
+	int weapon; //0x1B8
+private:
+	char _0x1BC[0x284A];
+}; //size 0x2A08
 class entityState_t
 {
 public:
 	int number; //0x00
 private:
-	char _0xE0[212];
+	LerpEntityState_t lerp; //0x04;
+	int time2; //0x80
+	int loopSoundId; //0x84
+	int solid; //0x88
+public:
+	renderOptions_t renderOptions; //0x8C
+private:
+	char _0x94[0x48];
 public:
 	BYTE eType;//0xD8
 private:
@@ -746,8 +784,10 @@ public:
 	__int32 IsZoomed; //0x0590 
 	char _0x0594[48];
 	__int32 weaponID; //0x05C4 
-	char _0x05C8[576];
-};
+	char _0x05C8[0x1C8];
+	BYTE weaponSlot; //0x790
+	char _0x791[0x77];
+}; //size 0x808
 class refdef_t
 {
 public:

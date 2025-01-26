@@ -336,6 +336,35 @@ namespace T6SDK
         }
     }
 
+    void HandlePovCamoWriting(int entitystateEDI)
+    {
+        T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnPovCamoWriting, entitystateEDI);
+    }
+    __declspec(naked) void PovCamoWriting()
+    {
+        _asm
+        {
+            mov [edi + 0x8C], edx
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+            push edi
+            call HandlePovCamoWriting
+            mov eax, [eaxTMP]
+            mov edx, [edxTMP]
+            mov ecx, [ecxTMP]
+            mov esi, [esiTMP]
+            mov edi, [ediTMP]
+            mov esp, [espTMP]
+            mov ebp, [ebpTMP]
+            jmp[T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.JumpBackAddress]
+        }
+    }
+
     static const char* DetouredSafeStringTranslate(const char* string)
     {
         if (T6SDK::Theater::IsPlaybackInited())
@@ -376,6 +405,7 @@ namespace T6SDK
         T6SDK::Addresses::HookAddresses::h_NearClipping.Hook(NearClippingPatch);
 		T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.Hook(UnlockGunAngles);
         T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.Hook(UnlockCameraRoll);
+        T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Hooks set!");
         //Detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.Hook(T6SDK::Theater::DetouredSwitchCamera);
@@ -411,6 +441,7 @@ namespace T6SDK
         T6SDK::Addresses::HookAddresses::h_NearClipping.UnHook();
 		T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.UnHook();
         T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.UnHook();
+		T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.UnHook();
         //Removing detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.UnHook();
         T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.UnHook();
