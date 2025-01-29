@@ -175,6 +175,7 @@
     <ClInclude Include="T6SDK.h" />
     <ClInclude Include="UI_EnumButton.h" />
     <ClInclude Include="UI_KeyReactiveText.h" />
+    <ClInclude Include="UI_ListBox.h" />
     <ClInclude Include="UI_RadioButton.h" />
     <ClInclude Include="UI_Slider.h" />
   </ItemGroup>

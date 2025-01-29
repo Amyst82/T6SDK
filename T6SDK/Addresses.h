@@ -88,6 +88,11 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryHook h_PovCamoWritingHook(T6SDK::CrossVersion::CrossValue<DWORD>(
 			T6SDK::Addresses::t6mpv43 + 0x5406DD, T6SDK::Addresses::t6mp + FILLIN,
 			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+
+        //B9 3E 00 00 00 F3 A5 E8 ? ? ? ? 83 8D
+        inline static T6SDK::MemoryHook h_CamoChangingCinePatch(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x3075C3, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
     }
     namespace DetoursAddresses
     {
@@ -197,11 +202,6 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryPatch JumpToDollyCamMarkerPatch(T6SDK::CrossVersion::CrossValue<DWORD>(
 			T6SDK::Addresses::t6mpv43 + 0x16A42D, T6SDK::Addresses::t6mp + FILLIN,
 			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
-
-        //B9 3E 00 00 00 F3 A5 E8 ? ? ? ? 83 8D
-        inline static T6SDK::MemoryPatch CamoChangingCinePatch(T6SDK::CrossVersion::CrossValue<DWORD>(
-			T6SDK::Addresses::t6mpv43 + 0x3075C3, T6SDK::Addresses::t6mp + FILLIN,
-			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90});
 
         inline static T6SDK::MemoryPatch InitialTickSTOP(T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x16C2D1, T6SDK::Addresses::t6mp + 0x14F521, 
