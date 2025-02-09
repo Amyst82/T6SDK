@@ -827,7 +827,13 @@ private:
 public:
 	int Tick; //0x4808C
 private:
-	char _0x48090[22528];
+	int tick2; //0x48090
+	int tick3; //0x48094
+	int tick4; //0x48098
+public:
+	int FakeTick; //0x4809C
+private:
+	char _0x48090[22512];
 public:
 	refdef_t RefDef; //0x4D890
 	vec3_t RefDefViewAngles; //0x648F0
