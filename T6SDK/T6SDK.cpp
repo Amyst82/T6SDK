@@ -60,6 +60,8 @@ namespace T6SDK
 
     void HandleIngameKeyPressed(BYTE keyCode)
     {
+        if (!T6SDK::Theater::IsInTheater())
+            return;
         //T6SDK::ConsoleLog::Log("Pressed!");
         T6SDK::Events::InvokeByteParam(T6SDK::EventType::OnKeyPressed, keyCode);
         if (keyCode == 0xCD) //MouseWheel Up
@@ -364,6 +366,33 @@ namespace T6SDK
             jmp[T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.JumpBackAddress]
         }
     }
+    void HandleOnAxisToAngles()
+    {
+		T6SDK::Events::Invoke(T6SDK::EventType::OnAxisToAngles);
+    }
+    __declspec(naked) void OnAxisToAngles()
+    {
+		_asm
+		{
+			mov[eaxTMP], eax
+			mov[edxTMP], edx
+			mov[ecxTMP], ecx
+			mov[esiTMP], esi
+			mov[ediTMP], edi
+			mov[espTMP], esp
+			mov[ebpTMP], ebp
+			call HandleOnAxisToAngles
+			mov eax, [eaxTMP]
+			mov edx, [edxTMP]
+			mov ecx, [ecxTMP]
+			mov esi, [esiTMP]
+			mov edi, [ediTMP]
+			mov esp, [espTMP]
+			mov ebp, [ebpTMP]
+            movss[esi + 0x08], xmm0
+			jmp[T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.JumpBackAddress]
+		}
+    }
 
     static const char* DetouredSafeStringTranslate(const char* string)
     {
@@ -406,6 +435,9 @@ namespace T6SDK
 		T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.Hook(UnlockGunAngles);
         T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.Hook(UnlockCameraRoll);
         T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
+
+        T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.Hook(OnAxisToAngles);
+
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Hooks set!");
         //Detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.Hook(T6SDK::Theater::DetouredSwitchCamera);
@@ -442,6 +474,7 @@ namespace T6SDK
 		T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.UnHook();
         T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.UnHook();
 		T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.UnHook();
+        T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.UnHook();
         //Removing detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.UnHook();
         T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.UnHook();

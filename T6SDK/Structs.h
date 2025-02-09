@@ -591,9 +591,7 @@ private:
 public:
 	float Roll; //Can be used for something else
 private:
-	int pad2;
-private:
-	int pad3[6];
+	int pad3[7];
 public:
 	float Fov;
 } CameraMarker_s;
@@ -808,9 +806,9 @@ public:
 	Matrix33_s viewAxis; //0x0044 
 	char _0x0068[4];
 	__int32 iTime; //0x006C 
-	char _0x0070[144];
+	char _0x0070[0x16FF0];
 
-};
+}; //sizeof=0x17060
 
 class cg_t
 {
@@ -832,12 +830,15 @@ private:
 	char _0x48090[22528];
 public:
 	refdef_t RefDef; //0x4D890
+	vec3_t RefDefViewAngles; //0x648F0
 private:
-	char _0x4D990[0x1709C];
+	char _0x648FC[0x130];
 public:
 	vec3_t baseGunAngles; //0x64A2C
+	vec3_t swayViewAngles; //0x64A38
+	vec3_t swayAngles; //0x64A44
 private:
-	char _unknown[0x5028];
+	char _unknown[0x5010];
 public:
 	clientinfo_t client[18]; //0x69A60
 }; 

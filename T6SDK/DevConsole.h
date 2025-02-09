@@ -60,6 +60,7 @@ namespace T6SDK
 		}
 		static void OnInputKey(BYTE key)
 		{
+
 			//Getting InputKey by key
 			T6SDK::Input::InputKey* keyPointer = 0x00;
 			try
@@ -305,6 +306,9 @@ namespace T6SDK
 			if (T6SDK::CrossVersion::GetGameVersion() == T6SDK::CrossVersion::GameVersion::V43 || T6SDK::CrossVersion::GetGameVersion() == T6SDK::CrossVersion::GameVersion::V41)
 			{
 				T6SDK::ConsoleLog::Log("Removing Redacted's console...");
+				DWORD redactedConsole = T6SDK::Memory::IdaSigScan("FF D0 47 8D 76 ? 3B FB 75 ? A1", "ExtendedConsole.Red32n");
+				T6SDK::ConsoleLog::LogFormatted("Redacted's console address: %p", redactedConsole);
+				T6SDK::Addresses::Patches::DisableRedactedConsole = T6SDK::MemoryPatch(redactedConsole, { 0x90, 0x90 });
 				T6SDK::Addresses::Patches::DisableRedactedConsole.Patch();
 				T6SDK::ConsoleLog::Log("Redacted's console removed!");
 			}

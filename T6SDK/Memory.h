@@ -145,7 +145,7 @@ namespace T6SDK
 
 			return 0;
 		}
-		inline static DWORD IdaSigScan(const char* signature)
+		inline static DWORD IdaSigScan(const char* signature, LPCSTR moduleName)
 		{
 			static auto pattern_to_byte = [](const char* pattern)
 				{
@@ -170,8 +170,8 @@ namespace T6SDK
 					return bytes;
 				};
 
-			DWORD base = (DWORD)GetModuleHandleA(NULL);
-			DWORD sizeOfImage = GetModuleInfo(NULL).SizeOfImage;
+			DWORD base = (DWORD)GetModuleHandleA(moduleName);
+			DWORD sizeOfImage = GetModuleInfo(moduleName).SizeOfImage;
 			auto patternBytes = pattern_to_byte(signature);
 
 			DWORD patternLength = patternBytes.size();
@@ -193,6 +193,9 @@ namespace T6SDK
 			}
 			return NULL;
 		}
-
+		inline static DWORD IdaSigScan(const char* signature)
+		{
+			return IdaSigScan(signature, NULL);
+		}
 	}
 }

@@ -93,6 +93,10 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryHook h_CamoChangingCinePatch(T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x3075C3, T6SDK::Addresses::t6mp + FILLIN,
             T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
+
+        inline static T6SDK::MemoryHook h_AxisToAnglesHook(T6SDK::CrossVersion::CrossValue<DWORD>(
+			T6SDK::Addresses::t6mpv43 + 0x1A5FC9, T6SDK::Addresses::t6mp + FILLIN,
+			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
     }
     namespace DetoursAddresses
     {
@@ -258,6 +262,9 @@ namespace T6SDK::Addresses
         T6SDK::Addresses::t6zmv41 + 0x2D53A84, T6SDK::Addresses::t6zm + 0x2D7A104);
 
     inline static T6SDK::MemoryAddress<int> CurrentKeyCatcher(t6mpv43 + 0xDC7844, t6mp + FILLIN, t6zmv41 + FILLIN, t6zm + FILLIN);
+
+    inline static T6SDK::MemoryAddress<vec3_t> SunPosition(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x14 }); //Check BO2 Console v4 source
+    inline static T6SDK::MemoryAddress<vec3_t> SunColor(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x58 });
 #pragma endregion
 
 }

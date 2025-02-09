@@ -63,5 +63,12 @@ namespace T6SDK
 
 			//T6SDK::ConsoleLog::LogFormatted(14, "[MemoryPatch] Unpatched %i bytes at address 0x%x", Opcodes.size(), BaseAddress);
         }
+        DWORD EndPointerAddress()
+        {
+            if (BaseAddress != NULL)
+            {
+                return BaseAddress;
+            }
+        }
 	};
 }
