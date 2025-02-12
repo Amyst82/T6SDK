@@ -899,5 +899,56 @@ namespace T6SDK
 
 			return true;
 		}
+
+		static bool SetClipboardText(const std::string& text)
+		{
+			// Open the clipboard
+			if (!OpenClipboard(nullptr)) {
+				// Handle error
+				return false;
+			}
+			// Empty the clipboard
+			if (!EmptyClipboard()) {
+				// Handle error
+				CloseClipboard();
+				return false;
+			}
+			// Allocate global memory for the text
+			HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, text.size() + 1);
+			if (!hGlobal) 
+			{
+				// Handle error
+				CloseClipboard();
+				return false;
+			}
+			// Copy the text to the global memory
+			char* pGlobal = static_cast<char*>(GlobalLock(hGlobal));
+			if (pGlobal) 
+			{
+				memcpy(pGlobal, text.c_str(), text.size() + 1);
+				GlobalUnlock(hGlobal);
+			}
+			else 
+			{
+				// Handle error
+				GlobalFree(hGlobal);
+				CloseClipboard();
+				return false;
+			}
+
+			// Set the clipboard data
+			if (!SetClipboardData(CF_TEXT, hGlobal)) 
+			{
+				// Handle error
+				GlobalFree(hGlobal);
+				CloseClipboard();
+				return false;
+			}
+
+			// Close the clipboard
+			CloseClipboard();
+
+			return true;
+		}
 	}
 }
