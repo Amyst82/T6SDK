@@ -11,8 +11,10 @@ namespace T6SDK
         uintptr_t BaseAddress{};
         int Length{};
         BYTE* OriginalBytes{};
+
     public:
         DWORD JumpBackAddress{};
+        inline static DWORD OutFunc = 0x00;
         MemoryHook()
         {
 
@@ -30,12 +32,18 @@ namespace T6SDK
             OriginalBytes = T6SDK::Memory::StoreOldBytes(BaseAddress, Length);
         }
 
+
         void Init(uintptr_t _baseAddress, int _length)
         {
 			BaseAddress = _baseAddress;
 			Length = _length;
 			JumpBackAddress = BaseAddress + Length;
 			OriginalBytes = T6SDK::Memory::StoreOldBytes(BaseAddress, Length);
+        }
+        void SetOutFunc(DWORD _outFunc)
+        {
+            OutFunc = _outFunc; 
+            T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "OutFunc set: 0x%X", OutFunc);
         }
 
 #pragma region CrossVersion 
@@ -89,11 +97,12 @@ namespace T6SDK
         {
             try
             {
-                T6SDK::ConsoleLog::LogErrorFormatted("Original bytes were: 0%X long", *OriginalBytes);
+                T6SDK::ConsoleLog::LogErrorFormatted("Unhooking at 0x0%X", BaseAddress);
+                T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "OutFunc before unhooking: 0x%X", OutFunc);
                 if (!OriginalBytes)
                     return false;
                 T6SDK::Memory::RestoreOldBytes(BaseAddress, OriginalBytes, Length);
-                
+                T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "OutFunc after unhooking: 0x%X", OutFunc);
                 return true;
             }
             catch (const char* errorMessage)
@@ -101,6 +110,29 @@ namespace T6SDK
                 T6SDK::ConsoleLog::LogError(errorMessage);
                 return false;
             }
+        }
+        bool ReHook()
+        {
+			try
+			{
+                T6SDK::ConsoleLog::LogFormatted("Rehook func address: 0x%X", OutFunc);
+                if(OutFunc == 0x00)
+                {
+                    T6SDK::ConsoleLog::LogError("Rehook failed! OutFunc was not set");
+                    return false;
+                }
+                bool res = Hook((void*)OutFunc);
+                if (res)
+                    T6SDK::ConsoleLog::LogSuccess("Rehooked!");
+                else
+                    T6SDK::ConsoleLog::LogError("Rehook failed!");
+                return res;
+			}
+			catch (const char* errorMessage)
+			{
+				T6SDK::ConsoleLog::LogError(errorMessage);
+				return false;
+			}
         }
     };
 }

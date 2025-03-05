@@ -587,9 +587,13 @@ namespace T6SDK
 		{
 			T6SDK::Typedefs::AnglesToAxis(angles, axis);
 		}
+		
 		static void AxisToAngles(Matrix33_s* axis, vec3_t* angles)
 		{
+			T6SDK::ConsoleLog::LogFormatted("UnHooking AxisToAngles... OutFunc: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
+			T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.UnHook();
 			T6SDK::Typedefs::AxisToAngles(axis, angles);
+			T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.ReHook();
 		}
 		static Matrix33_s GetRotation33FromMatrix44(Matrix44_s* tagMat)
 		{
@@ -627,6 +631,7 @@ namespace T6SDK
 				yaw += 360.0f;
 			return vec3_t(yaw, pitch, 0.0f);
 		}
+
 		static bool CG_DObjGetWorldTagMatrix(cpose_t* pose, PVOID obj, unsigned int tagName, Matrix33_s* tagMat, vec3_t* origin)
 		{
 			return T6SDK::Typedefs::CG_DObjGetWorldTagMatrix(pose, obj, tagName, tagMat, origin);

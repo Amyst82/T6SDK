@@ -203,7 +203,7 @@ namespace T6SDK
 			T6SDK::Drawing::DrawRectAbsolute(11.0f, bgY+1.0f, T6SDK::Addresses::ScreenWidth.Value() - 22.0f, bgHeight - 2.0f, tColor{ 0.09f, 0.11f, 0.16f, 1.0f}, T6SDK::AnchorPoint::TopLeft, 0x00);
 			//Drawing text (test)
 			float height = (float)T6SDK::Drawing::consoleFont->pixelHeight;
-			const char* DEVCONSOLETITLE = "^5SKIEEQ ^7>  ";
+			const char* DEVCONSOLETITLE = "^5AIRYZ ^7>  ";
 			ContentXOffset = T6SDK::InternalFunctions::R_TextWidth(DEVCONSOLETITLE, strlen(DEVCONSOLETITLE), T6SDK::Drawing::consoleFont);
 			T6SDK::Typedefs::R_AddCmdDrawTextInternal(DEVCONSOLETITLE, 256, T6SDK::Drawing::consoleFont, bgRect.left + 5.0f, bgRect.top + height + 5.0f, 1.0f, 1.0f, 0, T6SDK::Drawing::WHITECOLOR, 0);
 			//MAIN CONTENT

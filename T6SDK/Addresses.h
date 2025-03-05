@@ -124,6 +124,7 @@ namespace T6SDK::Addresses
         inline static T6SDK::CDetourHook DetouredGetFreeCamModeNameHook("Demo_GetFreeCamModeName", (void*)T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x28E680, T6SDK::Addresses::t6mp + 0x0C5E30,
             T6SDK::Addresses::t6zmv41 + 0x281C50, T6SDK::Addresses::t6zm + 0x0D6770).GetValue());
+
     }
     namespace Patches
     {

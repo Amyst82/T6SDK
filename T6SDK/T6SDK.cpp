@@ -366,22 +366,23 @@ namespace T6SDK
             jmp[T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.JumpBackAddress]
         }
     }
-    void HandleOnAxisToAngles()
-    {
-		T6SDK::Events::Invoke(T6SDK::EventType::OnAxisToAngles);
-    }
+
     __declspec(naked) void OnAxisToAngles()
     {
-		_asm
-		{
-			mov[eaxTMP], eax
-			mov[edxTMP], edx
-			mov[ecxTMP], ecx
-			mov[esiTMP], esi
-			mov[ediTMP], edi
-			mov[espTMP], esp
-			mov[ebpTMP], ebp
-			call HandleOnAxisToAngles
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
+        T6SDK::Events::Invoke(T6SDK::EventType::OnAxisToAngles);
+        _asm
+        {
 			mov eax, [eaxTMP]
 			mov edx, [edxTMP]
 			mov ecx, [ecxTMP]
@@ -436,6 +437,8 @@ namespace T6SDK
         T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.Hook(UnlockCameraRoll);
         T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
 
+        T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.SetOutFunc((DWORD)&OnAxisToAngles);
+        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Hooking: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
         T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.Hook(OnAxisToAngles);
 
         T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Hooks set!");
