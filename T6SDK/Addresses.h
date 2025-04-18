@@ -41,8 +41,8 @@ namespace T6SDK::Addresses
 
         //83 C4 10 56 55 57 E8 ? ? ? ? 8B 6C 24 ? 83 C4 ? 81 FD
         inline static T6SDK::MemoryHook h_CG_DrawActiveFrame(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x11DC80, T6SDK::Addresses::t6mp + 0x15D0C0,
-            T6SDK::Addresses::t6zmv41 + 0x19C1B9, T6SDK::Addresses::t6zm + 0x1420F9).GetValue(), 6);
+            T6SDK::Addresses::t6mpv43 + 0x067DE0, T6SDK::Addresses::t6mp + 0x15D0C0, // T6SDK::Addresses::t6mpv43 + 0x11DC80,
+            T6SDK::Addresses::t6zmv41 + 0x19C1B9, T6SDK::Addresses::t6zm + 0x1420F9).GetValue(), 5);
 
         //05 ? ? ? ? 50 E8 ? ? ? ? 6A ? E8 ? ? ? ? 6A 00
         inline static T6SDK::MemoryHook h_Demo_AddDollyCamMarker(T6SDK::CrossVersion::CrossValue<DWORD>(
@@ -97,6 +97,10 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryHook h_AxisToAnglesHook(T6SDK::CrossVersion::CrossValue<DWORD>(
 			T6SDK::Addresses::t6mpv43 + 0x1A5FC9, T6SDK::Addresses::t6mp + FILLIN,
 			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
+
+        inline static T6SDK::MemoryHook h_Com_GameMode_SetMode(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x1B9C73, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 7);
     }
     namespace DetoursAddresses
     {
@@ -266,6 +270,8 @@ namespace T6SDK::Addresses
 
     inline static T6SDK::MemoryAddress<vec3_t> SunPosition(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x14 }); //Check BO2 Console v4 source
     inline static T6SDK::MemoryAddress<vec3_t> SunColor(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x58 });
+
+    inline static T6SDK::MemoryAddress<int> GameMode(T6SDK::Addresses::t6mpv43 + 0x2160890, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
 #pragma endregion
 
 }

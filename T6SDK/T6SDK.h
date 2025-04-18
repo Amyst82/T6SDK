@@ -13,6 +13,7 @@ namespace T6SDK
 		inline static bool GameLoaded = false;
 		inline static bool DevConsoleOpened = false;
 		inline static bool DEBUG = false;
+		inline static bool ENABLED = false;
 		static void Initialize();
 		static void DeInitialize();
 		static void InitializeDevConsole();

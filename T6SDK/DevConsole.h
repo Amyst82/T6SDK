@@ -60,7 +60,8 @@ namespace T6SDK
 		}
 		static void OnInputKey(BYTE key)
 		{
-
+			if (!T6SDK::MAIN::ENABLED)
+				return;
 			//Getting InputKey by key
 			T6SDK::Input::InputKey* keyPointer = 0x00;
 			try
@@ -187,6 +188,8 @@ namespace T6SDK
 
 		static void DrawConsole()
 		{
+			if (!T6SDK::MAIN::ENABLED)
+				return;
 			if (!T6SDK::MAIN::DevConsoleOpened)
 				return;
 			if (!T6SDK::Drawing::CheckResources())

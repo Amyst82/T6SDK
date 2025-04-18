@@ -255,6 +255,7 @@ namespace T6SDK
     enum class EventType
     {
         OnGameLoaded,
+        OnGameModeChanged,
         OnTheaterControlsDrawn,
         OnActiveFrameDrawn,
         OnViewMatrixWritten,
