@@ -272,7 +272,9 @@ namespace T6SDK
 		OnMouseWheelDown,
         OnSafeStringTranslated,
         OnPovCamoWriting,
-        OnAxisToAngles
+        OnAxisToAngles,
+        OnDemoPlaybackInited,
+        OnSunInited
     };
     enum class AnchorPoint
     {

@@ -1,8 +1,15 @@
 #pragma once
+
 #include "StdInclude.h"
 #include <stdarg.h>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
 using namespace std;
 #define _CRT_SECURE_NO_WARNINGS
+#define CONSOLETEXTGRAY 8
 #define CONSOLETEXTGREEN 10
 #define CONSOLETEXTCYAN 11
 #define CONSOLETEXTRED 12
@@ -15,6 +22,14 @@ namespace T6SDK
 	class ConsoleLog
 	{
 	public:
+		enum LogTag
+		{
+			C_DEBUG,
+			C_INFO,
+			C_SUCCESS,
+			C_WARNING,
+			C_ERROR
+		};
 		static void Initialize();
 		static void DeInitialize();
 		inline static void EraseLines(int count) {
@@ -50,6 +65,19 @@ namespace T6SDK
 				return false;
 			}
 			return true;
+		}
+
+		static std::string formatTimestamp(const std::string& format) 
+		{
+			auto now = std::chrono::system_clock::now();
+			auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+			std::tm tm_buf;
+			localtime_s(&tm_buf, &in_time_t); // Use localtime_s on Windows
+
+			std::stringstream ss;
+			ss << std::put_time(&tm_buf, format.c_str());
+			return ss.str();
 		}
 		inline static void LogSuccess(const char* text)
 		{
@@ -170,6 +198,56 @@ namespace T6SDK
 			LogSameLine(buffer);
 		}
 
+		inline static void LogTagged(LogTag tag, bool TimeStamp, const char* caller, const char* format, ...)
+		{
+			if (!T6SDK::MAIN::DEBUG)
+				return;
+			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			std::string tagString = "DEBUG: ";
+			TimeStamp = true;
+			switch (tag)
+			{
+				case C_DEBUG:
+					SetConsoleTextAttribute(hConsole, CONSOLETEXTGRAY);
+					tagString = "DEBUG: ";
+					break;
+				case C_INFO:
+					SetConsoleTextAttribute(hConsole, CONSOLETEXTCYAN);
+					tagString = "INFO: ";
+					break;
+				case C_SUCCESS:
+					SetConsoleTextAttribute(hConsole, CONSOLETEXTGREEN);
+					tagString = "SUCCESS: ";
+					break;
+				case C_WARNING:
+					SetConsoleTextAttribute(hConsole, CONSOLETEXTYELLOW);
+					tagString = "WARNING: ";
+					break;
+				case C_ERROR:
+					SetConsoleTextAttribute(hConsole, CONSOLETEXTRED);
+					tagString = "ERROR: ";
+					break;
+				default:
+					SetConsoleTextAttribute(hConsole, CONSOLETEXTWHITE);
+					tagString = "DEBUG: ";
+					break;
+			}
+
+			char buffer[1024];
+			va_list args;
+			va_start(args, format);
+			vsprintf_s(buffer, format, args);
+			va_end(args);
+			if (TimeStamp)
+			{
+				//cout << "\r" << "[" << caller << "] " << tagString << buffer << endl;
+				cout << "\r" << "[" << formatTimestamp("%a, %d %b %Y %T") << "] " << "[" << caller << "] " << tagString << buffer << endl;
+			}
+			else
+				cout << "\r" << "[" << caller << "] " << tagString << buffer << endl;
+			hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			SetConsoleTextAttribute(hConsole, CONSOLETEXTWHITE);
+		}
 		
 	};
 }

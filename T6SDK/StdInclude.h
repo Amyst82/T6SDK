@@ -30,6 +30,7 @@
 #include "DevConsole.h"
 #include "UI_ClickableButton.h"
 #include "UI_CheckBoxButton.h"
+#include "UI_CheckBoxButtonInversed.h"
 #include "UI_Slider.h"
 #include "UI_RadioButton.h"
 #include "UI_EnumButton.h"

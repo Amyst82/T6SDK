@@ -69,32 +69,28 @@ namespace T6SDK
 		}
 		static dvar_s* RegisterBool(const char* name, bool value, const char* description)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of BOOL", name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered dvar %s with the type of BOOL", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterBool(name, value, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
-			for (dvar_s*& word : T6SDK::Dvars::_DvarTrie.searchByPrefix(name))
-			{
-				T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "dvar %s present", word->dvarName);
-			}
 			return ret;
 		}
 		static dvar_s* RegisterFloat(const char* name, float value, float min, float max, const char* description)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of FLOAT", name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered dvar %s with the type of FLOAT", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterFloat(name, value, min, max, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
 			return ret;
 		}
 		static dvar_s* RegisterVec3(const char* name, float x, float y, float z, float min, float max, const char* description)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of VEC3", name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered dvar %s with the type of VEC3", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterVec3(name, x, y, z, min, max, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
 			return ret;
 		}
 		static dvar_s* RegisterString(const char* name, const char* value, const char* description)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of STRING", name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered dvar %s with the type of STRING", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterString(name, value, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
 			return ret;
@@ -102,7 +98,7 @@ namespace T6SDK
 
 		static dvar_s* RegisterInt(const char* name, int value, int min, int max, const char* description)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of INT", name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered dvar %s with the type of INT", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterInt(name, value, min, max, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
 			return ret;
@@ -110,14 +106,14 @@ namespace T6SDK
 
 		static dvar_s* RegisterEnum(const char* name, const char** valueList, int defaultIndex, const char* description)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "Registered dvar %s with the type of ENUM", name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered dvar %s with the type of ENUM", name);
 			dvar_s* ret = T6SDK::Typedefs::Dvar_RegisterEnum(name, valueList, defaultIndex, 1, description);
 			T6SDK::Dvars::_DvarTrie.insert(ret);
 			return ret;
 		}
 		static void Cmd_AddCommandInternal(const char* cmdName, void(*function)(), cmd_function_s* allocedCmd)
 		{
-			T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTMAGENTA, "Registered command %s", cmdName);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DVARS", "Registered command %s", cmdName);
 			T6SDK::Typedefs::Cmd_AddCommandInternal(cmdName, function, allocedCmd);
 		}
 
@@ -242,7 +238,7 @@ namespace T6SDK
 			}
 			catch (const char* e)
 			{
-				T6SDK::ConsoleLog::LogErrorFormatted("Failed to get current value of dvar %s: %s", _dvar->dvarName, e);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "DVARS", "Failed to get current value of dvar %s: %s", _dvar->dvarName, e);
 				return std::string("");
 			}
 		}
@@ -292,7 +288,7 @@ namespace T6SDK
 			}
 			catch (const char* e)
 			{
-				T6SDK::ConsoleLog::LogErrorFormatted("Failed to get reset value of dvar %s: %s", _dvar->dvarName, e);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "DVARS", "Failed to get reset value of dvar %s: %s", _dvar->dvarName, e);
 				return std::string("");
 			}
 		}
@@ -342,7 +338,7 @@ namespace T6SDK
 			}
 			catch (const char* e)
 			{
-				T6SDK::ConsoleLog::LogErrorFormatted("Failed to get type of dvar %s: %s", _dvar->dvarName, e);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "DVARS", "Failed to get type of dvar %s: %s", _dvar->dvarName, e);
 				return "???";
 			}
 		}
@@ -1926,7 +1922,7 @@ namespace T6SDK
 		void Register(dvar_s* dVar)
 		{
 			_dvar = dVar;
-			T6SDK::ConsoleLog::LogFormatted("Registered dvar %s, at address 0x%X", _dvar->dvarName, (int)_dvar);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DVARS", "Registered dvar %s, at address 0x%X", _dvar->dvarName, (int)_dvar);
 		}
 		CustomDvar(dvar_s* dVar)
 		{

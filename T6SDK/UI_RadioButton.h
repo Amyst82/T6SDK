@@ -53,7 +53,7 @@ namespace T6SDK::Drawing
 			DrawRelative = drawRelative;
 			this->GroupIndex = groupIndex;
 			T6SDK::MAIN::RegisteredRadioButtons.push_back((uintptr_t)this);
-			T6SDK::ConsoleLog::LogSuccessFormatted("Registered radio button: %s in group %i; Address: 0x%X; Total radio buttons registered: %i", text, groupIndex, (uintptr_t)this, T6SDK::MAIN::RegisteredRadioButtons.size());
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "RADIO BUTTON", "Registered radio button: %s in group %i; Address: 0x%X; Total radio buttons registered: %i", text, groupIndex, (uintptr_t)this, T6SDK::MAIN::RegisteredRadioButtons.size());
 		}
 		/// <summary>
 		/// Radio button.
@@ -73,7 +73,7 @@ namespace T6SDK::Drawing
 			GridRow = gridRow;
 			this->GroupIndex = groupIndex;
 			T6SDK::MAIN::RegisteredRadioButtons.push_back((uintptr_t)this);
-			T6SDK::ConsoleLog::LogSuccessFormatted("Registered radio button: %s in group %i; Address: 0x%X; Total radio buttons registered: %i", text, groupIndex, (uintptr_t)this, T6SDK::MAIN::RegisteredRadioButtons.size());
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "RADIO BUTTON", "Registered radio button: %s in group %i; Address: 0x%X; Total radio buttons registered: %i", text, groupIndex, (uintptr_t)this, T6SDK::MAIN::RegisteredRadioButtons.size());
 		}
 		void SetChecked()
 		{

@@ -61,6 +61,77 @@ namespace T6SDK
 	void T6SDK::Events::RegisterListener(EventType eventType, uintptr_t function) 
 	{
 		listeners[eventType].push_back(function);
-		T6SDK::ConsoleLog::LogFormatted("Added a new function: 0x%X; Events count: %i", listeners[eventType][0], listeners[eventType].size());
+		std::string eventNameString = "OnGameLoaded";
+		switch (eventType)
+		{
+			case EventType::OnGameLoaded:
+				eventNameString = "OnGameLoaded";
+				break;
+			case EventType::OnGameModeChanged:
+				eventNameString = "OnGameModeChanged";
+				break;
+			case EventType::OnTheaterControlsDrawn:
+				eventNameString = "OnTheaterControlsDrawn";
+				break;
+			case EventType::OnActiveFrameDrawn:
+				eventNameString = "OnActiveFrameDrawn";
+				break;
+			case EventType::OnViewMatrixWritten:
+				eventNameString = "OnViewMatrixWritten";
+				break;
+			case EventType::OnEndFrameDrawn:
+				eventNameString = "OnEndFrameDrawn";
+				break;
+			case EventType::OnTickChanged:
+				eventNameString = "OnTickChanged";
+				break;
+			case EventType::OnAspectRatioChanged:
+				eventNameString = "OnAspectRatioChanged";
+				break;
+			case EventType::OnCameraMarkerAdded:
+				eventNameString = "OnCameraMarkerAdded";
+				break;
+			case EventType::OnFreeCameraModeChanged:
+				eventNameString = "OnFreeCameraModeChanged";
+				break;
+			case EventType::OnCameraModeChanged:
+				eventNameString = "OnCameraModeChanged";
+				break;
+			case EventType::OnKeyPressed:
+				eventNameString = "OnKeyPressed";
+				break;
+			case EventType::OnMouseLeftButtonClicked:
+				eventNameString = "OnMouseLeftButtonClicked";
+				break;
+			case EventType::OnMouseRightButtonClicked:
+				eventNameString = "OnMouseRightButtonClicked";
+				break;
+			case EventType::OnMouseWheelUp:
+				eventNameString = "OnMouseWheelUp";
+				break;
+			case EventType::OnMouseWheelDown:
+				eventNameString = "OnMouseWheelDown";
+				break;
+			case EventType::OnSafeStringTranslated:
+				eventNameString = "OnSafeStringTranslated";
+				break;
+			case EventType::OnPovCamoWriting:
+				eventNameString = "OnPovCamoWriting";
+				break;
+			case EventType::OnAxisToAngles:
+				eventNameString = "OnAxisToAngles";
+				break;
+			case EventType::OnDemoPlaybackInited:
+				eventNameString = "OnDemoPlaybackInited";
+				break;
+			case EventType::OnSunInited:
+				eventNameString = "OnSunInited";
+				break;
+			default:
+				eventNameString = "";
+				break;
+		}
+		//T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "EVENTS", "Added a new function: 0x%X; Events count: %i", listeners[eventType][0], listeners[eventType].size());
+		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "EVENTS", "Listener added on [%s]. Listeners count: %i.", eventNameString.c_str(), listeners[eventType].size());
 	}
 }

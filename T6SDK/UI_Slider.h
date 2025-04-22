@@ -46,6 +46,11 @@ namespace T6SDK::Drawing
 		{
 			*value = internalDefaultValue;
 			defaultValue = GetCoordByValue(internalDefaultValue, X, Y, WIDTH, Min, Max);
+			if (Function)
+			{
+				func* f = (func*)Function;
+				f(*value);
+			}
 		}
 
 	public:
@@ -213,7 +218,7 @@ namespace T6SDK::Drawing
 					}
 					else
 					{
-						MouseHold = false;
+						//MouseHold = false;
 					}
 					if (!T6SDK::Input::Keys::LMB.IsAnyPressState())
 					{
@@ -226,22 +231,27 @@ namespace T6SDK::Drawing
 						*value = Min + coef * (defaultValue - (float)sliderRect.left);
 						if (GetCoordByValue(*value, (float)sliderRect.left, (float)sliderRect.top, WIDTH, Min, Max) != defaultValue)
 						{
-							if (Function)
-							{
-								func* f = (func*)Function;
-								f(*value);
-							}
+							
 						}
+						if (Function)
+						{
+							func* f = (func*)Function;
+							f(*value);
+						}
+
 					}
-					if (defaultValue < (float)sliderRect.left + 5.0f)
+					if(MouseHold)
 					{
-						defaultValue = (float)sliderRect.left;
-						*value = Min;
-					}
-					if (defaultValue > (float)sliderRect.right - 5.0f)
-					{
-						defaultValue = (float)sliderRect.right;
-						*value = Max;
+						if (defaultValue < (float)sliderRect.left)
+						{
+							defaultValue = (float)sliderRect.left;
+							*value = Min;
+						}
+						if (defaultValue > (float)sliderRect.right)
+						{
+							defaultValue = (float)sliderRect.right;
+							*value = Max;
+						}
 					}
 					//Drawing the slider
 					T6SDK::Drawing::DrawRectAbsolute((float)sliderRect.left, (float)sliderRect.top, defaultValue - (float)sliderRect.left, HEIGHT, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : clr, T6SDK::AnchorPoint::TopLeft, 0x00);

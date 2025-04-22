@@ -101,6 +101,14 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryHook h_Com_GameMode_SetMode(T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x1B9C73, T6SDK::Addresses::t6mp + FILLIN,
             T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 7);
+
+        inline static T6SDK::MemoryHook h_InitDemoPlaybackData(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x1AE42A, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 8);
+
+        inline static T6SDK::MemoryHook h_SunInited(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x19D1DF, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
     }
     namespace DetoursAddresses
     {
@@ -263,8 +271,7 @@ namespace T6SDK::Addresses
     inline static T6SDK::MemoryAddress<DemoTimescaleFormat_s> DemoTimescaleFormat(t6mpv43 + 0x861F48, t6mp + 0x86C53C, t6zmv41 + 0x825BF8, t6zm + 0x83AFDC); //that 0.1x string format in demo
     inline static T6SDK::MemoryAddress<float> Demo_timescale(t6mpv43 + 0x2162B04, t6mp + 0x2162B04, t6zmv41 + 0x2134684, t6zm + 0x2138A04); //float value of demo timescale
     inline static T6SDK::MemoryAddress<float> Demo_timescale_step(t6mpv43 + 0x85E7C8, t6mp + 0x85D35C, t6zmv41 + 0x8348E4, t6zm + 0x7EA744); //float value of demo timescale step //0.200000003
-    inline static T6SDK::MemoryAddress<bool> PlaybackInitedFlag(T6SDK::Addresses::t6mpv43 + 0x2D83A04, T6SDK::Addresses::t6mp + 0x2DA4A04,
-        T6SDK::Addresses::t6zmv41 + 0x2D53A84, T6SDK::Addresses::t6zm + 0x2D7A104);
+    inline static T6SDK::MemoryAddress<bool> PlaybackInitedFlag(T6SDK::Addresses::t6mpv43 + 0x2D83A04, T6SDK::Addresses::t6mp + 0x2DA4A04, T6SDK::Addresses::t6zmv41 + 0x2D53A84, T6SDK::Addresses::t6zm + 0x2D7A104);
 
     inline static T6SDK::MemoryAddress<int> CurrentKeyCatcher(t6mpv43 + 0xDC7844, t6mp + FILLIN, t6zmv41 + FILLIN, t6zm + FILLIN);
 
@@ -272,6 +279,17 @@ namespace T6SDK::Addresses
     inline static T6SDK::MemoryAddress<vec3_t> SunColor(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x58 });
 
     inline static T6SDK::MemoryAddress<int> GameMode(T6SDK::Addresses::t6mpv43 + 0x2160890, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+
+    inline static T6SDK::MemoryAddress<int> DemoEndTick(T6SDK::Addresses::t6mpv43 + 0x2CF3470, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+
+    inline static T6SDK::MemoryAddress<int> NumDefaultBookmarks(T6SDK::Addresses::t6mpv43+0x2CF42E8, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    inline static T6SDK::MemoryAddress<int> DemoSummary(T6SDK::Addresses::t6mpv43 + 0x00, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    inline static T6SDK::MemoryAddress<int> DemoAddress1(T6SDK::Addresses::t6mpv43 + 0x2E046D0, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    inline static T6SDK::MemoryAddress<int> DemoAddress2(T6SDK::Addresses::t6mpv43 + 0x2E05678, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    inline static DWORD DemoThumbnailAddress = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2B17A38, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
+    inline static DWORD DemoThumbnailAddress2 = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB9AB8, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
+    inline static T6SDK::MemoryAddress<BYTE> DemoLoadPatch(T6SDK::Addresses::t6mpv43 + 0x1C79E6, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+
 #pragma endregion
 
 }

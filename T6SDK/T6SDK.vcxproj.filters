@@ -135,6 +135,9 @@
     <ClInclude Include="UI_ListBox.h">
       <Filter>Drawing</Filter>
     </ClInclude>
+    <ClInclude Include="UI_CheckBoxButtonInversed.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

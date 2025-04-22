@@ -34,30 +34,30 @@ namespace T6SDK
 			if (!normalFont)
 			{
 				normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
-				T6SDK::ConsoleLog::LogFormatted(12, "normalFont restored: 0x%X", *normalFont);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DRAWING", "normalFont restored: 0x%X", *normalFont);
 				return false;
 			}
 			if (!consoleFont)
 			{
 				consoleFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/consoleFont", 1);
-				T6SDK::ConsoleLog::LogFormatted(12, "consoleFont restored: 0x%X", *consoleFont);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DRAWING", "consoleFont restored: 0x%X", *consoleFont);
 				return false;
 			}
 			if(!WhiteMaterial)
 			{
 				WhiteMaterial = T6SDK::InternalFunctions::Material_RegisterHandle("white", (int)T6SDK::XAssetType::MATERIAL);
-				T6SDK::ConsoleLog::LogFormatted(12, "WhiteMaterial restored: 0x%X", WhiteMaterial);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DRAWING", "WhiteMaterial restored: 0x%X", WhiteMaterial);
 				return false;
 			}
 			if (!headicontalkballoon)
 			{
 				headicontalkballoon = T6SDK::InternalFunctions::Material_RegisterHandle("headicontalkballoon", (int)T6SDK::XAssetType::MATERIAL);
-				T6SDK::ConsoleLog::LogFormatted(12, "headicontalkballoon restored: 0x%X", headicontalkballoon);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DRAWING", "headicontalkballoon restored: 0x%X", headicontalkballoon);
 				return false;
 			}
 			if(!normalFont || !WhiteMaterial || !headicontalkballoon)
 			{
-				T6SDK::ConsoleLog::LogFormatted(12, "Missing some drawing resources");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DRAWING", "Missing some drawing resources");
 				return false;
 			}
 			if (!LightDef)

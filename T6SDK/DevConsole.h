@@ -31,14 +31,14 @@ namespace T6SDK
 			T6SDK::MAIN::DevConsoleOpened = true;
 			T6SDK::Input::SetInputLocked(true);
 			CaretIndex = 0;
-			T6SDK::ConsoleLog::Log("Console opened!");
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DEVCONSOLE", "Console opened!");
 		}
 		static void CloseConsole()
 		{
 			T6SDK::InternalFunctions::Key_SetCatcher(KeyChatcherMask);
 			T6SDK::MAIN::DevConsoleOpened = false;
 			T6SDK::Input::SetInputLocked(false);
-			T6SDK::ConsoleLog::Log("Console closed!");
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DEVCONSOLE", "Console closed!");
 		}
 
 		static void SwtichConsoleVisibileMode()
@@ -70,7 +70,7 @@ namespace T6SDK
 			}
 			catch(const char* errorMessage)
 			{
-				T6SDK::ConsoleLog::LogError(errorMessage);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "DEVCONSOLE", errorMessage);
 				keyPointer = 0x00;
 			}
 			//T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "DevConsole Key pressed: 0x%X", keyPointer);
@@ -81,7 +81,7 @@ namespace T6SDK
 			if (key == T6SDK::Input::Keys::TILDA.KeyCode)
 			{
 				SwtichConsoleVisibileMode();
-				T6SDK::ConsoleLog::Log("Tilda pressed!");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEVCONSOLE", "Tilda pressed!");
 			}
 			
 			
@@ -308,12 +308,12 @@ namespace T6SDK
 			//Remove redacted's console
 			if (T6SDK::CrossVersion::GetGameVersion() == T6SDK::CrossVersion::GameVersion::V43 || T6SDK::CrossVersion::GetGameVersion() == T6SDK::CrossVersion::GameVersion::V41)
 			{
-				T6SDK::ConsoleLog::Log("Removing Redacted's console...");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DEVCONSOLE", "Removing Redacted's console...");
 				DWORD redactedConsole = T6SDK::Memory::IdaSigScan("FF D0 47 8D 76 ? 3B FB 75 ? A1", "ExtendedConsole.Red32n");
-				T6SDK::ConsoleLog::LogFormatted("Redacted's console address: %p", redactedConsole);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEVCONSOLE", "Redacted's console address: %p", redactedConsole);
 				T6SDK::Addresses::Patches::DisableRedactedConsole = T6SDK::MemoryPatch(redactedConsole, { 0x90, 0x90 });
 				T6SDK::Addresses::Patches::DisableRedactedConsole.Patch();
-				T6SDK::ConsoleLog::Log("Redacted's console removed!");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "DEVCONSOLE", "Redacted's console removed!");
 			}
 			//Add dvars to dvar trie
 			for (int i = 0; i < *T6SDK::Addresses::g_dvarCount; i++)

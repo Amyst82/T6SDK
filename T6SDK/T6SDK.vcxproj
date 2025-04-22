@@ -154,6 +154,7 @@
     <ClInclude Include="DvarTrie.h" />
     <ClInclude Include="Theater.h" />
     <ClInclude Include="UI_CheckBoxButton.h" />
+    <ClInclude Include="UI_CheckBoxButtonInversed.h" />
     <ClInclude Include="UI_ClickableButton.h" />
     <ClInclude Include="ConsoleLog.h" />
     <ClInclude Include="Drawing.h" />

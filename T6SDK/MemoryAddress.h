@@ -97,9 +97,7 @@ namespace T6SDK
         {
             if (IsValid() == false)
             {
-                char buffer[256];
-				sprintf_s(buffer, 256, "Unable to set value of base address 0x%x", BaseAddress);
-                T6SDK::ConsoleLog::Log(buffer);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORY ADDRESS", "Unable to set value of base address 0x%x", BaseAddress);
                 return;
             }
             if (Offset.empty() && BaseAddress != NULL)

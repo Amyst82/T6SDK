@@ -23,13 +23,13 @@ namespace T6SDK
 			m_hook_bytes = new std::uint8_t[6];
 			if (!trampoline)
 			{
-				T6SDK::ConsoleLog::LogError("[CDetourHook] Hooking attempted without trampoline\n");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "Hooking attempted without trampoline!");
 				return;
 			}
 
 			T6SDK::Memory::MemoryCopySafe(m_original_bytes, trampoline, 6);
 
-			T6SDK::ConsoleLog::LogFormatted(11, "[CDetourHook] Saving old instructions: [0x%X, 0x%X, 0x%X, 0x%X, 0x%X, 0x%X]",
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "CDetourHook", "Saving old instructions: [0x%X, 0x%X, 0x%X, 0x%X, 0x%X, 0x%X]",
 				m_original_bytes[0], m_original_bytes[1], m_original_bytes[2], m_original_bytes[3], m_original_bytes[4], m_original_bytes[5]);
 		}
 		void Hook(void* hook_func)
@@ -42,11 +42,11 @@ namespace T6SDK
 
 			T6SDK::Memory::MemoryCopySafe(m_original_bytes, m_original_function, 6);
 
-			T6SDK::ConsoleLog::LogFormatted(11, "[CDetourHook] Writing new instructions: [0x%X, 0x%X, 0x%X, 0x%X, 0x%X, 0x%X]",
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "CDetourHook", "Writing new instructions: [0x%X, 0x%X, 0x%X, 0x%X, 0x%X, 0x%X]",
 				m_hook_bytes[0], m_hook_bytes[1], m_hook_bytes[2], m_hook_bytes[3], m_hook_bytes[4], m_hook_bytes[5]);
 
 			T6SDK::Memory::MemoryCopySafe(m_original_function, m_hook_bytes, 6);
-			T6SDK::ConsoleLog::LogSuccessFormatted("%s detoured!", m_name);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "CDetourHook", "%s detoured!", m_name);
 		}
 		//~CDetourHook()
 		//{
@@ -59,13 +59,13 @@ namespace T6SDK
 		{
 			if (!m_original_function)
 			{
-				T6SDK::ConsoleLog::LogError("[CDetourHook] unhook: original_function is nullptr");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "unhook: original_function is nullptr");
 				return;
 			}
 
 			if (!m_original_bytes)
 			{
-				T6SDK::ConsoleLog::LogError("[CDetourHook] unhook: original_bytes is nullptr");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "unhook: original_bytes is nullptr");
 				return;
 			}
 			T6SDK::Memory::MemoryCopySafe(m_original_function, m_original_bytes, 6);
@@ -81,12 +81,12 @@ namespace T6SDK
 		{
 			if (!m_original_function)
 			{
-				printf("[CDetourHook] rehook: original_function is nullptr\n");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "rehook: original_function is nullptr");
 				return;
 			}
 			if (!m_hook_bytes)
 			{
-				printf("[CDetourHook] rehook: hook_bytes is nullptr\n");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "rehook: hook_bytes is nullptr");
 				return;
 			}
 			T6SDK::Memory::MemoryCopySafe(m_original_function, m_hook_bytes, 6);
@@ -103,7 +103,7 @@ namespace T6SDK
 		{
 			auto original = get_original_function<Fn>();
 			if (!original)
-				printf("[CDetourHook] call_original: original is nullptr\n");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "call_original: original is nullptr");
 
 			UnHook();
 			ReturnType ret = original(args...);
@@ -117,7 +117,7 @@ namespace T6SDK
 		{
 			auto original = get_original_function<Fn>();
 			if (!original)
-				printf("[CDetourHook] call_original_noreturn: original is nullptr\n");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "CDetourHook", "call_original_noreturn: original is nullptr\n");
 
 			UnHook();
 			original(args...);

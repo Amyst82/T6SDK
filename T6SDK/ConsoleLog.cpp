@@ -16,23 +16,23 @@ namespace T6SDK
 			switch (T6SDK::CrossVersion::GetGameVersion())
 			{
 			case T6SDK::CrossVersion::GameVersion::V43:
-				Log("Loaded console Redacted MP");
+				LogTagged(C_SUCCESS, false, "DEVCONSOLE", "Loaded console Redacted MP");
 				SetConsoleTitleA("T6SDK Redacted MP");
 				break;
 			case T6SDK::CrossVersion::GameVersion::MP:
-				Log("Loaded console Steam MP");
+				LogTagged(C_SUCCESS, false, "DEVCONSOLE", "Loaded console Steam MP");
 				SetConsoleTitleA("T6SDK Steam MP");
 				break;
 			case T6SDK::CrossVersion::GameVersion::V41:
-				Log("Loaded console Redacted ZM");
+				LogTagged(C_SUCCESS, false, "DEVCONSOLE", "Loaded console Redacted ZM");
 				SetConsoleTitleA("T6SDK Redacted ZM");
 				break;
 			case T6SDK::CrossVersion::GameVersion::ZM:
-				Log("Loaded console Steam ZM");
+				LogTagged(C_SUCCESS, false, "DEVCONSOLE", "Loaded console Steam ZM");
 				SetConsoleTitleA("T6SDK Steam ZM");
 				break;
 			}
-			Log("Console initialized!");
+			LogTagged(C_DEBUG, false, "DEVCONSOLE", "Console initialized!");
 			return;
 		}
 		catch (const char* errorMessage)

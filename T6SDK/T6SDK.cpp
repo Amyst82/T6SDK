@@ -3,12 +3,12 @@
 
 namespace T6SDK
 {
-	uintptr_t eaxTMP, ecxTMP, edxTMP, esiTMP, ediTMP, espTMP, ebpTMP;
+	uintptr_t eaxTMP, ecxTMP, edxTMP, esiTMP, ediTMP, espTMP, ebpTMP, eaxTMP2=0x00;
 	__declspec(naked) void EndFrameDrawn()
 	{
         __asm
         {
-            mov[eaxTMP], eax
+            mov[eaxTMP2], eax
             mov[edxTMP], edx
             mov[ecxTMP], ecx
             mov[esiTMP], esi
@@ -16,19 +16,46 @@ namespace T6SDK
             mov[espTMP], esp
             mov[ebpTMP], ebp
         }
-        //Invoking on EndFrameDrawn event
-        T6SDK::Events::Invoke(T6SDK::EventType::OnEndFrameDrawn);
-        __asm
+        if (T6SDK::MAIN::ENABLED)
         {
-            mov eax, [eaxTMP]
-            mov edx, [edxTMP]
-            mov ecx, [ecxTMP]
-            mov esi, [esiTMP]
-            mov edi, [ediTMP]
-            mov esp, [espTMP]
-            mov ebp, [ebpTMP]
-            add[eax + 0x18], 0x400
-            jmp[T6SDK::Addresses::HookAddresses::h_EndFrameDrawn.JumpBackAddress]
+            __asm
+            {
+                mov eax, [eaxTMP2]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+            }
+            T6SDK::Events::Invoke(T6SDK::EventType::OnEndFrameDrawn);
+            __asm
+            {
+                mov eax, [eaxTMP2]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                add dword ptr[eax + 0x18], 0x400
+                jmp[T6SDK::Addresses::HookAddresses::h_EndFrameDrawn.JumpBackAddress]
+            }
+        }
+        else
+        {
+            __asm
+            {
+                mov eax, [eaxTMP2]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                add dword ptr[eax + 0x18], 0x400
+                jmp[T6SDK::Addresses::HookAddresses::h_EndFrameDrawn.JumpBackAddress]
+            }
         }
 	}
 	_declspec(naked) void TheaterControlsDrawn()
@@ -121,17 +148,27 @@ namespace T6SDK
 
     __declspec(naked) void CGDrawActiveFrame()
     {
+        __asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+        }
         if (T6SDK::MAIN::ENABLED)
         {
             __asm
             {
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
             }
             T6SDK::Events::Invoke(T6SDK::EventType::OnActiveFrameDrawn);
             __asm
@@ -152,6 +189,13 @@ namespace T6SDK
         {
             __asm
             {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 push ebx
                 mov ebx, [esp+0x08]
                 jmp[T6SDK::Addresses::HookAddresses::h_CG_DrawActiveFrame.JumpBackAddress]
@@ -165,17 +209,27 @@ namespace T6SDK
     }
     __declspec(naked) void Demo_AddDollyCamMarker()
     {
+        __asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+        }
         if (T6SDK::MAIN::ENABLED)
         {
             __asm
-            {
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
+            {        
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 push esi
                 call HandleAddDollyCamMarker
                 mov eax, [eaxTMP]
@@ -193,6 +247,13 @@ namespace T6SDK
         {
             __asm
             {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 add eax, 0x00ED440
                 jmp[T6SDK::Addresses::HookAddresses::h_Demo_AddDollyCamMarker.JumpBackAddress]
             }
@@ -264,17 +325,27 @@ namespace T6SDK
     }
     __declspec(naked) void Demo_CameraModeSwitched()
     {
+        __asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+        }
         if (T6SDK::MAIN::ENABLED)
         {
             __asm
             {
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 push esi
                 call HandleSwitchCameraMode
                 mov eax, [eaxTMP]
@@ -291,6 +362,13 @@ namespace T6SDK
         {
             __asm
             {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 jmp[T6SDK::Addresses::HookAddresses::h_Demo_SwitchCameraMode.JumpBackAddress]
             }
         }
@@ -299,19 +377,29 @@ namespace T6SDK
     float nearClipping = 4.0f;
     __declspec(naked) void NearClippingPatch()
     {
+        __asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+        }
         if (T6SDK::MAIN::ENABLED)
         {
             if (T6SDK::Dvars::DvarList::r_znear)
                 nearClipping = T6SDK::Dvars::GetFloat(*T6SDK::Dvars::DvarList::r_znear);
             _asm
             {
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 mov eax, nearClipping
                 mov[esp + 0x08], eax
                 mov eax, [eaxTMP]
@@ -330,6 +418,7 @@ namespace T6SDK
             {
                 mov eax, nearClipping
                 mov[esp + 0x08], eax
+
                 jmp[T6SDK::Addresses::HookAddresses::h_NearClipping.JumpBackAddress]
             }
         }
@@ -345,17 +434,27 @@ namespace T6SDK
     }
     __declspec(naked) void UnlockGunAngles()
     {
+        __asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+        }
         if (T6SDK::MAIN::ENABLED)
         {
             __asm
             {
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 call HandleUnlockGunAngles
                 mov eax, [eaxTMP]
                 mov edx, [edxTMP]
@@ -372,6 +471,13 @@ namespace T6SDK
         {
             __asm
             {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 lea ebx, [esi + 0x480A8]
                 jmp[T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.JumpBackAddress]
             }
@@ -400,18 +506,28 @@ namespace T6SDK
     }
     __declspec(naked) void PovCamoWriting()
     {
+        __asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+        }
         if (T6SDK::MAIN::ENABLED)
         {
             _asm
             {
                 mov[edi + 0x8C], edx
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 push edi
                 call HandlePovCamoWriting
                 mov eax, [eaxTMP]
@@ -436,19 +552,20 @@ namespace T6SDK
 
     __declspec(naked) void OnAxisToAngles()
     {
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
         if (T6SDK::MAIN::ENABLED)
         {
-            _asm
-            {
-                mov[eaxTMP], eax
-                mov[edxTMP], edx
-                mov[ecxTMP], ecx
-                mov[esiTMP], esi
-                mov[ediTMP], edi
-                mov[espTMP], esp
-                mov[ebpTMP], ebp
 
-            }
             T6SDK::Events::Invoke(T6SDK::EventType::OnAxisToAngles);
             _asm
             {
@@ -467,6 +584,13 @@ namespace T6SDK
         {
             _asm
             {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
                 movss[esi + 0x08], xmm0
                 jmp[T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.JumpBackAddress]
             }
@@ -496,9 +620,15 @@ namespace T6SDK
     void HandleGameModeChanged(int mode)
     {
         if (mode == 32)
+        {
             T6SDK::MAIN::ENABLED = true;
+            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Entered theater mode!");
+        }
 		else
+        {
             T6SDK::MAIN::ENABLED = false;
+            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "T6SDK", "Exit theater mode. All MVM features will be disabled.");
+        }
 
         T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnGameModeChanged, mode);
     }
@@ -527,18 +657,112 @@ namespace T6SDK
             jmp[T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.JumpBackAddress]
         }
     }
+
+    __declspec(naked) void OnDemoPlaybackInited()
+    {
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
+        if (T6SDK::MAIN::ENABLED)
+        {
+
+            T6SDK::Events::Invoke(T6SDK::EventType::OnDemoPlaybackInited);
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                movss[eax + 0x63544], xmm0
+                jmp[T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.JumpBackAddress]
+            }
+        }
+        else
+        {
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                movss[eax + 0x63544], xmm0
+                jmp[T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.JumpBackAddress]
+            }
+        }
+    }
+
+    __declspec(naked) void OnSunInited()
+    {
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
+        if (T6SDK::MAIN::ENABLED)
+        {
+
+            T6SDK::Events::Invoke(T6SDK::EventType::OnSunInited);
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                mov eax, [edx + 0x100]
+                jmp[T6SDK::Addresses::HookAddresses::h_SunInited.JumpBackAddress]
+            }
+        }
+        else
+        {
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                mov eax, [edx + 0x100]
+                jmp[T6SDK::Addresses::HookAddresses::h_SunInited.JumpBackAddress]
+            }
+        }
+    }
 	void T6SDK::MAIN::Initialize()
 	{
         T6SDK::Drawing::normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "Normal Font registered: 0x%X->0x%X", T6SDK::Drawing::normalFont, *T6SDK::Drawing::normalFont);
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Normal Font registered: 0x%X->0x%X", T6SDK::Drawing::normalFont, *T6SDK::Drawing::normalFont);
         T6SDK::Drawing::consoleFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/consoleFont", 1);
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "Console Font registered: 0x%X->0x%X", T6SDK::Drawing::consoleFont, *T6SDK::Drawing::consoleFont);
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Console Font registered: 0x%X->0x%X", T6SDK::Drawing::consoleFont, *T6SDK::Drawing::consoleFont);
         T6SDK::Drawing::WhiteMaterial = T6SDK::InternalFunctions::Material_RegisterHandle("white", (int)T6SDK::XAssetType::MATERIAL);
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "White Material registered: 0x%X", T6SDK::Drawing::WhiteMaterial);
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "White Material registered: 0x%X", T6SDK::Drawing::WhiteMaterial);
         T6SDK::Drawing::headicontalkballoon = T6SDK::InternalFunctions::Material_RegisterHandle("headicontalkballoon", (int)T6SDK::XAssetType::MATERIAL);
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "headicontalkballoon registered: 0x%X", T6SDK::Drawing::headicontalkballoon);
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "headicontalkballoon registered: 0x%X", T6SDK::Drawing::headicontalkballoon);
         T6SDK::Drawing::LightDef = T6SDK::InternalFunctions::DB_FindXAssetHeader(T6SDK::XAssetType::LIGHT_DEF, "light_dynamic");
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTYELLOW, "Light Def: 0x%X", T6SDK::Drawing::LightDef);
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Light Def: 0x%X", T6SDK::Drawing::LightDef);
         T6SDK::Drawing::FxCameraSelect = T6SDK::InternalFunctions::DB_FindXAssetHeader(T6SDK::XAssetType::FX, "misc/fx_theater_mode_camera_head_select");
        
         T6SDK::Addresses::HookAddresses::h_TheaterControlsDrawn.Hook(TheaterControlsDrawn);
@@ -554,10 +778,13 @@ namespace T6SDK
         T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
 
         T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.SetOutFunc((DWORD)&OnAxisToAngles);
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Hooking: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Hooking: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
         T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.Hook(OnAxisToAngles);
 
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Hooks set!");
+        T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.Hook(OnDemoPlaybackInited);
+        T6SDK::Addresses::HookAddresses::h_SunInited.Hook(OnSunInited);
+
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Hooks set!");
         //Detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.Hook(T6SDK::Theater::DetouredSwitchCamera);
         T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.Hook(DetouredSafeStringTranslate);
@@ -566,7 +793,7 @@ namespace T6SDK
 
         T6SDK::Addresses::DetoursAddresses::DetouredGetNextFreeCameraModeHook.Hook(T6SDK::Theater::DetouredGetNextFreeCameraMode);
         T6SDK::Addresses::DetoursAddresses::DetouredGetFreeCamModeNameHook.Hook(T6SDK::Theater::DetouredGetFreeCamModeName);
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Detours set!");
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Detours set!");
         //Patches
 
         T6SDK::Addresses::Patches::AllowRollPatch.Patch();
@@ -577,7 +804,7 @@ namespace T6SDK
         T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.Hook(Com_GameMode_SetMode);
         T6SDK::Addresses::Patches::DisableDvarsLimitsPatch.Patch();
         T6SDK::Addresses::Patches::DisableDvarProtectionPatch.Patch();
-        T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Dvars limits disabled");
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "T6SDK", "Dvars limits disabled");
 	}
 	void T6SDK::MAIN::DeInitialize()
 	{
@@ -617,7 +844,7 @@ namespace T6SDK
     {
         if (T6SDK::MAIN::GameLoaded == false)
         {
-            T6SDK::ConsoleLog::LogSuccess("Game loaded!");
+            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "T6SDK", "Game loaded!");
             //Sleep(1000);
 			T6SDK::MAIN::Initialize();
             T6SDK::Events::Invoke(T6SDK::EventType::OnGameLoaded);

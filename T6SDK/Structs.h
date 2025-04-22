@@ -920,3 +920,8 @@ typedef struct GfxDrawMethod_t
 	BYTE baseTechType;
 	BYTE emissiveTechType;
 };
+typedef struct DemoInfo_t
+{
+	std::vector<char> DemoDataPtr;
+	int DemoSize;
+};

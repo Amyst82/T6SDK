@@ -102,16 +102,21 @@ namespace T6SDK
 		{
 			return T6SDK::Typedefs::Demo_GetNextFreeCameraMode(anticlockwise);
 		}
+		static void GoToTick(int tick)
+		{
+			T6SDK::Theater::Demo_JumpToTick(tick);
+			T6SDK::Addresses::InitialTick.SetValueSafe(tick);
+		}
 #pragma region Custom Camera Modes
 		static void RegisterCameraMode(T6SDK::Theater::CustomCameraMode mode)
 		{
 			T6SDK::MAIN::RegisteredCameraModes.push_back((int)&mode);
-			T6SDK::ConsoleLog::LogSuccessFormatted("Registered new custom camera mode %s; Total custom modes registered: %i; Free camera modes: %i", mode.Name, T6SDK::MAIN::RegisteredCameraModes.size(), mode.FreeCameraModes.size());
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Registered new custom camera mode %s; Total custom modes registered: %i; Free camera modes: %i", mode.Name, T6SDK::MAIN::RegisteredCameraModes.size(), mode.FreeCameraModes.size());
 		}
 		static void RegisterCameraMode(T6SDK::Theater::CustomCameraMode* mode)
 		{
 			T6SDK::MAIN::RegisteredCameraModes.push_back((int)mode);
-			T6SDK::ConsoleLog::LogSuccessFormatted("Registered new custom camera mode %s; Total custom modes registered: %i; Free camera modes: %i", mode->Name, T6SDK::MAIN::RegisteredCameraModes.size(), mode->FreeCameraModes.size());
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Registered new custom camera mode %s; Total custom modes registered: %i; Free camera modes: %i", mode->Name, T6SDK::MAIN::RegisteredCameraModes.size(), mode->FreeCameraModes.size());
 		}
 		static void RemoveCameraMode(T6SDK::Theater::CustomCameraMode mode)
 		{
@@ -119,7 +124,7 @@ namespace T6SDK
 			{
 				if(T6SDK::MAIN::RegisteredCameraModes[i] == (int)&mode)
 				{
-					T6SDK::ConsoleLog::LogSuccessFormatted("Removed custom camera mode %s; Total custom modes registered: %i", mode.Name, T6SDK::MAIN::RegisteredCameraModes.size()-1);
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Removed custom camera mode %s; Total custom modes registered: %i", mode.Name, T6SDK::MAIN::RegisteredCameraModes.size()-1);
 					T6SDK::MAIN::RegisteredCameraModes.erase(T6SDK::MAIN::RegisteredCameraModes.begin() + i);
 					return;
 				}
@@ -131,7 +136,7 @@ namespace T6SDK
 			{
 				if (T6SDK::MAIN::RegisteredCameraModes[i] == (int)mode)
 				{
-					T6SDK::ConsoleLog::LogSuccessFormatted("Removed custom camera mode %s; Total custom modes registered: %i", mode->Name, T6SDK::MAIN::RegisteredCameraModes.size() - 1);
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Removed custom camera mode %s; Total custom modes registered: %i", mode->Name, T6SDK::MAIN::RegisteredCameraModes.size() - 1);
 					T6SDK::MAIN::RegisteredCameraModes.erase(T6SDK::MAIN::RegisteredCameraModes.begin() + i);
 					return;
 				}
@@ -143,7 +148,7 @@ namespace T6SDK
 			{
 				if(((T6SDK::Theater::CustomCameraMode*)T6SDK::MAIN::RegisteredCameraModes[i])->Name == name)
 				{
-					T6SDK::ConsoleLog::LogSuccessFormatted("Removed custom camera mode %s; Total custom modes registered: %i", name, T6SDK::MAIN::RegisteredCameraModes.size()-1);
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Removed custom camera mode %s; Total custom modes registered: %i", name, T6SDK::MAIN::RegisteredCameraModes.size()-1);
 					T6SDK::MAIN::RegisteredCameraModes.erase(T6SDK::MAIN::RegisteredCameraModes.begin() + i);
 					return;
 				}
@@ -152,7 +157,7 @@ namespace T6SDK
 		static void RemoveCameraMode(int index)
 		{
 			if(index < 3) return;
-			T6SDK::ConsoleLog::LogSuccessFormatted("Removed custom camera mode by index %i; Total custom modes registered: %i", index, T6SDK::MAIN::RegisteredCameraModes.size() - 1);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Removed custom camera mode by index %i; Total custom modes registered: %i", index, T6SDK::MAIN::RegisteredCameraModes.size() - 1);
 			T6SDK::MAIN::RegisteredCameraModes.erase(T6SDK::MAIN::RegisteredCameraModes.begin() + index);
 		}
 #pragma endregion
@@ -163,18 +168,18 @@ namespace T6SDK
 			if (!Demo_IsClipPlaying())
 			{
 				if (Demo_IsClipPreviewRunning())
-					T6SDK::ConsoleLog::LogError("We cannot switch camera in a demo that is being previewed");
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "THEATER", "We cannot switch camera in a demo that is being previewed");
 				else
 				{
 					if (!T6SDK::Addresses::DemoPlayback.Value())
 					{
-						T6SDK::ConsoleLog::LogError("DemoPlayback was null. Return to original func.");
+						T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "THEATER", "DemoPlayback was null. Return to original func.");
 						T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.call_original_noreturn<T6SDK::Typedefs::Demo_SwitchCamera_t, int>(localClientNum);
 						return;
 					}
 					/*2 is DOLLY CAM*/
 					Demo_SwitchCameraMode((int)T6SDK::Addresses::DemoPlayback.Value()->CameraMode != 2  + T6SDK::MAIN::RegisteredCameraModes.size() ? (int)T6SDK::Addresses::DemoPlayback.Value()->CameraMode + 1 : 0);
-					T6SDK::ConsoleLog::LogFormatted("Switched to %i\n", (int)T6SDK::Addresses::DemoPlayback.Value()->CameraMode);
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "THEATER", "Switched to %i.", (int)T6SDK::Addresses::DemoPlayback.Value()->CameraMode);
 					if(T6SDK::Addresses::DemoPlayback.Value()->CameraMode == T6SDK::DemoCameraMode::NONE)
 						T6SDK::Addresses::DemoPlayback.Value()->FreeCameraMode = (T6SDK::DemoFreeCameraMode)0x00;
 					else if(T6SDK::Addresses::DemoPlayback.Value()->CameraMode == T6SDK::DemoCameraMode::FREECAM)
@@ -189,7 +194,7 @@ namespace T6SDK
 					}	
 				}
 			}
-			T6SDK::ConsoleLog::LogSuccessFormatted("DetouredSwitchCamera fired! Current mode: %i; Total modes count: %i", (int)T6SDK::Addresses::DemoPlayback.Value()->CameraMode, T6SDK::MAIN::RegisteredCameraModes.size());
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "THEATER", "DetouredSwitchCamera fired! Current mode: %i; Total modes count: %i", (int)T6SDK::Addresses::DemoPlayback.Value()->CameraMode, T6SDK::MAIN::RegisteredCameraModes.size());
 			
 		}
 		

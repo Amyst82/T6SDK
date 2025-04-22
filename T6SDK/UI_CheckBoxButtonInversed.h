@@ -2,9 +2,9 @@
 #include "StdInclude.h"
 namespace T6SDK::Drawing
 {
-	class UI_CheckBoxButton
+	class UI_CheckBoxButtonInversed
 	{
-		typedef void func(UI_CheckBoxButton*);
+		typedef void func(UI_CheckBoxButtonInversed*);
 	private:
 		bool Hovered = false;
 		bool Pressed = false;
@@ -27,7 +27,7 @@ namespace T6SDK::Drawing
 		const char* CheckedText{};
 		bool ValueReadOnly = false;
 		const char* ToolTip = "";
-		UI_CheckBoxButton()
+		UI_CheckBoxButtonInversed()
 		{
 
 		}
@@ -41,9 +41,9 @@ namespace T6SDK::Drawing
 		/// <param name="drawRelative">Describes will x and y values will be treated as relative to the screen size.</param>
 		/// <param name="anchorPoint"></param>
 		/// <param name="value">Pointer to a bool value.</param>
-		/// <param name="function"> Function to call when checked state is changed. void func(UI_CheckBoxButton*)</param>
+		/// <param name="function"> Function to call when checked state is changed. void func(UI_CheckBoxButtonInversed*)</param>
 
-		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, bool* value, uintptr_t function)
+		UI_CheckBoxButtonInversed(const char* uncheckedtext, const char* checkedtext, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, bool* value, uintptr_t function)
 		{
 			UnCheckedText = uncheckedtext;
 			CheckedText = checkedtext;
@@ -63,8 +63,8 @@ namespace T6SDK::Drawing
 		/// <param name="gridRow">Number of one of 21 rows that the check box will take Y position from.</param>
 		/// <param name="anchorPoint"></param>
 		/// <param name="value">Pointer to a bool value.</param>
-		/// <param name="function"> Function to call when checked state is changed. void func(UI_CheckBoxButton*)</param>
-		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, bool* value, uintptr_t function)
+		/// <param name="function"> Function to call when checked state is changed. void func(UI_CheckBoxButtonInversed*)</param>
+		UI_CheckBoxButtonInversed(const char* uncheckedtext, const char* checkedtext, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, bool* value, uintptr_t function)
 		{
 			UnCheckedText = uncheckedtext;
 			CheckedText = checkedtext;
@@ -85,14 +85,14 @@ namespace T6SDK::Drawing
 			}
 			bool successDraw = false;
 			if (DrawRelative)
-				successDraw = T6SDK::Drawing::DrawTextRelative(*isChecked ? CheckedText : UnCheckedText, X, Y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : *isChecked ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
+				successDraw = T6SDK::Drawing::DrawTextRelative(*isChecked ? UnCheckedText : CheckedText, X, Y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : !*isChecked ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
 			else if (GridColumn != -1 && GridRow != -1)
 			{
 				vec2_t coords = T6SDK::Drawing::GetGridCellCoords(GridColumn, GridRow);
-				successDraw = T6SDK::Drawing::DrawTextAbsolute(*isChecked ? CheckedText : UnCheckedText, coords.x, coords.y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : *isChecked ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
+				successDraw = T6SDK::Drawing::DrawTextAbsolute(*isChecked ? UnCheckedText : CheckedText, coords.x, coords.y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : !*isChecked ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
 			}
 			else
-				successDraw = T6SDK::Drawing::DrawTextAbsolute(*isChecked ? CheckedText : UnCheckedText, X, Y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : *isChecked ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
+				successDraw = T6SDK::Drawing::DrawTextAbsolute(*isChecked ? UnCheckedText : CheckedText, X, Y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : !*isChecked ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
 			if (successDraw && IsEnabled)
 			{
 				if (T6SDK::Input::MousePosX() > (float)btnRect.left && T6SDK::Input::MousePosX() < (float)btnRect.right && T6SDK::Input::MousePosY() > (float)btnRect.top && T6SDK::Input::MousePosY() < (float)btnRect.bottom)
@@ -106,9 +106,9 @@ namespace T6SDK::Drawing
 						{
 							//T6SDK::ConsoleLog::Log("Clicked!");
 							Clicked = true;
-							if(!ValueReadOnly)
+							if (!ValueReadOnly)
 								*isChecked = !*isChecked;
-							
+							//T6SDK::ConsoleLog::LogFormatted(12, "Checked: %s", *isChecked ? "true" : "false");
 							if (Function)
 							{
 								func* f = (func*)Function;
@@ -132,7 +132,7 @@ namespace T6SDK::Drawing
 					Pressed = false;
 					Clicked = false;
 				}
-				
+
 			}
 		}
 		void Draw(bool isEnabled)

@@ -4,6 +4,8 @@
 #include <commdlg.h>
 #include <filesystem>
 #include <sstream>
+#include <fstream>
+#include <iostream>
 #pragma comment(lib, "ole32.lib") // Link against Ole32 library
 #define FILLIN 0x00
 namespace T6SDK::Typedefs
@@ -265,6 +267,13 @@ namespace T6SDK::Typedefs
 	inline extern SCR_UpdateScreen_t SCR_UpdateScreen = (SCR_UpdateScreen_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
 		T6SDK::Addresses::t6mpv43 + 0x086E40, T6SDK::Addresses::t6mp + FILLIN,
 		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+
+	//51 8B 44 24 ? 53 55 56 C6 00
+	typedef int(__cdecl* Demo_GetNextDefaultBookmarkForPlayer_t)(int localClientNum, int index, int* type, int* time, vec4_t* color, bool* useBottomHalfColor, vec4_t* bottomHalfColor);
+	inline extern Demo_GetNextDefaultBookmarkForPlayer_t Demo_GetNextDefaultBookmarkForPlayer = (Demo_GetNextDefaultBookmarkForPlayer_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
+		T6SDK::Addresses::t6mpv43 + 0x18D590, T6SDK::Addresses::t6mp + FILLIN,
+		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+
 }
 namespace T6SDK
 {
@@ -590,7 +599,7 @@ namespace T6SDK
 		
 		static void AxisToAngles(Matrix33_s* axis, vec3_t* angles)
 		{
-			T6SDK::ConsoleLog::LogFormatted("UnHooking AxisToAngles... OutFunc: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "INTERNAL FUNC", "UnHooking AxisToAngles... OutFunc: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
 			T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.UnHook();
 			T6SDK::Typedefs::AxisToAngles(axis, angles);
 			T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.ReHook();
@@ -642,7 +651,7 @@ namespace T6SDK
 
 			if (!DObj)
 			{
-				T6SDK::ConsoleLog::Log("CG_DObjGetWorldTagMatrix failed on DObj");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "INTERNAL FUNC", "CG_DObjGetWorldTagMatrix failed on DObj");
 				return FALSE;
 			}
 			return T6SDK::Typedefs::CG_DObjGetWorldTagMatrix(&entity->pose, DObj, tagName, tagMat, origin) != 0x00;
@@ -657,7 +666,7 @@ namespace T6SDK
 
 			if (!DObj)
 			{
-				T6SDK::ConsoleLog::Log("CG_DObjGetWorldTagMatrix failed on DObj");
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "INTERNAL FUNC", "CG_DObjGetWorldTagMatrix failed on DObj");
 				return FALSE;
 			}
 			return T6SDK::Typedefs::CG_DObjGetWorldTagPos(&entity->pose, DObj, tagName, pos);
@@ -701,8 +710,15 @@ namespace T6SDK
 				T6SDK::Typedefs::SCR_UpdateScreen();
 			}
 		}
-
+		static int Demo_GetNextDefaultBookmarkForPlayer(int index, int* type, int* time, vec4_t* color)
+		{
+			bool useBottomHalfColor = false;
+			vec4_t bottomHalfColor{};
+			return T6SDK::Typedefs::Demo_GetNextDefaultBookmarkForPlayer(0, index, type, time, color, &useBottomHalfColor, &bottomHalfColor);
+		}
 		static OPENFILENAME ofn;
+		
+		
 		static bool OpenFileDialog(TCHAR szFileName[], bool saveDialog = false, const TCHAR* filter = NULL, const TCHAR* title = NULL)
 		{
 			const TCHAR* FilterSpec;
@@ -721,27 +737,28 @@ namespace T6SDK
 			ofn.hwndOwner = GetFocus();
 			ofn.lpstrFilter = FilterSpec;
 			ofn.lpstrCustomFilter = NULL;
-			ofn.nMaxCustFilter = 0;
-			ofn.nFilterIndex = 0;
+			//ofn.nMaxCustFilter = 0;
+			ofn.nFilterIndex = 1;
 			ofn.lpstrFile = szFileName;
 			ofn.nMaxFile = MAX_PATH;
+			ofn.lpstrFile[0] = '\0';
 			//ofn.lpstrInitialDir = myDir; // Initial directory.
 			ofn.lpstrFileTitle = szFileTitle;
 			ofn.nMaxFileTitle = MAX_PATH;
 			ofn.lpstrTitle = Title;
 			//ofn.lpstrDefExt = 0; // I've set to null for demonstration
-			ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+			ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_EXPLORER;
 			ShowCursor(true);
 			if (saveDialog)
 			{
 				if (GetSaveFileName(&ofn) == 1)
 				{
-					T6SDK::ConsoleLog::LogSuccess("SaveFileDialog succeeded\n");
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, false, "SAVE FILE DIALOG", "SaveFileDialog succeeded!");
 					return 1;
 				}
 				else
 				{
-					T6SDK::ConsoleLog::LogError("SaveFileDialog failed or user cancelled the operation\n");
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "SAVE FILE DIALOG", "SaveFileDialog failed or user cancelled the operation!");
 					return 0;
 				}
 			}
@@ -749,12 +766,12 @@ namespace T6SDK
 			{
 				if (GetOpenFileName(&ofn) == 1)
 				{
-					T6SDK::ConsoleLog::LogSuccess("OpenFileDialog succeeded\n");
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, false, "OPEN FILE DIALOG", "OpenFileDialog succeeded!");
 					return 1;
 				}
 				else
 				{
-					T6SDK::ConsoleLog::LogError("OpenFileDialog failed or user cancelled the operation\n");
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "OPEN FILE DIALOG", "OpenFileDialog failed or user cancelled the operation!");
 					return 0;
 				}
 			}
@@ -800,7 +817,7 @@ namespace T6SDK
 			// Call CreateDirectoryA to create the directory
 			if (CreateDirectory(fullPath, NULL)) 
 			{
-				T6SDK::ConsoleLog::LogFormatted("Directory %s created successfully.", fullPath);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "DIRECTORY", "Directory %s created successfully.", fullPath);
 				return true;
 			}
 			else 
@@ -809,12 +826,12 @@ namespace T6SDK
 				DWORD error = GetLastError();
 				if (error == ERROR_ALREADY_EXISTS)
 				{
-					T6SDK::ConsoleLog::LogFormatted("Directory %s already exists.", fullPath);
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, true, "DIRECTORY", "Directory %s already exists.", fullPath);
 					return true;
 				}
 				else
 				{
-					T6SDK::ConsoleLog::LogFormatted("Failed to create directory %s. Error code: .", fullPath, error);
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "DIRECTORY", "Failed to create directory %s. Error code: .", fullPath, error);
 				}
 				return false;
 			}
@@ -954,6 +971,52 @@ namespace T6SDK
 			CloseClipboard();
 
 			return true;
+		}
+		static std::vector<char> readBytesSimple(const std::string& filename) 
+		{
+			// Open file in binary mode
+			std::ifstream file(filename, std::ios::binary);
+
+			if (!file) 
+			{
+				throw std::runtime_error("Cannot open file: " + filename);
+			}
+
+			// Get file size
+			file.seekg(0, std::ios::end);
+			std::streampos fileSize = file.tellg();
+			file.seekg(0, std::ios::beg);
+
+			// Read file contents into vector
+			std::vector<char> fileData(fileSize);
+			file.read(fileData.data(), fileSize);
+
+			return fileData;
+		}
+		static std::string removeExtension(std::filesystem::path filepath) 
+		{
+			// Replace extension with empty string
+			return filepath.replace_extension().string();
+		}
+		static std::vector<std::string> splitString(const std::string& str, char delimiter, bool keepEmpty = false) 
+		{
+			std::vector<std::string> tokens;
+			size_t start = 0;
+			size_t end = str.find(delimiter);
+
+			while (end != std::string::npos) {
+				if (keepEmpty || (end - start) > 0) {
+					tokens.push_back(str.substr(start, end - start));
+				}
+				start = end + 1;
+				end = str.find(delimiter, start);
+			}
+
+			if (keepEmpty || (str.size() - start) > 0) {
+				tokens.push_back(str.substr(start));
+			}
+
+			return tokens;
 		}
 	}
 }

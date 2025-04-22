@@ -20,7 +20,7 @@ namespace T6SDK
 
         }
         /// <summary>
-        /// Initialize a new memory hook instance.
+        /// Initialize a new MEMORYHOOK instance.
         /// </summary>
         /// <param name="_baseAddress">Adress of a function (or just a region in memory) to hook at.</param>
         /// <param name="_length">Length of bytes being involved in hooking.</param>
@@ -43,7 +43,7 @@ namespace T6SDK
         void SetOutFunc(DWORD _outFunc)
         {
             OutFunc = _outFunc; 
-            T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "OutFunc set: 0x%X", OutFunc);
+            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc set: 0x%X", OutFunc);
         }
 
 #pragma region CrossVersion 
@@ -85,7 +85,7 @@ namespace T6SDK
             }
             catch (const char* errorMessage)
             {
-                T6SDK::ConsoleLog::LogError(errorMessage);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", errorMessage);
                 return false;
             }
         }
@@ -97,17 +97,17 @@ namespace T6SDK
         {
             try
             {
-                T6SDK::ConsoleLog::LogErrorFormatted("Unhooking at 0x0%X", BaseAddress);
-                T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "OutFunc before unhooking: 0x%X", OutFunc);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Unhooking at 0x0%X", BaseAddress);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc before unhooking: 0x%X", OutFunc);
                 if (!OriginalBytes)
                     return false;
                 T6SDK::Memory::RestoreOldBytes(BaseAddress, OriginalBytes, Length);
-                T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTCYAN, "OutFunc after unhooking: 0x%X", OutFunc);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc after unhooking: 0x%X", OutFunc);
                 return true;
             }
             catch (const char* errorMessage)
             {
-                T6SDK::ConsoleLog::LogError(errorMessage);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", errorMessage);
                 return false;
             }
         }
@@ -115,22 +115,22 @@ namespace T6SDK
         {
 			try
 			{
-                T6SDK::ConsoleLog::LogFormatted("Rehook func address: 0x%X", OutFunc);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Rehook func address: 0x%X", OutFunc);
                 if(OutFunc == 0x00)
                 {
-                    T6SDK::ConsoleLog::LogError("Rehook failed! OutFunc was not set");
+                    T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", "Rehook failed! OutFunc was not set");
                     return false;
                 }
                 bool res = Hook((void*)OutFunc);
                 if (res)
-                    T6SDK::ConsoleLog::LogSuccess("Rehooked!");
+                    T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Rehooked!");
                 else
-                    T6SDK::ConsoleLog::LogError("Rehook failed!");
+                    T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", "Rehook failed!");
                 return res;
 			}
 			catch (const char* errorMessage)
 			{
-				T6SDK::ConsoleLog::LogError(errorMessage);
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", errorMessage);
 				return false;
 			}
         }
