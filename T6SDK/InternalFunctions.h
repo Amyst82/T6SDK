@@ -599,7 +599,7 @@ namespace T6SDK
 		
 		static void AxisToAngles(Matrix33_s* axis, vec3_t* angles)
 		{
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "INTERNAL FUNC", "UnHooking AxisToAngles... OutFunc: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
+			//T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "INTERNAL FUNC", "UnHooking AxisToAngles... OutFunc: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
 			T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.UnHook();
 			T6SDK::Typedefs::AxisToAngles(axis, angles);
 			T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.ReHook();

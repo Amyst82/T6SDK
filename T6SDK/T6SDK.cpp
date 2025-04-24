@@ -3,6 +3,8 @@
 
 namespace T6SDK
 {
+    inline static T6SDK::Drawing::UI_Notification UINotificationControl{};
+
 	uintptr_t eaxTMP, ecxTMP, edxTMP, esiTMP, ediTMP, espTMP, ebpTMP, eaxTMP2=0x00;
 	__declspec(naked) void EndFrameDrawn()
 	{
@@ -805,6 +807,8 @@ namespace T6SDK
         T6SDK::Addresses::Patches::DisableDvarsLimitsPatch.Patch();
         T6SDK::Addresses::Patches::DisableDvarProtectionPatch.Patch();
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "T6SDK", "Dvars limits disabled");
+
+        UINotificationControl = T6SDK::Drawing::UI_Notification();
 	}
 	void T6SDK::MAIN::DeInitialize()
 	{
@@ -880,4 +884,13 @@ namespace T6SDK
             T6SDK::ConsoleLog::Initialize();
         T6SDK::Addresses::HookAddresses::h_GameLoaded.Hook(hGameLoaded);
     }
+    void T6SDK::MAIN::UI_ShowNotification(const char* title, const char* text, int duration)
+    {
+        UINotificationControl = T6SDK::Drawing::UI_Notification(title, text, duration);
+        UINotificationControl.Show();
+    }
+	int T6SDK::MAIN::GetNotificationControl()
+	{
+        return (int) &UINotificationControl;
+	}
 }

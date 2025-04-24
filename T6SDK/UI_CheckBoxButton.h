@@ -2,6 +2,7 @@
 #include "StdInclude.h"
 namespace T6SDK::Drawing
 {
+
 	class UI_CheckBoxButton
 	{
 		typedef void func(UI_CheckBoxButton*);
@@ -18,8 +19,8 @@ namespace T6SDK::Drawing
 		int GridRow = -1;
 		float X = 0.0f;
 		float Y = 0.0f;
-
 		bool internalCheckedValue = false;
+
 
 	public:
 		bool* isChecked = &internalCheckedValue;
@@ -29,7 +30,7 @@ namespace T6SDK::Drawing
 		const char* ToolTip = "";
 		UI_CheckBoxButton()
 		{
-
+			this->isChecked = &this->internalCheckedValue;
 		}
 		/// <summary>
 		/// Check box.
@@ -51,7 +52,7 @@ namespace T6SDK::Drawing
 			Y = y;
 			Function = function;
 			this->anchorPoint = anchorPoint;
-			isChecked = value ? value : &internalCheckedValue;
+			this->isChecked = value ? value : &this->internalCheckedValue;
 			DrawRelative = drawRelative;
 		}
 		/// <summary>
@@ -72,7 +73,7 @@ namespace T6SDK::Drawing
 			GridColumn = gridColumn;
 			GridRow = gridRow;
 			this->anchorPoint = anchorPoint;
-			isChecked = value ? value : &internalCheckedValue;
+			this->isChecked = value ? value : &this->internalCheckedValue;
 		}
 
 		void Draw()

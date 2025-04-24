@@ -229,7 +229,7 @@ namespace T6SDK::Addresses
     }
 #pragma region Addresses
     inline static cg_t* cg = (cg_t*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2E048C80, T6SDK::Addresses::t6mp + 0x2E048C80, T6SDK::Addresses::t6zmv41 + 0x2E048C80, T6SDK::Addresses::t6zm + 0x2E048C80).GetValue();
-
+	inline static DWORD PlayerStates = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2CFE400, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
     inline static DWORD dvarPool = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x261FC48, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
     inline static int* g_dvarCount = (int*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x0267FC4C, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
     

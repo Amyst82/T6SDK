@@ -216,6 +216,21 @@ namespace T6SDK
 			}
 			return true;
 		}
+		static bool DrawRectAbsolute(float x, float y, float width, float height, float angle, tColor Color, AnchorPoint anchorPoint, RECT* OutRect)
+		{
+			if (!CheckResources())
+				return false;
+			vec2_t coords = EvaluateAnchorPoint(anchorPoint, x, y, width, height);
+			T6SDK::Typedefs::R_AddCmdDrawStretchPicRotateXYInternal(coords.x, coords.y, width, height, 0.0f, 0.0f, 1.0f, 1.0f, angle, Color, WhiteMaterial);
+			if (OutRect)
+			{
+				OutRect->left = coords.x;
+				OutRect->top = coords.y;
+				OutRect->right = coords.x + width;
+				OutRect->bottom = coords.y + height;
+			}
+			return true;
+		}
 		/// <summary>
 		/// Draw rect on screen snapped to grid.
 		/// </summary>
@@ -234,6 +249,14 @@ namespace T6SDK
 			vec2_t coords = T6SDK::Drawing::GetGridCellCoords(GridColumn0, GridRow0);
 			vec2_t coords2 = T6SDK::Drawing::GetGridCellCoords(GridColumn1, GridRow1);
 			return DrawRectAbsolute(coords.x+margin.x, coords.y+margin.y, coords2.x - coords.x+margin.z, coords2.y - coords.y+margin.w, Color, anchorPoint, OutRect);
+		}
+		static bool DrawRectAbsolute(int GridColumn0, int GridRow0, int GridColumn1, int GridRow1, float angle, vec4_t margin, tColor Color, AnchorPoint anchorPoint, RECT* OutRect)
+		{
+			if (!CheckResources())
+				return false;
+			vec2_t coords = T6SDK::Drawing::GetGridCellCoords(GridColumn0, GridRow0);
+			vec2_t coords2 = T6SDK::Drawing::GetGridCellCoords(GridColumn1, GridRow1);
+			return DrawRectAbsolute(coords.x + margin.x, coords.y + margin.y, coords2.x - coords.x + margin.z, coords2.y - coords.y + margin.w, angle, Color, anchorPoint, OutRect);
 		}
 #pragma endregion
 		#pragma region Rect coords relative
@@ -294,8 +317,7 @@ namespace T6SDK
 
 		static void DrawMaterial(float x, float y, float size, AnchorPoint anchorPoint, tColor Color, void* material)
 		{
-			if (!CheckResources())
-				return;
+
 			vec2_t coords = EvaluateAnchorPoint(anchorPoint, x, y, size, size);
 			T6SDK::Typedefs::R_AddCmdDrawStretchPicRotateXYInternal(coords.x, coords.y, size, size, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, Color, material);
 		}
@@ -306,5 +328,6 @@ namespace T6SDK
 			sprintf(buffer, "^5> ^7%s", Text);
 			T6SDK::Drawing::DrawTextAbsolute(buffer, coords.x, coords.y, 1.0f, T6SDK::Drawing::T_WHITECOLOR, AnchorPoint::Center, 0x00);
 		}
+
 	}
 }

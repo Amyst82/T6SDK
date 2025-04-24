@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+
 #pragma warning(disable:4996)
 
 namespace T6SDK
@@ -20,5 +21,7 @@ namespace T6SDK
 		inline static std::vector<int> RegisteredCameraModes{};
 		inline static std::vector<int> RegisteredRadioButtons{};
 		inline static std::map<BYTE, int> CharKeys{};
+		static void UI_ShowNotification(const char* title, const char* text, int duration);
+		static int GetNotificationControl();
 	};
 }

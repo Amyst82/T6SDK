@@ -164,6 +164,7 @@ namespace T6SDK
 					inputBuffer.clear();
 					SelectedLine = 0;
 					CaretIndex = 0;
+					CloseConsole();
 				}
 				else if (keyPointer->KeyChar >= 32 && keyPointer->KeyChar <= 126) // Printable ASCII characters
 				{

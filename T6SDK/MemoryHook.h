@@ -97,12 +97,12 @@ namespace T6SDK
         {
             try
             {
-                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Unhooking at 0x0%X", BaseAddress);
-                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc before unhooking: 0x%X", OutFunc);
+               //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Unhooking at 0x0%X", BaseAddress);
+               //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc before unhooking: 0x%X", OutFunc);
                 if (!OriginalBytes)
                     return false;
                 T6SDK::Memory::RestoreOldBytes(BaseAddress, OriginalBytes, Length);
-                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc after unhooking: 0x%X", OutFunc);
+                //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "OutFunc after unhooking: 0x%X", OutFunc);
                 return true;
             }
             catch (const char* errorMessage)
