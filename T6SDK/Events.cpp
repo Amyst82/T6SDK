@@ -127,6 +127,18 @@ namespace T6SDK
 			case EventType::OnSunInited:
 				eventNameString = "OnSunInited";
 				break;
+			case EventType::OnCgItemDrawn:
+				eventNameString = "OnCgItemDrawn";
+				break;
+			case EventType::OnProcessEntity:
+				eventNameString = "OnProcessEntity";
+				break;
+			case EventType::OnDemoRecordingEnded:
+				eventNameString = "OnDemoRecordingEnded";
+				break;
+			case EventType::OnCGCalcEntityLerpPositions:
+				eventNameString = "OnCGCalcEntityLerpPositions";
+				break;
 			default:
 				eventNameString = "";
 				break;

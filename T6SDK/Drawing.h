@@ -25,6 +25,7 @@ namespace T6SDK
 		static tColor GRAYCOLOR = { 0.5f, 0.5f, 0.5f, 1.0f };
 		static tColor ORANGECOLOR = { 1.0f, 0.6f, 0.2f, 1.0f };
 		static tColor T_BLACKCOLOR = { 0.0f, 0.0f, 0.0f, 0.5f };
+		static tColor T_GRAYCOLOR = { 0.5f, 0.5f, 0.5f, 0.3f };
 		static tColor TRANSPARENTCOLOR = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 #pragma endregion

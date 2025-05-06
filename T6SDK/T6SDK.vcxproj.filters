@@ -43,6 +43,9 @@
     <Filter Include="Theater">
       <UniqueIdentifier>{1ccc38ff-e368-4f9b-a9dc-759bead17755}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Demos">
+      <UniqueIdentifier>{e835cf9d-dfca-482e-bc42-8a2d5bd1afa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -141,6 +144,18 @@
     <ClInclude Include="UI_Notification.h">
       <Filter>Drawing</Filter>
     </ClInclude>
+    <ClInclude Include="DemoHandler.h">
+      <Filter>Demos</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_TextBoxDialog.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_IconClickableButton.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_RectangleClickableButton.h">
+      <Filter>Drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -154,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="Events.cpp">
       <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="DemoHandler.cpp">
+      <Filter>Demos</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

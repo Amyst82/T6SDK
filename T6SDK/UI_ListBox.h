@@ -100,6 +100,8 @@ namespace T6SDK::Drawing
 
 		void Draw()
 		{
+			if (T6SDK::Input::InputLockedByTextBoxDialog)
+				return;
 			if (!IsEnabled)
 			{
 				Clicked = false;

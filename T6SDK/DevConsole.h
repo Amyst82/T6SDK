@@ -166,21 +166,15 @@ namespace T6SDK
 					CaretIndex = 0;
 					CloseConsole();
 				}
-				else if (keyPointer->KeyChar >= 32 && keyPointer->KeyChar <= 126) // Printable ASCII characters
+				else if (keyPointer->Printable)
 				{
-					if(keyPointer->KeyChar == '~')
+					if (inputBuffer.length() >= 150)
 						return;
-					if(inputBuffer.length() >= 150)
-						return;
-					if(keyPointer->KeyChar == '-' && T6SDK::Input::Keys::SHIFT.IsAnyPressState())
-						inputBuffer += '_';
+					//If uppercase
+					if (T6SDK::Input::Keys::SHIFT.IsAnyPressState())
+						inputBuffer += std::toupper(keyPointer->UpperCasedKeyChar);
 					else
-					{
-						if (T6SDK::Input::Keys::SHIFT.IsAnyPressState())
-							inputBuffer += std::toupper(keyPointer->KeyChar);
-						else
-							inputBuffer += keyPointer->KeyChar;
-					}
+						inputBuffer += keyPointer->KeyChar;
 					CaretIndex = inputBuffer.length();
 				}
 			}
@@ -189,9 +183,12 @@ namespace T6SDK
 
 		static void DrawConsole()
 		{
+
 			if (!T6SDK::MAIN::ENABLED)
 				return;
 			if (!T6SDK::MAIN::DevConsoleOpened)
+				return;
+			if (T6SDK::Input::InputLockedByTextBoxDialog)
 				return;
 			if (!T6SDK::Drawing::CheckResources())
 				return;

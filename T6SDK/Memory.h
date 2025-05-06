@@ -171,6 +171,8 @@ namespace T6SDK
 				};
 
 			DWORD base = (DWORD)GetModuleHandleA(moduleName);
+			if (base == NULL)
+				return 0x00;
 			DWORD sizeOfImage = GetModuleInfo(moduleName).SizeOfImage;
 			auto patternBytes = pattern_to_byte(signature);
 
@@ -192,6 +194,56 @@ namespace T6SDK
 				}
 			}
 			return NULL;
+		}
+		inline static std::vector<DWORD> IdaSigScanM(const char* signature, LPCSTR moduleName)
+		{
+			static auto pattern_to_byte = [](const char* pattern)
+			{
+				auto bytes = std::vector<char>{};
+				auto start = const_cast<char*>(pattern);
+				auto end = const_cast<char*>(pattern) + strlen(pattern);
+			
+				for (auto current = start; current < end; ++current)
+				{
+					if (*current == '?')
+					{
+						++current;
+						if (*current == '?')
+							++current;
+						bytes.push_back('\?');
+					}
+					else
+					{
+						bytes.push_back(strtoul(current, &current, 16));
+					}
+				}
+				return bytes;
+			};
+			std::vector<DWORD> FoundAddreses{};
+			DWORD base = (DWORD)GetModuleHandleA(moduleName);
+			if (base == NULL)
+				return FoundAddreses;
+			DWORD sizeOfImage = GetModuleInfo(moduleName).SizeOfImage;
+			auto patternBytes = pattern_to_byte(signature);
+
+			DWORD patternLength = patternBytes.size();
+			auto data = patternBytes.data();
+
+			for (DWORD i = 0; i < sizeOfImage - patternLength; i++)
+			{
+				bool found = true;
+				for (DWORD j = 0; j < patternLength; j++)
+				{
+					char a = '\?';
+					char b = *(char*)(base + i + j);
+					found &= data[j] == a || data[j] == b;
+				}
+				if (found)
+				{
+					FoundAddreses.push_back(base + i);
+				}
+			}
+			return FoundAddreses;
 		}
 		inline static DWORD IdaSigScan(const char* signature)
 		{

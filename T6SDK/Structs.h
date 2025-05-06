@@ -835,7 +835,12 @@ private:
 public:
 	int FakeTick; //0x4809C
 private:
-	char _0x48090[22512];
+	int renderingThirdPerson; //0x480A0
+	int undefined; //0x480A4
+public:
+	playerState_t predictedPlayerState; //0x480A8
+private:
+	char _0x4AAB0[11744];
 public:
 	refdef_t RefDef; //0x4D890
 	vec3_t RefDefViewAngles; //0x648F0
@@ -925,3 +930,21 @@ typedef struct DemoInfo_t
 	std::vector<char> DemoDataPtr;
 	int DemoSize;
 };
+
+typedef struct Fog_s
+{
+	float startDist;
+	float fadeDist;
+	float startHeight;
+	float fadeHeight;
+	float sunHazePitchAngle;
+	float sunHazeYawAngle;
+	float hazeInnerRadius;
+	float hazeOuterRadius;
+	vec3_t fogColor;
+	float fogOpacity;
+	vec3_t sunHazeColor;
+	float sunHazeOpacity;
+};
+
+

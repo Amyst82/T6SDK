@@ -10,6 +10,7 @@
 #include <vector>
 #include <chrono>
 #include "T6SDK.h"
+#include <cinttypes>
 #include "ConsoleLog.h"
 #include "CrossVersion.h"
 #include "Enums.h"
@@ -37,7 +38,11 @@
 #include "UI_KeyReactiveText.h"
 #include "UI_ListBox.h"
 #include "UI_Notification.h"
+#include "UI_TextBoxDialog.h"
+#include "UI_IconClickableButton.h"
+#include "UI_RectangleClickableButton.h"
 #include "Theater.h"
+#include "DemoHandler.h"
 
 
 

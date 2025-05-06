@@ -109,6 +109,21 @@ namespace T6SDK::Addresses
         inline static T6SDK::MemoryHook h_SunInited(T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x19D1DF, T6SDK::Addresses::t6mp + FILLIN,
             T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+
+        //8B 86 ? ? ? ? 8D 4C 24 ? 51 8D 54 24 ? 52 57
+        inline static T6SDK::MemoryHook h_CG_Item(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x3A20B0, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+
+        //0F B6 4E ? 3B C1 74 ? 56 53
+        inline static T6SDK::MemoryHook h_CG_ProcessEntity(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x67DEA, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 7);
+
+        //0F B6 4E ? 3B C1 74 ? 56 53
+        inline static T6SDK::MemoryHook h_CG_CalcEntityLerpPositions(T6SDK::CrossVersion::CrossValue<DWORD>(
+            T6SDK::Addresses::t6mpv43 + 0x2B9B58, T6SDK::Addresses::t6mp + FILLIN,
+            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
     }
     namespace DetoursAddresses
     {
@@ -136,7 +151,6 @@ namespace T6SDK::Addresses
         inline static T6SDK::CDetourHook DetouredGetFreeCamModeNameHook("Demo_GetFreeCamModeName", (void*)T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x28E680, T6SDK::Addresses::t6mp + 0x0C5E30,
             T6SDK::Addresses::t6zmv41 + 0x281C50, T6SDK::Addresses::t6zm + 0x0D6770).GetValue());
-
     }
     namespace Patches
     {
@@ -226,6 +240,22 @@ namespace T6SDK::Addresses
 
         //FF D0 47 8D 76 ? 3B FB 75 ? A1
         inline static T6SDK::MemoryPatch DisableRedactedConsole((uintptr_t)GetModuleHandle("ExtendedConsole.Red32n") + 0x420A, { 0x90, 0x90});
+
+        static std::vector<BYTE> fogPatchBytes()
+        {
+            switch (T6SDK::CrossVersion::GetGameVersion())
+            {
+            case T6SDK::CrossVersion::V43:
+                return { 0xB8, 0xB8, 0x24, 0x62, 0x03, 0x90 };
+            case T6SDK::CrossVersion::MP:
+                return { 0xB8, 0xB8, 0x34, 0x64, 0x03, 0x90 };
+            case T6SDK::CrossVersion::V41:
+                return { 0xB8, 0xB8, 0x22, 0x5F, 0x03, 0x90 };
+            case T6SDK::CrossVersion::ZM:
+                return { 0xB8, 0x38, 0x8B, 0x61, 0x03, 0x90 };
+            }
+        }
+		inline static T6SDK::MemoryPatch FogPatch(T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x3275D7, T6SDK::Addresses::t6mp + 0x326917, T6SDK::Addresses::t6zmv41 + 0x325cb7, T6SDK::Addresses::t6zm + 0x324527).GetValue(), fogPatchBytes());
     }
 #pragma region Addresses
     inline static cg_t* cg = (cg_t*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2E048C80, T6SDK::Addresses::t6mp + 0x2E048C80, T6SDK::Addresses::t6zmv41 + 0x2E048C80, T6SDK::Addresses::t6zm + 0x2E048C80).GetValue();
@@ -289,6 +319,8 @@ namespace T6SDK::Addresses
     inline static DWORD DemoThumbnailAddress = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2B17A38, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
     inline static DWORD DemoThumbnailAddress2 = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB9AB8, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
     inline static T6SDK::MemoryAddress<BYTE> DemoLoadPatch(T6SDK::Addresses::t6mpv43 + 0x1C79E6, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    inline static const char* DemoName = (const char*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB98B2, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
+    inline static Fog_s* fog = (Fog_s*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x032224B8, T6SDK::Addresses::t6mp + 0x032434B8, T6SDK::Addresses::t6zmv41 + 0x031F22B8, T6SDK::Addresses::t6zm + 0x03218B38).GetValue();
 
 #pragma endregion
 

@@ -10,6 +10,8 @@ namespace T6SDK::Drawing
 		bool Hovered = false;
 		bool Pressed = false;
 		bool Clicked = false;
+		bool hoverSoundPlayed = false;
+
 		bool IsEnabled = true;
 		int GroupIndex = 0;
 		uintptr_t Function = 0;
@@ -103,8 +105,11 @@ namespace T6SDK::Drawing
 		}
 		void Draw()
 		{
+			if (T6SDK::Input::InputLockedByTextBoxDialog)
+				return;
 			if (!IsEnabled)
 			{
+				hoverSoundPlayed = false;
 				Hovered = false;
 				Pressed = false;
 				Clicked = false;
@@ -136,6 +141,12 @@ namespace T6SDK::Drawing
 				{
 					//T6SDK::ConsoleLog::Log("Hovered");
 					Hovered = true;
+					if (hoverSoundPlayed == false)
+					{
+						T6SDK::InternalFunctions::PlaySound("uin_unlock_window");
+						//T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "RADIOBUTTON", "Hover sound played!");
+						hoverSoundPlayed = true;
+					}
 					if (T6SDK::Input::Keys::LMB.IsAnyPressState())
 					{
 						Pressed = true;
@@ -144,6 +155,7 @@ namespace T6SDK::Drawing
 							//T6SDK::ConsoleLog::Log("Clicked!");
 							Clicked = true;
 							SetChecked();
+							T6SDK::InternalFunctions::PlaySound("uin_main_pause");
 						}
 					}
 					else
@@ -158,6 +170,7 @@ namespace T6SDK::Drawing
 				}
 				else
 				{
+					hoverSoundPlayed = false;
 					Hovered = false;
 					Pressed = false;
 					Clicked = false;

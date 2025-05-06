@@ -119,6 +119,8 @@ namespace T6SDK::Drawing
 
 		void Draw()
 		{
+			if (T6SDK::Input::InputLockedByTextBoxDialog)
+				return;
 			if (!T6SDK::Drawing::CheckResources())
 				return;
 			
@@ -229,6 +231,14 @@ namespace T6SDK::Drawing
 						defaultValue = moveto;
 						float coef = (Max - Min) / WIDTH;
 						*value = Min + coef * (defaultValue - (float)sliderRect.left);
+						if (*value < Min)
+						{
+							*value = Min;
+						}
+						if (*value > Max)
+						{
+							*value = Max;
+						}
 						if (GetCoordByValue(*value, (float)sliderRect.left, (float)sliderRect.top, WIDTH, Min, Max) != defaultValue)
 						{
 							

@@ -14,15 +14,19 @@ namespace T6SDK::Input
     public:
         BYTE KeyCode = 0x00;
         char KeyChar = '\0';
-        InputKey(DWORD baseAddress, BYTE keycode, char keyChar)
+		char UpperCasedKeyChar = '\0';
+		bool Printable = false;
+        InputKey(DWORD baseAddress, BYTE keycode, char keyChar, char upperCasedKeyChar, bool printable)
         {
             BaseAddress = baseAddress;
             KeyCode = keycode;
 			KeyChar = keyChar;
+            UpperCasedKeyChar = upperCasedKeyChar;
+            Printable = printable;
             T6SDK::MAIN::CharKeys.emplace(keycode, (int)this);
         }
 #pragma region CrossVersion 
-        InputKey(DWORD v43BaseAddress, DWORD mpBaseAddress, DWORD v41BaseAddress, DWORD zmBaseAddress, BYTE keycode, char keyChar)
+        InputKey(DWORD v43BaseAddress, DWORD mpBaseAddress, DWORD v41BaseAddress, DWORD zmBaseAddress, BYTE keycode, char keyChar, char upperCasedKeyChar, bool printable)
         {
             switch (T6SDK::CrossVersion::GetGameVersion())
             {
@@ -41,6 +45,8 @@ namespace T6SDK::Input
             }
             KeyCode = keycode;
 			KeyChar = keyChar;
+			UpperCasedKeyChar = upperCasedKeyChar;
+			Printable = printable;
             T6SDK::MAIN::CharKeys.emplace(keycode, (int)this);
         }
 #pragma endregion

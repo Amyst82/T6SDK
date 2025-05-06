@@ -274,7 +274,11 @@ namespace T6SDK
         OnPovCamoWriting,
         OnAxisToAngles,
         OnDemoPlaybackInited,
-        OnSunInited
+        OnSunInited,
+        OnCgItemDrawn,
+        OnProcessEntity,
+        OnDemoRecordingEnded,
+        OnCGCalcEntityLerpPositions
     };
     enum class AnchorPoint
     {
@@ -287,5 +291,22 @@ namespace T6SDK
         BottomLeft = 6,
         BottomCenter = 7,
         BottomRight = 8
+    };
+    enum class MP_DemoGameMode
+    {
+        tdm = 1,
+        dm,
+        dom,
+        dem,
+        conf,
+        koth,
+        hq,
+        ctf,
+        sd,
+        oneflag = 0xE,
+        gun = 0xA,
+        oic = 0xB,
+        shrp = 0xC,
+        sas = 0xD
     };
 }

@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Addresses.h" />
+    <ClInclude Include="DemoHandler.h" />
     <ClInclude Include="detour.h" />
     <ClInclude Include="DevConsole.h" />
     <ClInclude Include="DvarTrie.h" />
@@ -175,14 +176,18 @@
     <ClInclude Include="Structs.h" />
     <ClInclude Include="T6SDK.h" />
     <ClInclude Include="UI_EnumButton.h" />
+    <ClInclude Include="UI_IconClickableButton.h" />
     <ClInclude Include="UI_KeyReactiveText.h" />
     <ClInclude Include="UI_ListBox.h" />
     <ClInclude Include="UI_Notification.h" />
     <ClInclude Include="UI_RadioButton.h" />
+    <ClInclude Include="UI_RectangleClickableButton.h" />
     <ClInclude Include="UI_Slider.h" />
+    <ClInclude Include="UI_TextBoxDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleLog.cpp" />
+    <ClCompile Include="DemoHandler.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

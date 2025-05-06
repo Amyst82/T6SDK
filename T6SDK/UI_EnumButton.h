@@ -6,6 +6,7 @@ namespace T6SDK::Drawing
 	{
 		typedef void func(int);
 	private:
+		bool hoverSoundPlayed = false;
 		bool Hovered = false;
 		bool Pressed = false;
 		bool Clicked = false;
@@ -82,6 +83,8 @@ namespace T6SDK::Drawing
 		
 		void Draw()
 		{
+			if (T6SDK::Input::InputLockedByTextBoxDialog)
+				return;
 			const char* internalText = Text;
 			if(strlen(Text) <= 1)
 			{
@@ -119,11 +122,17 @@ namespace T6SDK::Drawing
 				{
 					//T6SDK::ConsoleLog::Log("Hovered");
 					Hovered = true;
+					if (hoverSoundPlayed == false)
+					{
+						T6SDK::InternalFunctions::PlaySound("uin_unlock_window");
+						hoverSoundPlayed = true;
+					}
 					if (T6SDK::Input::Keys::LMB.IsAnyPressState())
 					{
 						Pressed = true;
 						if (Clicked == false)
 						{
+							T6SDK::InternalFunctions::PlaySound("uin_main_pause");
 							//T6SDK::ConsoleLog::Log("Clicked!");
 							Clicked = true;
 							if (*SelectedValue < MaxValue)

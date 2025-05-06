@@ -274,6 +274,12 @@ namespace T6SDK::Typedefs
 		T6SDK::Addresses::t6mpv43 + 0x18D590, T6SDK::Addresses::t6mp + FILLIN,
 		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
 
+	//E8 ? ? ? ? F3 0F 10 05 ? ? ? ? 6A ? 83 E0
+	typedef void(__cdecl* PlaySound_t)(const char* soundName);
+	inline extern PlaySound_t PlaySound = (PlaySound_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
+		T6SDK::Addresses::t6mpv43 + 0x3F1580, T6SDK::Addresses::t6mp + FILLIN,
+		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+
 }
 namespace T6SDK
 {
@@ -716,8 +722,18 @@ namespace T6SDK
 			vec4_t bottomHalfColor{};
 			return T6SDK::Typedefs::Demo_GetNextDefaultBookmarkForPlayer(0, index, type, time, color, &useBottomHalfColor, &bottomHalfColor);
 		}
+		static void PlaySound(const char* soundName)
+		{
+			__asm
+			{
+				mov eax, 0x69AA70
+				call eax
+			}
+			T6SDK::Typedefs::PlaySound(soundName);
+		}
+
+		#pragma region Misc (not part of engine)
 		static OPENFILENAME ofn;
-		
 		
 		static bool OpenFileDialog(TCHAR szFileName[], bool saveDialog = false, const TCHAR* filter = NULL, const TCHAR* title = NULL)
 		{
@@ -737,7 +753,7 @@ namespace T6SDK
 			ofn.hwndOwner = GetFocus();
 			ofn.lpstrFilter = FilterSpec;
 			ofn.lpstrCustomFilter = NULL;
-			//ofn.nMaxCustFilter = 0;
+			ofn.nMaxCustFilter = 0;
 			ofn.nFilterIndex = 1;
 			ofn.lpstrFile = szFileName;
 			ofn.nMaxFile = MAX_PATH;
@@ -1018,5 +1034,36 @@ namespace T6SDK
 
 			return tokens;
 		}
+		static std::string FormatUnixTime(time_t unixTime) 
+		{
+			std::stringstream oss{};
+			oss << std::put_time(std::localtime(&unixTime), "%A %d %B %Y %H:%M");
+			return oss.str();
+		}
+		static std::vector<std::filesystem::path> find_files_by_extension(const std::filesystem::path& root, const std::string& ext)
+		{
+			std::vector<std::filesystem::path> results;
+			try
+			{
+				for (const auto& entry : std::filesystem::recursive_directory_iterator(root))
+				{
+					if (entry.is_regular_file() && entry.path().extension() == ext)
+					{
+						results.push_back(entry.path());
+					}
+				}
+			}
+			catch (const std::filesystem::filesystem_error& e)
+			{
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "T6SDK", "Error accessing path: %s -> %s", root.c_str(), e.what());
+			}
+			return results;
+		}
+
+		static std::string getFilenameFromPath(const std::string& path) 
+		{
+			return std::filesystem::path(path).filename().string();
+		}
+#pragma endregion
 	}
 }

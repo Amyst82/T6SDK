@@ -124,28 +124,61 @@ namespace T6SDK
             mov[ediTMP], edi
             mov[espTMP], esp
             mov[ebpTMP], ebp
-            test eax, eax
-            je L7
-            test edx, edx
-            je L7
-            dec eax //somehow its 0x01 bigger so we need to decrement
-            push eax //pass esi as a parameter
-            call HandleIngameKeyPressed
-            L7:
-            mov eax, [eaxTMP]
-            mov ecx, [ecxTMP]
-			mov edx, [edxTMP]
-            mov esi, [esiTMP]
-            mov edi, [ediTMP]
-            mov esp, [espTMP]
-            mov ebp, [ebpTMP]
-            push ecx
-            push edx
-            push eax
-            xor edi, edi
-            push edi
-            jmp[T6SDK::Addresses::HookAddresses::h_Com_EventLoopKeyEvent.JumpBackAddress]
         }
+        if (T6SDK::MAIN::ENABLED)
+        {
+            __asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                test eax, eax
+                je L7
+                test edx, edx
+                je L7
+                dec eax //somehow its 0x01 bigger so we need to decrement
+                push eax //pass esi as a parameter
+                call HandleIngameKeyPressed
+                L7 :
+                mov eax, [eaxTMP]
+                mov ecx, [ecxTMP]
+                mov edx, [edxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                push ecx
+                push edx
+                push eax
+                xor edi, edi
+                push edi
+                jmp[T6SDK::Addresses::HookAddresses::h_Com_EventLoopKeyEvent.JumpBackAddress]
+            }
+
+        }
+        else
+        {
+            __asm
+            {
+                mov eax, [eaxTMP]
+                mov ecx, [ecxTMP]
+                mov edx, [edxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                push ecx
+                push edx
+                push eax
+                xor edi, edi
+                push edi
+                jmp[T6SDK::Addresses::HookAddresses::h_Com_EventLoopKeyEvent.JumpBackAddress]
+            }
+        }     
     }
 
     __declspec(naked) void CGDrawActiveFrame()
@@ -753,6 +786,166 @@ namespace T6SDK
             }
         }
     }
+
+    void HandleOnCgItem(int centity)
+    {
+        T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnCgItemDrawn, centity);
+    }
+    __declspec(naked) void OnCG_Item()
+    {
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
+        if (T6SDK::MAIN::ENABLED)
+        {
+            _asm
+            {
+                push esi
+                call HandleOnCgItem
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                mov eax, [esi + 0x1DC]
+                jmp[T6SDK::Addresses::HookAddresses::h_CG_Item.JumpBackAddress]
+            }
+        }
+        else
+        {
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                mov eax, [esi + 0x1DC]
+                jmp[T6SDK::Addresses::HookAddresses::h_CG_Item.JumpBackAddress]
+            }
+        }
+    }
+
+    void HandleOnProcessEntity(int centity)
+    {
+        T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnProcessEntity, centity);
+    }
+    __declspec(naked) void OnCG_ProcessEntity()
+    {
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
+        if (T6SDK::MAIN::ENABLED)
+        {
+            _asm
+            {
+                push esi
+                call HandleOnProcessEntity
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                cmp dword ptr[esi + 0x260], 0x00
+                jmp[T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.JumpBackAddress]
+            }
+        }
+        else
+        {
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                cmp dword ptr[esi + 0x260], 0x00
+                jmp[T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.JumpBackAddress]
+            }
+        }
+    }
+    void HandleOnCGCalcEntityLerpPositions(int centity)
+    {
+        T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnCGCalcEntityLerpPositions, centity);
+    }
+    __declspec(naked) void OnCGCalcEntityLerpPositions()
+    {
+        _asm
+        {
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+
+        }
+        if (T6SDK::MAIN::ENABLED)
+        {
+            _asm
+            {
+                push esi
+                call HandleOnCGCalcEntityLerpPositions
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                pop edi
+                pop esi
+                pop ebp
+                pop ebx
+                ret
+                //jmp[T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.JumpBackAddress]
+            }
+        }
+        else
+        {
+            _asm
+            {
+                mov eax, [eaxTMP]
+                mov edx, [edxTMP]
+                mov ecx, [ecxTMP]
+                mov esi, [esiTMP]
+                mov edi, [ediTMP]
+                mov esp, [espTMP]
+                mov ebp, [ebpTMP]
+                pop edi
+                pop esi
+                pop ebp
+                pop ebx
+                ret
+                //jmp[T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.JumpBackAddress]
+            }
+        }
+    }
 	void T6SDK::MAIN::Initialize()
 	{
         T6SDK::Drawing::normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
@@ -785,6 +978,9 @@ namespace T6SDK
 
         T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.Hook(OnDemoPlaybackInited);
         T6SDK::Addresses::HookAddresses::h_SunInited.Hook(OnSunInited);
+        T6SDK::Addresses::HookAddresses::h_CG_Item.Hook(OnCG_Item);
+        T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.Hook(OnCG_ProcessEntity);
+        T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.Hook(OnCGCalcEntityLerpPositions);
 
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Hooks set!");
         //Detours
@@ -795,6 +991,7 @@ namespace T6SDK
 
         T6SDK::Addresses::DetoursAddresses::DetouredGetNextFreeCameraModeHook.Hook(T6SDK::Theater::DetouredGetNextFreeCameraMode);
         T6SDK::Addresses::DetoursAddresses::DetouredGetFreeCamModeNameHook.Hook(T6SDK::Theater::DetouredGetFreeCamModeName);
+
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Detours set!");
         //Patches
 
@@ -807,7 +1004,8 @@ namespace T6SDK
         T6SDK::Addresses::Patches::DisableDvarsLimitsPatch.Patch();
         T6SDK::Addresses::Patches::DisableDvarProtectionPatch.Patch();
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "T6SDK", "Dvars limits disabled");
-
+        T6SDK::Addresses::Patches::FogPatch.Patch();
+        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "T6SDK", "FOG patched!");
         UINotificationControl = T6SDK::Drawing::UI_Notification();
 	}
 	void T6SDK::MAIN::DeInitialize()
@@ -853,6 +1051,7 @@ namespace T6SDK
 			T6SDK::MAIN::Initialize();
             T6SDK::Events::Invoke(T6SDK::EventType::OnGameLoaded);
             T6SDK::MAIN::GameLoaded = true;
+			T6SDK::Addresses::HookAddresses::h_GameLoaded.UnHook();
         }
     }
     __declspec(naked) void hGameLoaded()

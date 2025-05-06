@@ -6,6 +6,10 @@ namespace T6SDK::Drawing
 	{
 		typedef void func(void);
 	private:
+
+		float fadingX = 0.0f;
+		bool hoverSoundPlayed = false;
+
 		bool Hovered = false;
 		bool Pressed = false;
 		bool Clicked = false;
@@ -18,9 +22,29 @@ namespace T6SDK::Drawing
 		bool DrawRelative = false;
 		int GridColumn = -1;
 		int GridRow = -1;
+
+		
 	public:
+		bool cyclingFading = false;
+		float Size = 1.5f;
 		const char* Text{};
 		const char* ToolTip = "";
+
+		float* GetFadingColor(tColor color)
+		{
+			if (!cyclingFading)
+				return color;
+			float A = 0.5f;
+			float k = 1.6f;
+			float w = 0.8f;
+			float R = color[0];
+			float G = color[1];
+			float B = color[2];
+			float coef = (A * tanh(k * sin(w * fadingX)) / tanh(k)) + 0.5f;
+			float Alpha = 0.5f + (0.5f * coef);
+			return tColor{ R, G, B, Alpha };
+		}
+
 		/// <summary>
 		/// Just a clickable button.
 		/// </summary>
@@ -39,6 +63,16 @@ namespace T6SDK::Drawing
 			Function = function;
 			this->anchorPoint = anchorPoint;
 		}
+		UI_ClickableButton(const char* text, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, uintptr_t function, bool cyclingFading)
+		{
+			Text = text;
+			X = x;
+			Y = y;
+			DrawRelative = drawRelative;
+			Function = function;
+			this->anchorPoint = anchorPoint;
+			this->cyclingFading = cyclingFading;
+		}
 		/// <summary>
 		/// Just a clickable button.
 		/// </summary>
@@ -55,13 +89,25 @@ namespace T6SDK::Drawing
 			Function = function;
 			this->anchorPoint = anchorPoint;
 		}
+		UI_ClickableButton(const char* text, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, uintptr_t function, bool cyclingFading)
+		{
+			Text = text;
+			GridColumn = gridColumn;
+			GridRow = gridRow;
+			Function = function;
+			this->anchorPoint = anchorPoint;
+			this->cyclingFading = cyclingFading;
+		}
 		UI_ClickableButton()
 		{
 
 		}
 	public:
+
 		void Draw()
 		{
+			if (T6SDK::Input::InputLockedByTextBoxDialog)
+				return;
 			if (!IsEnabled)
 			{
 				Hovered = false;
@@ -70,20 +116,25 @@ namespace T6SDK::Drawing
 			}
 			bool successDraw = false;
 			if (DrawRelative)
-				successDraw = T6SDK::Drawing::DrawTextRelative(Text, X, Y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : Pressed ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
+				successDraw = T6SDK::Drawing::DrawTextRelative(Text, X, Y, Size, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : Pressed ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : GetFadingColor(T6SDK::Drawing::WHITECOLOR), anchorPoint, &btnRect);
 			else if (GridColumn != -1 && GridRow != -1)
 			{
 				vec2_t coords = T6SDK::Drawing::GetGridCellCoords(GridColumn, GridRow);
-				successDraw = T6SDK::Drawing::DrawTextAbsolute(Text, coords.x, coords.y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : Pressed ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
+				successDraw = T6SDK::Drawing::DrawTextAbsolute(Text, coords.x, coords.y, Size, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : Pressed ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : GetFadingColor(T6SDK::Drawing::WHITECOLOR), anchorPoint, &btnRect);
 			}
 			else
-				successDraw = T6SDK::Drawing::DrawTextAbsolute(Text, X, Y, 1.5f, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : Pressed ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : T6SDK::Drawing::WHITECOLOR, anchorPoint, &btnRect);
+				successDraw = T6SDK::Drawing::DrawTextAbsolute(Text, X, Y, Size, !IsEnabled ? T6SDK::Drawing::GRAYCOLOR : Pressed ? T6SDK::Drawing::ORANGECOLOR : Hovered ? T6SDK::Drawing::YELLOWCOLOR : GetFadingColor(T6SDK::Drawing::WHITECOLOR), anchorPoint, &btnRect);
 			if (successDraw && IsEnabled)
 			{
 				if (T6SDK::Input::MousePosX() > (float)btnRect.left && T6SDK::Input::MousePosX() < (float)btnRect.right && T6SDK::Input::MousePosY() > (float)btnRect.top && T6SDK::Input::MousePosY() < (float)btnRect.bottom)
 				{
 					//T6SDK::ConsoleLog::Log("Hovered");
 					Hovered = true;
+					if (hoverSoundPlayed == false)
+					{
+						T6SDK::InternalFunctions::PlaySound("uin_unlock_window");
+						hoverSoundPlayed = true;
+					}
 					if (T6SDK::Input::Keys::LMB.IsAnyPressState())
 					{
 						Pressed = true;
@@ -91,6 +142,7 @@ namespace T6SDK::Drawing
 						{
 							//T6SDK::ConsoleLog::Log("Clicked!");
 							Clicked = true;
+							T6SDK::InternalFunctions::PlaySound("uin_main_pause");
 							if (Function)
 							{
 								func* f = (func*)Function;
@@ -110,10 +162,14 @@ namespace T6SDK::Drawing
 				}
 				else
 				{
+					hoverSoundPlayed = false;
 					Hovered = false;
 					Pressed = false;
 					Clicked = false;
 				}
+				fadingX += 0.05f;
+				if (fadingX > 8.0f)
+					fadingX = 0.0f;
 			}
 		}
 		void Draw(bool isEnabled)
