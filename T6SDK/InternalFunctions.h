@@ -280,6 +280,17 @@ namespace T6SDK::Typedefs
 		T6SDK::Addresses::t6mpv43 + 0x3F1580, T6SDK::Addresses::t6mp + FILLIN,
 		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
 
+	//8B 4C 24 ? F3 0F 10 49 ? 0F 57 C0 0F 2E C8 9F F6 C4 ? 7A ? F3 0F 10 09 0F 2E C8 9F F6 C4 ? 7A ? F3 0F 10 49 ? 0F 57 0D ? ? ? ? 0F 2F C8 72 ? F3 0F 10 05 ? ? ? ? F3 0F 11 44 24 ? D9 44 24 ? C3 F3 0F 10 05 ? ? ? ? F3 0F 11 44 24 ? D9 44 24 ? C3 F3 0F 10 49 ? F3 0F 10 11 F3 0F 10 41 ? F3 0F 59 C9 F3 0F 59 D2 F3 0F 58 D1 F3 0F 51 CA 0F 5A C0 0F 5A C9 E8 ? ? ? ? F2 0F 5A C0
+	typedef float(__cdecl* vectosignedpitch_t)(vec3_t* v);
+	inline extern vectosignedpitch_t vectosignedpitch = (vectosignedpitch_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
+		T6SDK::Addresses::t6mpv43 + 0x9CFB0, T6SDK::Addresses::t6mp + FILLIN,
+		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+
+	//0F 57 C9 56 8B 74 24 ? F3 0F 10 46 ? 0F 2E C1 9F F6 C4 ? 7A ? F3 0F 10 16 0F 2E D1 9F F6 C4 ? 7A ? F3 0F 10 56
+	typedef vec3_t(__cdecl* vectoangles_t)(vec3_t* v, vec3_t* vec2);
+	inline extern vectoangles_t vectoangles = (vectoangles_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
+		T6SDK::Addresses::t6mpv43 + 0x3EE30, T6SDK::Addresses::t6mp + FILLIN,
+		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
 }
 namespace T6SDK
 {
@@ -646,7 +657,69 @@ namespace T6SDK
 				yaw += 360.0f;
 			return vec3_t(yaw, pitch, 0.0f);
 		}
+		static vec3_t vectoangles(vec3_t* vec, vec3_t* vec2)
+		{
+			return T6SDK::Typedefs::vectoangles(vec, vec2);
+		}
+		static float VecToSignedPitch(vec3_t* vec)
+		{
+			return T6SDK::Typedefs::vectosignedpitch(vec);
+		}
 
+		static void VecToAnglesCustom(const vec3_t* forward, vec3_t* angles) 
+		{
+			const float M_PI = 3.14159265358979323846f;
+			const float RAD2DEG = 180.0f / M_PI;
+			if (forward->y == 0.0f && forward->x == 0.0f) 
+			{
+				angles->x = (-forward->z < 0.0f) ? 270.0f : 90.0f; // Pitch
+				angles->y = 0.0f; // Yaw
+				angles->z = 0.0f;
+				return;
+			}
+
+			// Calculate yaw (around Y axis) using atan2(y, x)
+			float yaw = atan2f(forward->y, forward->x) * (180.0f / M_PI);
+			// Normalize yaw to [0°, 360°] range
+			if (yaw < 0.0f) 
+			{
+				yaw += 360.0f;
+			}
+
+			// Calculate pitch (around X axis) using atan2(z, sqrt(x^2+y^2))
+			float pitch = -atan2f(forward->z, sqrtf(forward->x * forward->x + forward->y * forward->y)) * (180.0f / M_PI);
+			// Normalize pitch to [0°, 360°] range
+			if (pitch < 0.0f) 
+			{
+				pitch += 360.0f;
+			}
+
+			// Store results
+			angles->x = pitch;
+			angles->y = yaw;
+			angles->z = 0.0f;  // Roll is calculated separately in AxisToAngles
+		}
+		static float VecToSignedPitchCustom(const vec3_t* forward) 
+		{
+			const float M_PI = 3.14159265358979323846f;
+			const float RAD2DEG = 180.0f / M_PI;
+			if (forward->y == 0.0f && forward->x == 0.0f) 
+			{
+				return (forward->z > 0.0f) ? 90.0f : -90.0f;
+			}
+			// Equivalent to BO2's -atan2(y,x) * (180/Ï) without bit manipulation
+			return -atan2f(forward->y, forward->x) * RAD2DEG;
+		}
+		static void AxisToAnglesCustom(Matrix33_s* axis, vec3_t* angles)
+		{
+			const float M_PI = 3.14159265358979323846f;
+			const float RAD2DEG = 180.0f / M_PI;
+			const float DEG2RAD = M_PI / 180.0f;
+			// Step 1: Get initial yaw and pitch from forward vector
+			VecToAnglesCustom(&axis->m[0], angles);
+			float roll = atan2(axis->m[1][2], axis->m[2][2]) * RAD2DEG;
+			angles->z = roll;
+		}
 		static bool CG_DObjGetWorldTagMatrix(cpose_t* pose, PVOID obj, unsigned int tagName, Matrix33_s* tagMat, vec3_t* origin)
 		{
 			return T6SDK::Typedefs::CG_DObjGetWorldTagMatrix(pose, obj, tagName, tagMat, origin);
