@@ -46,11 +46,11 @@ namespace T6SDK
 		}
 		if (result.empty())
 		{
-			//T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Decoded string is empty!");
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Decoded string is empty!");
 			return false;
 		}
-		//else
-		//	T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Decoded string: %s", result.c_str());
+		else
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Decoded string: %s", result.c_str());
 		decodedString = result;
 		return true;
 	}
@@ -351,7 +351,7 @@ namespace T6SDK
 
 	T6SDK::DemoBriefData T6SDK::DemoHandler::GetDemoBriefData(const char* demoPath)
 	{
-		bool suppressLogs = true;
+		bool suppressLogs = false;
 		T6SDK::DemoBriefData demoData{};
 
 		//Setting demo path

@@ -90,10 +90,6 @@ namespace T6SDK
 
     void HandleIngameKeyPressed(BYTE keyCode)
     {
-        if (!T6SDK::Theater::IsInTheater())
-            return;
-        //T6SDK::ConsoleLog::Log("Pressed!");
-        T6SDK::Events::InvokeByteParam(T6SDK::EventType::OnKeyPressed, keyCode);
         if (keyCode == 0xCD) //MouseWheel Up
         {
             T6SDK::Input::MouseWheelDelta = 1.0f;
@@ -106,6 +102,8 @@ namespace T6SDK
         }
         else
             T6SDK::Input::MouseWheelDelta = 0.0f;
+
+        T6SDK::Events::InvokeByteParam(T6SDK::EventType::OnKeyPressed, keyCode);
 
         if (keyCode == 0xC7)
             T6SDK::Events::Invoke(T6SDK::EventType::OnMouseLeftButtonClicked);

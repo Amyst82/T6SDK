@@ -291,6 +291,8 @@ namespace T6SDK::Typedefs
 	inline extern vectoangles_t vectoangles = (vectoangles_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
 		T6SDK::Addresses::t6mpv43 + 0x3EE30, T6SDK::Addresses::t6mp + FILLIN,
 		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+
+
 }
 namespace T6SDK
 {
@@ -1061,6 +1063,32 @@ namespace T6SDK
 
 			return true;
 		}
+		static std::string GetClipboardText() 
+		{
+			if (!OpenClipboard(nullptr)) {
+				return "";
+			}
+
+			HANDLE hData = GetClipboardData(CF_TEXT);
+			if (hData == nullptr) {
+				CloseClipboard();
+				return "";
+			}
+
+			char* pszText = static_cast<char*>(GlobalLock(hData));
+			if (pszText == nullptr) {
+				CloseClipboard();
+				return "";
+			}
+
+			std::string text(pszText);
+
+			GlobalUnlock(hData);
+			CloseClipboard();
+
+			return text;
+		}
+
 		static std::vector<char> readBytesSimple(const std::string& filename) 
 		{
 			// Open file in binary mode

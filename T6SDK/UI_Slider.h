@@ -37,6 +37,7 @@ namespace T6SDK::Drawing
 		float WIDTH = 210.0f;
 		float HEIGHT = 15.0f;
 		const char* Text{};
+		std::string StringText{};
 	public:
 		float* value = &internalValue;
 		float Min = 0.0f;
@@ -88,6 +89,22 @@ namespace T6SDK::Drawing
 			Text = text;
 			DrawRelative = drawRelative;
 		}
+		UI_Slider(std::string& text, float* _value, float _defaultValue, float min, float max, float x, float y, bool drawRelative, tColor color, T6SDK::AnchorPoint anchorPoint, uintptr_t function)
+		{
+			X = x;
+			Y = y;
+			Function = function;
+			this->anchorPoint = anchorPoint;
+			if (value)
+				value = _value;
+			Min = min;
+			Max = max;
+			clr = color;
+			internalDefaultValue = _defaultValue;
+			defaultValue = GetCoordByValue(_defaultValue, X, Y, WIDTH, min, max);
+			StringText = text;
+			DrawRelative = drawRelative;
+		}
 		/// <summary>
 		/// Slider.
 		/// </summary>
@@ -113,6 +130,21 @@ namespace T6SDK::Drawing
 			internalDefaultValue = _defaultValue;
 			defaultValue = GetCoordByValue(_defaultValue, X, Y, WIDTH, min, max);
 			Text = text;
+			this->GridColumn = GridColumn;
+			this->GridRow = GridRow;
+		}
+		UI_Slider(std::string& text, float* _value, float _defaultValue, float min, float max, int GridColumn, int GridRow, tColor color, T6SDK::AnchorPoint anchorPoint, uintptr_t function)
+		{
+			Function = function;
+			this->anchorPoint = anchorPoint;
+			if (value)
+				value = _value;
+			Min = min;
+			Max = max;
+			clr = color;
+			internalDefaultValue = _defaultValue;
+			defaultValue = GetCoordByValue(_defaultValue, X, Y, WIDTH, min, max);
+			StringText = text;
 			this->GridColumn = GridColumn;
 			this->GridRow = GridRow;
 		}
@@ -162,8 +194,17 @@ namespace T6SDK::Drawing
 					color = &T6SDK::Drawing::WHITECOLOR;
 
 				//Draw the slider text
-				char buffer[100];
-				sprintf_s(buffer, 100, "%s: %.3f", Text, *value);
+
+				char buffer[250];
+				if (StringText.empty() == false)
+				{
+					sprintf_s(buffer, 250, "%s: %.3f", StringText.c_str(), *value);
+				}
+				else
+				{
+					sprintf_s(buffer, 250, "%s: %.3f", Text, *value);
+				}
+				
 				if (T6SDK::Drawing::DrawTextAbsolute(buffer, (float)baseRect.left, (float)baseRect.top, 1.0f, *color, T6SDK::AnchorPoint::TopLeft, &textRect))
 				{
 					if (IsEnabled && T6SDK::Input::MousePosX() > (float)textRect.left && T6SDK::Input::MousePosX() < (float)textRect.right && T6SDK::Input::MousePosY() > (float)textRect.top && T6SDK::Input::MousePosY() < (float)textRect.bottom)

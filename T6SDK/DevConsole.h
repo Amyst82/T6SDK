@@ -138,6 +138,7 @@ namespace T6SDK
 						CaretIndex = inputBuffer.length();
 					}
 				}
+				
 				if (key == T6SDK::Input::Keys::ESCAPE.KeyCode) // Escape
 				{
 					CloseConsole();
@@ -170,6 +171,29 @@ namespace T6SDK
 				{
 					if (inputBuffer.length() >= 150)
 						return;
+					if (keyPointer->KeyChar == 'c') //for copy
+					{
+						if (T6SDK::Input::Keys::CTRL.Hold())
+						{
+							if (inputBuffer.empty())
+								return;
+							T6SDK::InternalFunctions::SetClipboardText(inputBuffer);
+							T6SDK::MAIN::UI_ShowNotification("DEVCONSOLE", "^2Copied to clipboard", 200);
+							CloseConsole();
+							return;
+						}
+					}
+					if (keyPointer->KeyChar == 'v') //for pasting
+					{
+						if (T6SDK::Input::Keys::CTRL.Hold())
+						{
+							if (T6SDK::InternalFunctions::GetClipboardText().empty())
+								return;
+							inputBuffer = T6SDK::InternalFunctions::GetClipboardText();
+							CaretIndex = inputBuffer.length();
+							return;
+						}
+					}
 					//If uppercase
 					if (T6SDK::Input::Keys::SHIFT.IsAnyPressState())
 						inputBuffer += std::toupper(keyPointer->UpperCasedKeyChar);

@@ -16,9 +16,20 @@ union DvarLimits {
 	} integer;
 	struct
 	{
+		long min;
+		long max;
+	} integer64;
+	struct
+	{
 		float min;
 		float max;
-	} decimal;
+	} value;
+	struct
+	{
+		float min;
+		float max;
+	} vector;
+
 };
 
 union DvarValue {
@@ -50,19 +61,18 @@ typedef enum DvarType : int
 
 typedef struct dvar_s
 {
-	char* dvarName;
-	char* dvarDesc;
-	int hash;
-	int flags;
-	DvarType type;
-	bool modified;
+	char* dvarName; //0x00
+	char* dvarDesc; //0x04
+	int hash; //0x08
+	int flags; //0x0C
+	DvarType type; //0x10
+	bool modified; //0x14
 	DvarValue current;
 	DvarValue latched;
 	DvarValue reset;
-	DvarValue saved;
 	DvarLimits domain;
 	dvar_s* next;
-} dvar_s;
+} dvar_s; //Size: 0x60
 
 typedef struct cmd_function_s
 {

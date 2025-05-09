@@ -108,6 +108,28 @@ namespace T6SDK::Drawing
 				float textRectWidth = (float)textRect.right - (float)textRect.left;
 				if (textRectWidth > (float)textBoxRect.right - (float)textBoxRect.left-10.0f)
 					return;
+				if (keyPointer->KeyChar == 'c') //for copy
+				{
+					if (T6SDK::Input::Keys::CTRL.Hold())
+					{
+						if (Text.empty())
+							return;
+						T6SDK::InternalFunctions::SetClipboardText(Text);
+						T6SDK::MAIN::UI_ShowNotification("DIALOG", "^2Copied to clipboard", 200);
+						return;
+					}
+				}
+				if (keyPointer->KeyChar == 'v') //for pasting
+				{
+					if (T6SDK::Input::Keys::CTRL.Hold())
+					{
+						if (T6SDK::InternalFunctions::GetClipboardText().empty())
+							return;
+						Text = T6SDK::InternalFunctions::GetClipboardText();
+						CaretIndex = Text.length();
+						return;
+					}
+				}
 				//If uppercase
 				if (T6SDK::Input::Keys::SHIFT.IsAnyPressState())
 					Text += std::toupper(keyPointer->UpperCasedKeyChar);

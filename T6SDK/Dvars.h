@@ -57,6 +57,12 @@ namespace T6SDK::Typedefs
 		T6SDK::Addresses::t6mpv43 + 0x1B3070, T6SDK::Addresses::t6mp + 0x2B4B20, 
 		T6SDK::Addresses::t6zmv41 + 0x0DC2A0, T6SDK::Addresses::t6zm + 0x030BF0).GetValue());
 
+	//8B 44 24 ? 56 8B 74 24 ? 6A ? E8
+	typedef void(__cdecl* Dvar_SetString_t)(dvar_s* dvarName, const char* valueList);
+	inline extern Dvar_SetString_t Dvar_SetString = (Dvar_SetString_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
+		T6SDK::Addresses::t6mpv43 + 0x14AEF0, T6SDK::Addresses::t6mp + FILLIN,
+		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+
 }
 namespace T6SDK
 {
@@ -144,7 +150,7 @@ namespace T6SDK
 
 		static void SetString(dvar_s* _dvar, const char* value)
 		{
-			_dvar->current.string = value;
+			T6SDK::Typedefs::Dvar_SetString(_dvar, value);
 		}
 
 		static const char* GetString(dvar_s* _dvar)
