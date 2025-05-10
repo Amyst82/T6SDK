@@ -4,6 +4,7 @@ namespace T6SDK::Drawing
 {
 	class UI_TextBoxDialog
 	{
+		typedef void func(std::string&);
 	private:
 		//okbutton
 		bool OkHoverSoundPlayed = false;
@@ -215,6 +216,11 @@ namespace T6SDK::Drawing
 							T6SDK::InternalFunctions::PlaySound("uin_main_pause");
 							if (OkFunction)
 								OkFunction(Text);
+							if (Function)
+							{
+								func* f = (func*)Function;
+								f(Text);
+							}
 							isShown = false;
 							CaretIndex = 0;
 							T6SDK::Input::InputLockedByTextBoxDialog = false;
@@ -280,6 +286,15 @@ namespace T6SDK::Drawing
 			Text = "";
 			this->isShown = true;
 			this->OkFunction = OkFunc;
+			this->Function = 0;
+			T6SDK::Input::InputLockedByTextBoxDialog = true;
+		}
+		void Show(uintptr_t OkFunc)
+		{
+			Text = "";
+			this->isShown = true;
+			this->OkFunction = 0;
+			this->Function = OkFunc;
 			T6SDK::Input::InputLockedByTextBoxDialog = true;
 		}
 	};

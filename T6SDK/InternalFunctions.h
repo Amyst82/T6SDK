@@ -6,6 +6,7 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <shlobj.h>
 #pragma comment(lib, "ole32.lib") // Link against Ole32 library
 #define FILLIN 0x00
 namespace T6SDK::Typedefs
@@ -1140,6 +1141,41 @@ namespace T6SDK
 			std::stringstream oss{};
 			oss << std::put_time(std::localtime(&unixTime), "%A %d %B %Y %H:%M");
 			return oss.str();
+		}
+
+		static void revealFileInExplorer(const std::wstring& filePath) 
+		{
+			// Extract directory path and filename
+			size_t lastSlash = filePath.find_last_of(L"\\/");
+			if (lastSlash == std::wstring::npos) {
+				std::wcerr << L"Invalid file path: " << filePath << std::endl;
+				return;
+			}
+
+			std::wstring directory = filePath.substr(0, lastSlash);
+			std::wstring filename = filePath.substr(lastSlash + 1);
+
+			// Convert paths to PIDLs (Pointer to ID List)
+			PIDLIST_ABSOLUTE pidlDirectory = ILCreateFromPathW(directory.c_str());
+			if (!pidlDirectory) 
+			{
+				std::wcerr << L"Failed to get PIDL for directory: " << directory << std::endl;
+				return;
+			}
+
+			// Create a PIDL for the file (optional - can be NULL if you just want to open the folder)
+			PIDLIST_ABSOLUTE pidlFile = ILCreateFromPathW(filePath.c_str());
+
+			// Open Explorer and select the file
+			HRESULT hr = SHOpenFolderAndSelectItems(pidlDirectory, pidlFile ? 1 : 0, pidlFile ? (LPCITEMIDLIST*)&pidlFile : NULL, 0);
+
+			// Clean up
+			ILFree(pidlDirectory);
+			if (pidlFile) 
+				ILFree(pidlFile);
+
+			if (FAILED(hr)) 
+				std::wcerr << L"SHOpenFolderAndSelectItems failed for: " << filePath << std::endl;
 		}
 		static std::vector<std::filesystem::path> find_files_by_extension(const std::filesystem::path& root, const std::string& ext)
 		{

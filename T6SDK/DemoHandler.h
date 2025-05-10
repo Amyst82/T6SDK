@@ -137,27 +137,29 @@ namespace T6SDK
             MpMapsStrngs("mp_pod", "Pod", "loadscreen_mp_pod"),
             MpMapsStrngs("mp_takeoff", "Takeoff", "loadscreen_mp_takeoff"),
         };
-        inline static const std::map<MP_DemoGameMode, GameModeStrings> MpGameModes = { 
-            {MP_DemoGameMode::tdm, GameModeStrings("tdm", "Team Deathmatch")}, 
-            {MP_DemoGameMode::dm, GameModeStrings("dm", "Free For All")},
-			{MP_DemoGameMode::dom, GameModeStrings("dom", "Domination")},
-			{MP_DemoGameMode::dem, GameModeStrings("dem", "Demolition")},
-			{MP_DemoGameMode::conf, GameModeStrings("conf", "Kill Confirmed")},
-			{MP_DemoGameMode::koth, GameModeStrings("koth", "Hardpoint")},
-			{MP_DemoGameMode::hq, GameModeStrings("hq", "Headquarters")},
-			{MP_DemoGameMode::ctf, GameModeStrings("ctf", "Capture the flag")},
-			{MP_DemoGameMode::sd, GameModeStrings("sd", "Search and Destroy")},
-			{MP_DemoGameMode::oneflag, GameModeStrings("oneflag", "One Flag CTF")},
-			{MP_DemoGameMode::gun, GameModeStrings("gun", "Gun Game")},
-			{MP_DemoGameMode::oic, GameModeStrings("oic", "One in the Chamber")},
-			{MP_DemoGameMode::shrp, GameModeStrings("shrp", "Sharpshooter")},
-			{MP_DemoGameMode::sas, GameModeStrings("sas", "Sticks and Stones")}
+        inline static const std::vector<GameModeStrings> MpGameModes = { 
+            GameModeStrings("tdm", "Team Deathmatch"), 
+            GameModeStrings("dm", "Free For All"),
+			GameModeStrings("dom", "Domination"),
+			GameModeStrings("dem", "Demolition"),
+			GameModeStrings("conf", "Kill Confirmed"),
+			GameModeStrings("koth", "Hardpoint"),
+			GameModeStrings("hq", "Headquarters"),
+			GameModeStrings("ctf", "Capture the flag"),
+			GameModeStrings("sd", "Search and Destroy"),
+			GameModeStrings("oneflag", "One Flag CTF"),
+			GameModeStrings("gun", "Gun Game"),
+			GameModeStrings("oic", "One in the Chamber"),
+			GameModeStrings("shrp", "Sharpshooter"),
+			GameModeStrings("sas", "Sticks and Stones")
         };
 		static bool ReadMapName(vector<char> tagsFileData, std::string& mapName, std::string& friendlyName, std::string& uiSelectImage, bool supressConsoleLog);
+        
 		static bool ReadDemoGameMode(vector<char> tagsFileData, std::string& gameMode, std::string& friendlyName, bool supressConsoleLog);
 		static bool DemoTagsHasMetadata(vector<char> tagsFileData, std::string& customMetaData, bool supressConsoleLog);
 		static bool ReadDemoAuthor(vector<char> thumbnailFileData, std::string& author, bool supressConsoleLog);
 		static bool ReadDemoName(vector<char> thumbnailFileData, std::string& demoName, bool supressConsoleLog);
+        static bool SetDemoName(std::string& demoPath, std::string& name);
 		static bool ReadDemoDuration(vector<char> thumbnailFileData, uint32_t* duration, bool supressConsoleLog);
 		static bool ReadDemoCreateDate(std::string path, vector<char> thumbnailFileData, int* createDate, bool supressConsoleLog);
         static DemoBriefData GetDemoBriefData(const char* demoPath);
