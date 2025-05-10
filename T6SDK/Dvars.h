@@ -13,7 +13,7 @@ namespace T6SDK::Typedefs
 	typedef dvar_s* (__cdecl* Dvar_RegisterBool_t)(const char* dvarName, bool value, unsigned __int16 flags, const char* description);
 	inline extern Dvar_RegisterBool_t Dvar_RegisterBool = (Dvar_RegisterBool_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
 		T6SDK::Addresses::t6mpv43 + 0x0E0170, T6SDK::Addresses::t6mp + 0x1CADF0,
-		T6SDK::Addresses::t6zmv41 + 0x2FBCC0, T6SDK::Addresses::t6zm + 0x2A53F0).GetValue());
+		T6SDK::Addresses::t6zmv41 + 0x1FBCC0, T6SDK::Addresses::t6zm + 0x2A53F0).GetValue());
 
 	//83 EC ? F3 0F 10 44 24 ? 8B 44 24 ? 8B 4C 24 ? 57
 	typedef dvar_s* (__cdecl* Dvar_RegisterFloat_t)(const char* dvarName, float value, float min, float max, unsigned __int16 flags, const char* description);
@@ -60,8 +60,8 @@ namespace T6SDK::Typedefs
 	//8B 44 24 ? 56 8B 74 24 ? 6A ? E8
 	typedef void(__cdecl* Dvar_SetString_t)(dvar_s* dvarName, const char* valueList);
 	inline extern Dvar_SetString_t Dvar_SetString = (Dvar_SetString_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x14AEF0, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x14AEF0, T6SDK::Addresses::t6mp + 0x7F0A0,
+		T6SDK::Addresses::t6zmv41 + 0xEC3C0, T6SDK::Addresses::t6zm + 0x1E7C80).GetValue());
 
 }
 namespace T6SDK

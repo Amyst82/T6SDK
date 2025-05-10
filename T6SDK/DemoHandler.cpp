@@ -535,7 +535,8 @@ namespace T6SDK
 		{
 			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
-			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
+			if (T6SDK::Addresses::DemoThumbnailAddress2 != 0)
+				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
 			vector<char>().swap(thumbnailData);
 		}
@@ -597,7 +598,8 @@ namespace T6SDK
 			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Thumbnail size: %i", thumbnailData.size());
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
-			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
+			if(T6SDK::Addresses::DemoThumbnailAddress2 != 0)
+				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
 			std::string authorString{};
 			std::string demoNameString{};
@@ -672,7 +674,8 @@ namespace T6SDK
 			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Thumbnail size: %i", thumbnailData.size());
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
-			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
+			if (T6SDK::Addresses::DemoThumbnailAddress2 != 0)
+				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
 			std::string authorString{};
 			std::string demoNameString{};
@@ -768,7 +771,8 @@ namespace T6SDK
 			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Thumbnail size: %i", thumbnailData.size());
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
-			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
+			if (T6SDK::Addresses::DemoThumbnailAddress2 != 0)
+				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
 			std::string authorString{};
 			std::string demoNameString{};

@@ -11,9 +11,10 @@ namespace T6SDK::Dvars
     {
     public:
         std::unordered_map<char, DvarTrieNode*> children;
-        bool isEndOfWord;
-        dvar_s* dvar;
-        DvarTrieNode() : isEndOfWord(false) {}
+        bool isEndOfWord = false;
+        dvar_s* dvar{};
+
+        DvarTrieNode() : isEndOfWord(false), dvar(nullptr) {}
     };
 
     class DvarTrie 
@@ -38,6 +39,7 @@ namespace T6SDK::Dvars
         }
         void insert(dvar_s* dvar)
         {
+            
             DvarTrieNode* current = root;
             std::string word = dvar->dvarName;
             std::transform(word.begin(), word.end(), word.begin(), ::tolower);

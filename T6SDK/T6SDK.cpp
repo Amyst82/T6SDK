@@ -969,34 +969,26 @@ namespace T6SDK
         T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.Hook(UnlockGunAngles);
         T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.Hook(UnlockCameraRoll);
         T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
-
         T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.SetOutFunc((DWORD)&OnAxisToAngles);
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Hooking: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
         T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.Hook(OnAxisToAngles);
-
         T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.Hook(OnDemoPlaybackInited);
         T6SDK::Addresses::HookAddresses::h_SunInited.Hook(OnSunInited);
         T6SDK::Addresses::HookAddresses::h_CG_Item.Hook(OnCG_Item);
         T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.Hook(OnCG_ProcessEntity);
         T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.Hook(OnCGCalcEntityLerpPositions);
-
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Hooks set!");
         //Detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.Hook(T6SDK::Theater::DetouredSwitchCamera);
         T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.Hook(DetouredSafeStringTranslate);
-
         T6SDK::Events::RegisterListener(T6SDK::EventType::OnSafeStringTranslated, (uintptr_t)&T6SDK::Theater::HandleTheaterSafeStringTranslate);
-
         T6SDK::Addresses::DetoursAddresses::DetouredGetNextFreeCameraModeHook.Hook(T6SDK::Theater::DetouredGetNextFreeCameraMode);
         T6SDK::Addresses::DetoursAddresses::DetouredGetFreeCamModeNameHook.Hook(T6SDK::Theater::DetouredGetFreeCamModeName);
-
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Detours set!");
         //Patches
-
         T6SDK::Addresses::Patches::AllowRollPatch.Patch();
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch.Patch();
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch2.Patch();
-
         T6SDK::Addresses::HookAddresses::h_EndFrameDrawn.Hook(EndFrameDrawn);
         T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.Hook(Com_GameMode_SetMode);
         T6SDK::Addresses::Patches::DisableDvarsLimitsPatch.Patch();

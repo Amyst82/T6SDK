@@ -29,20 +29,16 @@ namespace T6SDK::Addresses
             T6SDK::Addresses::t6mpv43 + 0x58EE55, T6SDK::Addresses::t6mp + 0x58EE45,
             T6SDK::Addresses::t6zmv41 + 0x58B715, T6SDK::Addresses::t6zm + 0x58BD15).GetValue(), 7);
 
-        //8B 74 24 ? 55 57 8B C6
+        //8B 74 24 ? 55 57 8B C6 - what is this?
         //51 52 50 33 FF
         inline static T6SDK::MemoryHook h_Com_EventLoopKeyEvent(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x21E8AB, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+            T6SDK::Addresses::t6mpv43 + 0x21E8AB, T6SDK::Addresses::t6mp + 0x1F376B,
+            T6SDK::Addresses::t6zmv41 + 0x3801B, T6SDK::Addresses::t6zm + 0x173BFB).GetValue(), 6);
 
-        inline static T6SDK::MemoryHook h_Com_EventLoopCharEvent(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x21E8AB, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
-
-        //83 C4 10 56 55 57 E8 ? ? ? ? 8B 6C 24 ? 83 C4 ? 81 FD
+        //53 8B 5C 24 ? 56 8B 74 24 ? 83 BE ? ? ? ? ? 74
         inline static T6SDK::MemoryHook h_CG_DrawActiveFrame(T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x067DE0, T6SDK::Addresses::t6mp + 0x15D0C0, // T6SDK::Addresses::t6mpv43 + 0x11DC80,
-            T6SDK::Addresses::t6zmv41 + 0x19C1B9, T6SDK::Addresses::t6zm + 0x1420F9).GetValue(), 5);
+            T6SDK::Addresses::t6zmv41 + 0x1211B0, T6SDK::Addresses::t6zm + 0x1420F9).GetValue(), 5);
 
         //05 ? ? ? ? 50 E8 ? ? ? ? 6A ? E8 ? ? ? ? 6A 00
         inline static T6SDK::MemoryHook h_Demo_AddDollyCamMarker(T6SDK::CrossVersion::CrossValue<DWORD>(
@@ -77,8 +73,8 @@ namespace T6SDK::Addresses
 
         //68 ? ? ? ? 68 ? ? ? ? E8 ? ? ? ? 83 C4 ? 03 C3 A3 ? ? ? ? EB
         inline static T6SDK::MemoryHook h_GameLoaded(T6SDK::CrossVersion::CrossValue<DWORD>(
-			T6SDK::Addresses::t6mpv43 + 0x104BCA, T6SDK::Addresses::t6mp + FILLIN,
-			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
+			T6SDK::Addresses::t6mpv43 + 0x104BCA, T6SDK::Addresses::t6mp + 0x185F3A,
+			T6SDK::Addresses::t6zmv41 + 0x11AEAA, T6SDK::Addresses::t6zm + 0x5147A).GetValue(), 5);
 
         inline static T6SDK::MemoryHook h_UnlockCameraRollHook(T6SDK::CrossVersion::CrossValue<DWORD>(
 			T6SDK::Addresses::t6mpv43 + 0x143276, T6SDK::Addresses::t6mp + 0x1246C6,
@@ -86,44 +82,48 @@ namespace T6SDK::Addresses
 
         //89 8F 8C ? ? ? 8B 86 ? ? ? ? 50
         inline static T6SDK::MemoryHook h_PovCamoWritingHook(T6SDK::CrossVersion::CrossValue<DWORD>(
-			T6SDK::Addresses::t6mpv43 + 0x5406DD, T6SDK::Addresses::t6mp + FILLIN,
-			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+			T6SDK::Addresses::t6mpv43 + 0x5406DD, T6SDK::Addresses::t6mp + 0x54089D,
+			T6SDK::Addresses::t6zmv41 + 0x53D66D, T6SDK::Addresses::t6zm + 0x53D8DD).GetValue(), 6);
 
         //B9 3E 00 00 00 F3 A5 E8 ? ? ? ? 83 8D
         inline static T6SDK::MemoryHook h_CamoChangingCinePatch(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x3075C3, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
+            T6SDK::Addresses::t6mpv43 + 0x3075C3, T6SDK::Addresses::t6mp + 0x249733,
+            T6SDK::Addresses::t6zmv41 + 0x142733, T6SDK::Addresses::t6zm + 0x3E443).GetValue(), 5);
 
+        //F3 0F 11 44 24 ? F3 0F 10 47 ? F3 0F 11 44 24 ? F3 0F 10 47 ? F3 0F 11 44 24 ? F3 0F 10 46 ? 0F 57 C3 -> movss dword ptr [esi+ ^HERE^ 8], xmm0
         inline static T6SDK::MemoryHook h_AxisToAnglesHook(T6SDK::CrossVersion::CrossValue<DWORD>(
-			T6SDK::Addresses::t6mpv43 + 0x1A5FC9, T6SDK::Addresses::t6mp + FILLIN,
-			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
+			T6SDK::Addresses::t6mpv43 + 0x1A5FC9, T6SDK::Addresses::t6mp + 0x1F4719,
+			T6SDK::Addresses::t6zmv41 + 0x2943E9, T6SDK::Addresses::t6zm + 0x187459).GetValue(), 5);
 
+        //E8 ? ? ? ? 83 C4 ? A1 ? ? ? ? 50 E8 ? ? ? ? 83 C4 ? 85 C0 75 ? 84 DB the follwing call func
         inline static T6SDK::MemoryHook h_Com_GameMode_SetMode(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x1B9C73, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 7);
+            T6SDK::Addresses::t6mpv43 + 0x1B9C73, T6SDK::Addresses::t6mp + 0x2A53,
+            T6SDK::Addresses::t6zmv41 + 0x2D9DB3, T6SDK::Addresses::t6zm + 0x1940A3).GetValue(), 7);
 
+        //F3 0F 11 80 ? ? ? ? E8 ? ? ? ? C6 05
         inline static T6SDK::MemoryHook h_InitDemoPlaybackData(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x1AE42A, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 8);
+            T6SDK::Addresses::t6mpv43 + 0x1AE42A, T6SDK::Addresses::t6mp + 0x239C1A,
+            T6SDK::Addresses::t6zmv41 + 0x243C4A, T6SDK::Addresses::t6zm + 0x1E80A).GetValue(), 8);
 
+        //8B 82 ? ? ? ? 6A ? A3 ? ? ? ? E8 ? ? ? ? 83 C4 ? EB ? 50
         inline static T6SDK::MemoryHook h_SunInited(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x19D1DF, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+            T6SDK::Addresses::t6mpv43 + 0x19D1DF, T6SDK::Addresses::t6mp + 0x296BDF,
+            T6SDK::Addresses::t6zmv41 + 0x27686F, T6SDK::Addresses::t6zm + 0x31B2F).GetValue(), 6);
 
         //8B 86 ? ? ? ? 8D 4C 24 ? 51 8D 54 24 ? 52 57
         inline static T6SDK::MemoryHook h_CG_Item(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x3A20B0, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 6);
+            T6SDK::Addresses::t6mpv43 + 0x3A20B0, T6SDK::Addresses::t6mp + 0x3A1420,
+            T6SDK::Addresses::t6zmv41 + 0x3A0AF0, T6SDK::Addresses::t6zm + 0x39F700).GetValue(), 6);
 
-        //0F B6 4E ? 3B C1 74 ? 56 53
+        //83 BE ? ? ? ? ? 74 ? 56 53 E8 ? ? ? ? 83 C4 ? 8D 86 //TODO REDO t6mp, t6zm
         inline static T6SDK::MemoryHook h_CG_ProcessEntity(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x67DEA, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 7);
+            T6SDK::Addresses::t6mpv43 + 0x67DEA, T6SDK::Addresses::t6mp + 0x18779A,
+            T6SDK::Addresses::t6zmv41 + 0x1211BA, T6SDK::Addresses::t6zm + 0xCD4EA).GetValue(), 7);
 
-        //0F B6 4E ? 3B C1 74 ? 56 53
+        //E8 ? ? ? ? 57 E8 ? ? ? ? 83 C4 ? 84 C0 74 ? 53 -> following [pop esi]
         inline static T6SDK::MemoryHook h_CG_CalcEntityLerpPositions(T6SDK::CrossVersion::CrossValue<DWORD>(
-            T6SDK::Addresses::t6mpv43 + 0x2B9B58, T6SDK::Addresses::t6mp + FILLIN,
-            T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), 5);
+            T6SDK::Addresses::t6mpv43 + 0x2B9B58, T6SDK::Addresses::t6mp + 0x69AF8,
+            T6SDK::Addresses::t6zmv41 + 0x2A37D8, T6SDK::Addresses::t6zm + 0x143C28).GetValue(), 5);
     }
     namespace DetoursAddresses
     {
@@ -150,7 +150,7 @@ namespace T6SDK::Addresses
         //E8 ? ? ? ? 83 E8 ? 74 ? 48 74 ? 48 74
         inline static T6SDK::CDetourHook DetouredGetFreeCamModeNameHook("Demo_GetFreeCamModeName", (void*)T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x28E680, T6SDK::Addresses::t6mp + 0x0C5E30,
-            T6SDK::Addresses::t6zmv41 + 0x281C50, T6SDK::Addresses::t6zm + 0x0D6770).GetValue());
+            T6SDK::Addresses::t6zmv41 + 0x181C50, T6SDK::Addresses::t6zm + 0x0D6770).GetValue());
     }
     namespace Patches
     {
@@ -226,13 +226,13 @@ namespace T6SDK::Addresses
 
         //E8 ? ? ? ? 83 C4 ? 5F 5E 83 C4 ? C3 53 55 56
         inline static T6SDK::MemoryPatch DisableClipRecordingPatch(T6SDK::CrossVersion::CrossValue<DWORD>(
-			T6SDK::Addresses::t6mpv43 + 0x1F3F93, T6SDK::Addresses::t6mp + FILLIN,
-			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90});
+			T6SDK::Addresses::t6mpv43 + 0x1F3F93, T6SDK::Addresses::t6mp + 0x23B5A3,
+			T6SDK::Addresses::t6zmv41 + 0x1B3463, T6SDK::Addresses::t6zm + 0x2D5AF3).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90});
 
         //0F 84 ? ? ? ? E8 ? ? ? ? 84 C0 0F 85 ? ? ? ? E8 ? ? ? ? 84 C0 75 ? 53
         inline static T6SDK::MemoryPatch JumpToDollyCamMarkerPatch(T6SDK::CrossVersion::CrossValue<DWORD>(
-			T6SDK::Addresses::t6mpv43 + 0x16A42D, T6SDK::Addresses::t6mp + FILLIN,
-			T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
+			T6SDK::Addresses::t6mpv43 + 0x16A42D, T6SDK::Addresses::t6mp + 0x1F05CD,
+			T6SDK::Addresses::t6zmv41 + 0x22939D, T6SDK::Addresses::t6zm + 0x14D91D).GetValue(), { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 });
 
         inline static T6SDK::MemoryPatch InitialTickSTOP(T6SDK::CrossVersion::CrossValue<DWORD>(
             T6SDK::Addresses::t6mpv43 + 0x16C2D1, T6SDK::Addresses::t6mp + 0x14F521, 
@@ -259,9 +259,11 @@ namespace T6SDK::Addresses
     }
 #pragma region Addresses
     inline static cg_t* cg = (cg_t*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2E048C80, T6SDK::Addresses::t6mp + 0x2E048C80, T6SDK::Addresses::t6zmv41 + 0x2E048C80, T6SDK::Addresses::t6zm + 0x2E048C80).GetValue();
-	inline static DWORD PlayerStates = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2CFE400, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
-    inline static DWORD dvarPool = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x261FC48, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
-    inline static int* g_dvarCount = (int*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x0267FC4C, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
+    //05 ? ? ? ? 50 56 E8 ? ? ? ? 83 C4 ? 5E 5B
+    inline static DWORD PlayerStates = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2CFE400, T6SDK::Addresses::t6mp + 0x2D1F400, T6SDK::Addresses::t6zmv41 + 0x2CCE480, T6SDK::Addresses::t6zm + 0x2CF4B00).GetValue();
+    //Sig is too fucking long. Find with "Can't create dvar '%s': %i dvars already exist" in IDA.
+    inline static DWORD dvarPool = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x261FC48, T6SDK::Addresses::t6mp + 0x261FC48, T6SDK::Addresses::t6zmv41 + 0x25EFF48, T6SDK::Addresses::t6zm + 0x25F5548).GetValue();
+    inline static int* g_dvarCount = (int*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x0267FC4C, T6SDK::Addresses::t6mp + 0x2267FC4C, T6SDK::Addresses::t6zmv41 + 0x264FF4C, T6SDK::Addresses::t6zm + 0x265554C).GetValue();
     
     inline static T6SDK::MemoryAddress<demoPlayback*> DemoPlayback(T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2D83A00, T6SDK::Addresses::t6mp + 0x2DA4A00,
         T6SDK::Addresses::t6zmv41 + 0x2D53A80, T6SDK::Addresses::t6zm + 0x2D7A100).GetValue());
@@ -270,8 +272,8 @@ namespace T6SDK::Addresses
 
     inline static T6SDK::MemoryAddress<bool> IsDemoPaused(T6SDK::Addresses::t6mpv43 + 0x264C960, T6SDK::Addresses::t6mp + 0x264C960, T6SDK::Addresses::t6zmv41 + 0x261D140, T6SDK::Addresses::t6zm + 0x2622740);
     inline static T6SDK::MemoryAddress<UiContext_t> UiContext(T6SDK::Addresses::t6mpv43 + 0x2556228, T6SDK::Addresses::t6mp + 0x2556228, T6SDK::Addresses::t6zmv41 + 0x2526558, T6SDK::Addresses::t6zm + 0x252BB58);
-
-    inline static T6SDK::MemoryAddress<int> Tick(T6SDK::Addresses::t6mpv43 + 0xDC7EE0, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
+    //2B 15 ? ? ? ? 33 F6
+    inline static T6SDK::MemoryAddress<int> Tick(T6SDK::Addresses::t6mpv43 + 0xDC7EE0, T6SDK::Addresses::t6mp + 0xDC7EE0, T6SDK::Addresses::t6zmv41 + 0xD9CCF0, T6SDK::Addresses::t6zm + 0xD9DD70);
     
     static MemoryAddress<int> InitialTick(t6mpv43 + 0xDC7D74, t6mp + 0xDC7D74, t6zmv41 + 0xD9CB84, t6zm + 0xD9DC04, { 0x2AA4 }); //Use for go to first marker feature //8B 87 A4 2A 00 00 2B 87 B0 2A 00 00 5F 5E 83 E8 05 5D
 
@@ -302,24 +304,29 @@ namespace T6SDK::Addresses
     inline static T6SDK::MemoryAddress<float> Demo_timescale(t6mpv43 + 0x2162B04, t6mp + 0x2162B04, t6zmv41 + 0x2134684, t6zm + 0x2138A04); //float value of demo timescale
     inline static T6SDK::MemoryAddress<float> Demo_timescale_step(t6mpv43 + 0x85E7C8, t6mp + 0x85D35C, t6zmv41 + 0x8348E4, t6zm + 0x7EA744); //float value of demo timescale step //0.200000003
     inline static T6SDK::MemoryAddress<bool> PlaybackInitedFlag(T6SDK::Addresses::t6mpv43 + 0x2D83A04, T6SDK::Addresses::t6mp + 0x2DA4A04, T6SDK::Addresses::t6zmv41 + 0x2D53A84, T6SDK::Addresses::t6zm + 0x2D7A104);
-
-    inline static T6SDK::MemoryAddress<int> CurrentKeyCatcher(t6mpv43 + 0xDC7844, t6mp + FILLIN, t6zmv41 + FILLIN, t6zm + FILLIN);
+    //F6 05 ? ? ? ? ? 74 ? 56
+    inline static T6SDK::MemoryAddress<int> CurrentKeyCatcher(t6mpv43 + 0xDC7844, t6mp + 0xDC7844, t6zmv41 + 0xD9C654, t6zm + 0xD9D6D4);
 
     inline static T6SDK::MemoryAddress<vec3_t> SunPosition(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x14 }); //Check BO2 Console v4 source
     inline static T6SDK::MemoryAddress<vec3_t> SunColor(t6mpv43 + 0x00EE7A0C, t6mp + 0x00EE7A0C, t6zmv41 + 0xEBC88C, t6zm + 0x00EBD90C, { 0x58 });
-
-    inline static T6SDK::MemoryAddress<int> GameMode(T6SDK::Addresses::t6mpv43 + 0x2160890, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-
-    inline static T6SDK::MemoryAddress<int> DemoEndTick(T6SDK::Addresses::t6mpv43 + 0x2CF3470, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-
-    inline static T6SDK::MemoryAddress<int> NumDefaultBookmarks(T6SDK::Addresses::t6mpv43+0x2CF42E8, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-    inline static T6SDK::MemoryAddress<int> DemoSummary(T6SDK::Addresses::t6mpv43 + 0x00, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-    inline static T6SDK::MemoryAddress<int> DemoAddress1(T6SDK::Addresses::t6mpv43 + 0x2E046D0, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-    inline static T6SDK::MemoryAddress<int> DemoAddress2(T6SDK::Addresses::t6mpv43 + 0x2E05678, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-    inline static DWORD DemoThumbnailAddress = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2B17A38, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
-    inline static DWORD DemoThumbnailAddress2 = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB9AB8, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
-    inline static T6SDK::MemoryAddress<BYTE> DemoLoadPatch(T6SDK::Addresses::t6mpv43 + 0x1C79E6, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN);
-    inline static const char* DemoName = (const char*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB98B2, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
+    //3D ? ? ? ? 7C ? B8 ? ? ? ? C3 8D 04 49
+    inline static T6SDK::MemoryAddress<int> GameMode(T6SDK::Addresses::t6mpv43 + 0x2160890, T6SDK::Addresses::t6mp + 0x2160890, T6SDK::Addresses::t6zmv41 + 0x2132410, T6SDK::Addresses::t6zm + 0x2136790);
+    //8B 3D ? ? ? ? 2B FB
+    inline static T6SDK::MemoryAddress<int> DemoEndTick(T6SDK::Addresses::t6mpv43 + 0x2CF3470, T6SDK::Addresses::t6mp + 0x2D14470, T6SDK::Addresses::t6zmv41 + 0x2CC34F0, T6SDK::Addresses::t6zm + 0x2CE9B70);
+    //A3 ? ? ? ? 85 C0 0F 8E ? ? ? ? BE
+    inline static T6SDK::MemoryAddress<int> NumDefaultBookmarks(T6SDK::Addresses::t6mpv43+0x2CF42E8, T6SDK::Addresses::t6mp + 0x2D152E8, T6SDK::Addresses::t6zmv41 + 0x2CC4368, T6SDK::Addresses::t6zm + 0x2CEA9E8);
+    //E8 ? ? ? ? 89 06 E8 -> following func call
+    inline static T6SDK::MemoryAddress<int> DemoSummary(t6mpv43 + 0x2B63B40, T6SDK::Addresses::t6mp + 0x2B64B40, T6SDK::Addresses::t6zmv41 + 0x2B33E08, T6SDK::Addresses::t6zm + 0x2B3A440);
+    //68 ? ? ? ? E8 ? ? ? ? 8B 84 24 ? ? ? ? 8B 8C 24 ? ? ? ? 83 C4
+    inline static T6SDK::MemoryAddress<int> DemoAddress1(T6SDK::Addresses::t6mpv43 + 0x2E046D0, T6SDK::Addresses::t6mp + 0x2E256D0, T6SDK::Addresses::t6zmv41 + 0x2DD4750, T6SDK::Addresses::t6zm + 0x2DFADD0);
+    //A3 ? ? ? ? E8 ? ? ? ? 84 C0 74 ? E8 ? ? ? ? 50 -> 2nd function in brackets
+    inline static T6SDK::MemoryAddress<int> DemoAddress2(T6SDK::Addresses::t6mpv43 + 0x2E05678, T6SDK::Addresses::t6mp + 0x2E26678, T6SDK::Addresses::t6zmv41 + 0x2DD56F8, T6SDK::Addresses::t6zm + 0x2DFBD78);
+    //Search for 00 00 00 00 00 00 00 07 01 00 00 02 BE EF 00
+    inline static DWORD DemoThumbnailAddress = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2B17A38, T6SDK::Addresses::t6mp + 0x2BDAAB8, T6SDK::Addresses::t6zmv41 + 0x2AE7D30, T6SDK::Addresses::t6zm + 0x2AED338).GetValue();
+    inline static DWORD DemoThumbnailAddress2 = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB9AB8, FILLIN /*NOT NEEDED*/, T6SDK::Addresses::t6zmv41 + 0x2B89D80, T6SDK::Addresses::t6zm + 0x2BB03B8).GetValue();
+    //75 ? 68 ? ? ? ? 6A ? E8 ? ? ? ? 83 C4 ? 57 E8
+    inline static T6SDK::MemoryAddress<BYTE> DemoLoadPatch(T6SDK::Addresses::t6mpv43 + 0x1C79E6, T6SDK::Addresses::t6mp + 0x10C3F6, T6SDK::Addresses::t6zmv41 + 0x14B786, T6SDK::Addresses::t6zm + 0x10A886);
+    inline static const char* DemoName = (const char*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2BB98B2, T6SDK::Addresses::t6mp + 0x2BDA8B2, T6SDK::Addresses::t6zmv41 + 0x2B89C19, T6SDK::Addresses::t6zm + 0x2BB01B2).GetValue();
     inline static Fog_s* fog = (Fog_s*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x032224B8, T6SDK::Addresses::t6mp + 0x032434B8, T6SDK::Addresses::t6zmv41 + 0x031F22B8, T6SDK::Addresses::t6zm + 0x03218B38).GetValue();
 
 #pragma endregion

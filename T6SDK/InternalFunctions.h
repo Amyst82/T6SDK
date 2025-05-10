@@ -18,7 +18,7 @@ namespace T6SDK::Typedefs
 	typedef void(__cdecl* Demo_Error_t)(int localClientNum, const char* TitleText, const char* MessageText);
 	inline extern Demo_Error_t Demo_Error = (Demo_Error_t)T6SDK::CrossVersion::CrossValue<DWORD>(
 		T6SDK::Addresses::t6mpv43 + 0x0F5CD0, T6SDK::Addresses::t6mp + 0x246260,
-		T6SDK::Addresses::t6zmv41 + 0x261AC10, T6SDK::Addresses::t6zm + 0x073210).GetValue();
+		T6SDK::Addresses::t6zmv41 + 0x21AC10, T6SDK::Addresses::t6zm + 0x073210).GetValue();
 	
 	typedef void(__cdecl* Demo_Back_t)();
 	inline extern Demo_Back_t Demo_Back = (Demo_Back_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
@@ -118,11 +118,11 @@ namespace T6SDK::Typedefs
 	inline extern FxSpriteAdd_t FxSpriteAdd = (FxSpriteAdd_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
 		T6SDK::Addresses::t6mpv43 + 0x10AD60, T6SDK::Addresses::t6mp + 0x013B20,
 		T6SDK::Addresses::t6zmv41 + 0x0DA9D0, T6SDK::Addresses::t6zm + 0x197820).GetValue());
-
+	//E8 ? ? ? ? 83 C4 ? EB ? 8B 55 ? 68 and follow
 	typedef int(__cdecl* FX_PlayOrientedEffect_t)(int localClientNum, void* def, int startMsec,vec3_t* origin,	Matrix33_s* axis);
 	inline extern FX_PlayOrientedEffect_t FX_PlayOrientedEffect = (FX_PlayOrientedEffect_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x1CD600, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x1CD600, T6SDK::Addresses::t6mp + 0x24A830,
+		T6SDK::Addresses::t6zmv41 + 0x1402B0, T6SDK::Addresses::t6zm + 0x1F9770).GetValue());
 
 	//55 8B EC 83 E4 ? 83 EC 0C 80 3D ? ? ? ? ? 56 0F 84
 	typedef void(__cdecl* R_AddOmniLightToScene_t)(vec3_t* org, float radius, float r, float g, float b, float a);
@@ -248,50 +248,50 @@ namespace T6SDK::Typedefs
 	//56 8B 74 24 ? 56 E8 ? ? ? ? 68 ? ? ? ? 56 E8 ? ? ? ? 6A
 	typedef void (__cdecl* UI_CloseAll_t)(int localClientNum);
 	inline extern UI_CloseAll_t UI_CloseAll = (UI_CloseAll_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x0529C0, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x0529C0, T6SDK::Addresses::t6mp + 0x1C4C80,
+		T6SDK::Addresses::t6zmv41 + 0x23D310, T6SDK::Addresses::t6zm + 0x1BD7C0).GetValue());
 
 	//83 EC ? F3 0F 10 05 ? ? ? ? 56 8B 74 24 ? F3 0F 10 4E
 	typedef void (__cdecl* AngleVectors_t)(vec3_t* angles, vec3_t* forward, vec3_t* right, vec3_t* up);
 	inline extern AngleVectors_t AngleVectors = (AngleVectors_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x05DC40, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x05DC40, T6SDK::Addresses::t6mp + 0x16BDC0,
+		T6SDK::Addresses::t6zmv41 + 0x53DC0, T6SDK::Addresses::t6zm + 0x865F0).GetValue());
 
 	//A1 ? ? ? ? 80 B8 ? ? ? ? ? 56
 	typedef void (__cdecl* FX_ThroughWithEffect_t)(int localClientNum, unsigned int hEffect, bool forcekill);
 	inline extern FX_ThroughWithEffect_t FX_ThroughWithEffect = (FX_ThroughWithEffect_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x1FBD70, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x1FBD70, T6SDK::Addresses::t6mp + 0xFD010,
+		T6SDK::Addresses::t6zmv41 + 0x2667B0, T6SDK::Addresses::t6zm + 0xE1A30).GetValue());
 
 	//80 3D ? ? ? ? ? 0F 85 ? ? ? ? 56 8B 35
 	typedef void(__cdecl* SCR_UpdateScreen_t)();
 	inline extern SCR_UpdateScreen_t SCR_UpdateScreen = (SCR_UpdateScreen_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x086E40, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x086E40, T6SDK::Addresses::t6mp + 0x247050,
+		T6SDK::Addresses::t6zmv41 + 0x169940, T6SDK::Addresses::t6zm + 0xD3DC0).GetValue());
 
 	//51 8B 44 24 ? 53 55 56 C6 00
 	typedef int(__cdecl* Demo_GetNextDefaultBookmarkForPlayer_t)(int localClientNum, int index, int* type, int* time, vec4_t* color, bool* useBottomHalfColor, vec4_t* bottomHalfColor);
 	inline extern Demo_GetNextDefaultBookmarkForPlayer_t Demo_GetNextDefaultBookmarkForPlayer = (Demo_GetNextDefaultBookmarkForPlayer_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x18D590, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x18D590, T6SDK::Addresses::t6mp + 0x1DBE80,
+		T6SDK::Addresses::t6zmv41 + 0x18340, T6SDK::Addresses::t6zm + 0x264FF0).GetValue());
 
 	//E8 ? ? ? ? F3 0F 10 05 ? ? ? ? 6A ? 83 E0
 	typedef void(__cdecl* PlaySound_t)(const char* soundName);
 	inline extern PlaySound_t PlaySound = (PlaySound_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x3F1580, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x3F1580, T6SDK::Addresses::t6mp + 0x3F09D0,
+		T6SDK::Addresses::t6zmv41 + 0x3F0D70, T6SDK::Addresses::t6zm + 0x3EFC20).GetValue());
 
 	//8B 4C 24 ? F3 0F 10 49 ? 0F 57 C0 0F 2E C8 9F F6 C4 ? 7A ? F3 0F 10 09 0F 2E C8 9F F6 C4 ? 7A ? F3 0F 10 49 ? 0F 57 0D ? ? ? ? 0F 2F C8 72 ? F3 0F 10 05 ? ? ? ? F3 0F 11 44 24 ? D9 44 24 ? C3 F3 0F 10 05 ? ? ? ? F3 0F 11 44 24 ? D9 44 24 ? C3 F3 0F 10 49 ? F3 0F 10 11 F3 0F 10 41 ? F3 0F 59 C9 F3 0F 59 D2 F3 0F 58 D1 F3 0F 51 CA 0F 5A C0 0F 5A C9 E8 ? ? ? ? F2 0F 5A C0
 	typedef float(__cdecl* vectosignedpitch_t)(vec3_t* v);
 	inline extern vectosignedpitch_t vectosignedpitch = (vectosignedpitch_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x9CFB0, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x9CFB0, T6SDK::Addresses::t6mp + 0x11E030,
+		T6SDK::Addresses::t6zmv41 + 0x210F60, T6SDK::Addresses::t6zm + 0x20D7A0).GetValue());
 
 	//0F 57 C9 56 8B 74 24 ? F3 0F 10 46 ? 0F 2E C1 9F F6 C4 ? 7A ? F3 0F 10 16 0F 2E D1 9F F6 C4 ? 7A ? F3 0F 10 56
 	typedef vec3_t(__cdecl* vectoangles_t)(vec3_t* v, vec3_t* vec2);
 	inline extern vectoangles_t vectoangles = (vectoangles_t)(T6SDK::CrossVersion::CrossValue<DWORD>(
-		T6SDK::Addresses::t6mpv43 + 0x3EE30, T6SDK::Addresses::t6mp + FILLIN,
-		T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue());
+		T6SDK::Addresses::t6mpv43 + 0x3EE30, T6SDK::Addresses::t6mp + 0x1CD02A0,
+		T6SDK::Addresses::t6zmv41 + 0x9E500, T6SDK::Addresses::t6zm + 0x2D9C60).GetValue());
 
 
 }
@@ -800,11 +800,30 @@ namespace T6SDK
 		}
 		static void PlaySound(const char* soundName)
 		{
-			__asm
+			switch (T6SDK::CrossVersion::GetGameVersion())
 			{
-				mov eax, 0x69AA70
-				call eax
+			case T6SDK::CrossVersion::GameVersion::V43:
+				__asm
+				{
+					mov eax, 0x69AA70
+					call eax
+				}
+				break;
+			case T6SDK::CrossVersion::GameVersion::MP:
+				
+				break;
+			case T6SDK::CrossVersion::GameVersion::V41:
+				__asm
+				{
+					mov eax, 0x44C390
+					call eax
+				}
+				break;
+			case T6SDK::CrossVersion::GameVersion::ZM:
+				
+				break;
 			}
+			
 			T6SDK::Typedefs::PlaySound(soundName);
 		}
 
