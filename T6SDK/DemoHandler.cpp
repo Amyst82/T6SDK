@@ -25,22 +25,22 @@ namespace T6SDK
 		std::memcpy(&result, bytes.data(), sizeof(int));
 		return result;
 	}	
-	bool DecodeString(const std::vector<char>& encoded, std::string& decodedString) //ASCII decoder (BO2 has ascii bytes multiplied by 2 in %s.tags file somehow)
+	bool DecodeString(const std::vector<uint8_t >& encoded, int startindex, std::string& decodedString) //ASCII decoder (BO2 has ascii bytes multiplied by 2 in %s.tags file somehow)
 	{
-		std::string result;
-		for (uint8_t byte : encoded) 
+		std::string result{};
+		for (int i = startindex; i < encoded.size(); i++)
 		{
-			if (byte == 0x00) //Null terminator
+			if (encoded[i] == 0x00) //Null terminator
 				break;
-			if (byte == 0xFF) //End of string
+			if (encoded[i] == 0xFF) //End of string
 				break;
-			if(byte % 2 ==  0) //If it can be divided by two
-				result += byte/2;
-			else if(byte % 2 > 0)
-				result += (byte - 1) / 2; //If it can't be divided by two, subtract 1 and divide by 2
+			if(encoded[i] % 2 ==  0) //If it can be divided by two
+				result += encoded[i] / 2;
+			else if(encoded[i] % 2 > 0)
+				result += (encoded[i] - 1) / 2; //If it can't be divided by two, subtract 1 and divide by 2
 			else
 			{
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Unreadable byte: 0x%X", byte);
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Unreadable byte: 0x%X", encoded[i]);
 				decodedString = "";
 				return false;
 			}
@@ -59,7 +59,7 @@ namespace T6SDK
 		decodedString = result;
 		return true;
 	}
-	bool EncodeString(const std::string& inputString, std::vector<char>& encodedString)
+	bool EncodeString(const std::string& inputString, std::vector<uint8_t>& encodedString)
 	{
 		encodedString.clear();
 		for (char c : inputString)
@@ -69,9 +69,9 @@ namespace T6SDK
 		encodedString.push_back(0x00); //Null terminator
 		return true;
 	}
-	std::vector<char> timeToBytes(time_t timestamp) 
+	std::vector<uint8_t> timeToBytes(time_t timestamp) 
 	{
-		std::vector<char> bytes(8);
+		std::vector<uint8_t> bytes(8);
 
 		// Convert to known-size integer type (uint64_t)
 		uint64_t timeValue = static_cast<uint64_t>(timestamp);
@@ -143,102 +143,187 @@ namespace T6SDK
 	}
 #pragma endregion
 
-
-	bool T6SDK::DemoHandler::ReadMapName(vector<char> tagsFileData, std::string& mapName, std::string& friendlyName, std::string& uiSelectImage, bool supressConsoleLog)
+	#pragma region Map stuff
+	std::string T6SDK::DemoHandler::ReadMapName(vector<uint8_t>& tagsFileData)
 	{
 		char mapByte = 0x00;
-		vector<char> tagsData = tagsFileData;
+		vector<uint8_t> tagsData = tagsFileData;
 		mapByte = tagsData[0x01] == 0x14 ? tagsData[0x45] : tagsData[0x21];
-		switch (T6SDK::CrossVersion::GetGameVersion())
+		try
 		{
-		case T6SDK::CrossVersion::GameVersion::V43:
-		case T6SDK::CrossVersion::GameVersion::MP:
-		{
-			try
-			{
+			std::string mapName{};
+			if(T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::MP|| T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V43)
 				mapName = T6SDK::DemoHandler::MpMaps[(int)mapByte].map;
-				friendlyName = T6SDK::DemoHandler::MpMaps[(int)mapByte].friendlyName;
-				uiSelectImage = T6SDK::DemoHandler::MpMaps[(int)mapByte].menuSelectImage;
-				if(!supressConsoleLog)
-					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo map name: %s -> %s", mapName.c_str(), friendlyName.c_str());
-				return true;
-			}
-			catch (const std::out_of_range& e)
-			{
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Map name out of range: %s", e.what());
-				return false;
-			}
+			else if (T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V41 || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::ZM)
+				mapName = T6SDK::DemoHandler::ZmMaps[(int)mapByte].map;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo map name: %s ", mapName.c_str());
+			return mapName;
 		}
-		case T6SDK::CrossVersion::GameVersion::V41:
-		case T6SDK::CrossVersion::GameVersion::ZM:
-			return false;
-		default:
-			return false;
+		catch (const std::out_of_range& e)
+		{
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Unable to read demo map name: %s", e.what());
+			return std::string("^1Unknown^7");
 		}
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not get demo map name!");
-		return false;
 	}
-	bool T6SDK::DemoHandler::ReadDemoGameMode(vector<char> tagsFileData, std::string& gameMode, std::string& friendlyName, bool supressConsoleLog)
+	std::string T6SDK::DemoHandler::ReadMapFriendlyName(vector<uint8_t>& tagsFileData)
+	{
+		char mapByte = 0x00;
+		vector<uint8_t> tagsData = tagsFileData;
+		mapByte = tagsData[0x01] == 0x14 ? tagsData[0x45] : tagsData[0x21];
+		try
+		{
+			std::string mapName{};
+			if (T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::MP || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V43)
+				mapName = T6SDK::DemoHandler::MpMaps[(int)mapByte].friendlyName;
+			else if (T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V41 || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::ZM)
+				mapName = T6SDK::DemoHandler::ZmMaps[(int)mapByte].friendlyName;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo map friendly name: %s ", mapName.c_str());
+			return mapName;
+		}
+		catch (const std::out_of_range& e)
+		{
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Unable to read demo map friendly name: %s", e.what());
+			return std::string("^1Unknown^7");
+		}
+	}
+	std::string T6SDK::DemoHandler::ReadMapMenuSelectMaterial(vector<uint8_t>& tagsFileData)
+	{
+		char mapByte = 0x00;
+		vector<uint8_t> tagsData = tagsFileData;
+		mapByte = tagsData[0x01] == 0x14 ? tagsData[0x45] : tagsData[0x21];
+		try
+		{
+			std::string mapName{};
+			if (T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::MP || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V43)
+				mapName = T6SDK::DemoHandler::MpMaps[(int)mapByte].menuSelectImage;
+			else if (T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V41 || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::ZM)
+				mapName = T6SDK::DemoHandler::ZmMaps[(int)mapByte].menuSelectImage;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo map friendly name: %s ", mapName.c_str());
+			return mapName;
+		}
+		catch (const std::out_of_range& e)
+		{
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Unable to read demo map friendly name: %s", e.what());
+			return std::string("^1Unknown^7");
+		}
+	}
+#pragma endregion
+	#pragma region GameMode
+	std::string T6SDK::DemoHandler::ReadDemoGameMode(vector<uint8_t>& tagsFileData)
 	{
 		char modeByte = 0x00;
-		vector<char> tagsData = tagsFileData;
+		vector<uint8_t> tagsData = tagsFileData;
 		modeByte = tagsData[0x01] == 0x14 ? tagsData[0x57] : tagsData[0x33]; //if its from redacted public match
-		switch (T6SDK::CrossVersion::GetGameVersion())
+		std::string gameMode{}, friendlyName{};
+		try
 		{
-		case T6SDK::CrossVersion::GameVersion::V43:
-		case T6SDK::CrossVersion::GameVersion::MP:
+			if(T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::MP || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V43)
+			{
+				gameMode = T6SDK::DemoHandler::MpGameModes[(int)modeByte - 1].mode;
+				friendlyName = T6SDK::DemoHandler::MpGameModes[(int)modeByte - 1].friendlyName;
+			}
+			else if (T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::V41 || T6SDK::CrossVersion::GAMEVERSION == T6SDK::CrossVersion::GameVersion::ZM)
+			{
+				gameMode = T6SDK::DemoHandler::ZmGameModes[(int)modeByte - 1].mode;
+				friendlyName = T6SDK::DemoHandler::ZmGameModes[(int)modeByte - 1].friendlyName;
+				
+			}
+			return friendlyName;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo game mode: %s -> %s", gameMode.c_str(), friendlyName.c_str());
+		}
+		catch (const std::out_of_range& e)
 		{
-			try
-			{
-				gameMode = T6SDK::DemoHandler::MpGameModes[(int)modeByte-1].mode;
-				friendlyName = T6SDK::DemoHandler::MpGameModes[(int)modeByte-1].friendlyName;
-				if (!supressConsoleLog)
-					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo game mode: %s -> %s", gameMode.c_str(), friendlyName.c_str());
-				return true;
-			}
-			catch (const std::out_of_range& e)
-			{
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Game mode out of range: %s", e.what());
-				return false;
-			}
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Game mode out of range: %s", e.what());
+			return std::string("^1Unknown^7");
 		}
-		case T6SDK::CrossVersion::GameVersion::V41:
-		case T6SDK::CrossVersion::GameVersion::ZM:
-			return false;
-		default:
-			return false;
-		}
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not get demo game mode!");
-		return false;
 	}
-	bool T6SDK::DemoHandler::DemoTagsHasMetadata(vector<char> tagsFileData, std::string& customMetaData, bool supressConsoleLog)
+#pragma endregion
+	#pragma region Duration
+	uint32_t T6SDK::DemoHandler::ReadDemoDuration(vector<uint8_t>& thumbnailFileData)
+	{
+		std::vector<uint8_t> subarray(thumbnailFileData.begin() + 0xDF, thumbnailFileData.begin() + 0xDF + 0x04);
+		uint32_t duration = 0;
+		if (DecodeCODUint32((uint8_t*)subarray.data(), &duration))
+		{
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo duration: %i -> %02i:%02i", duration, duration / 60000, duration % 60000 / 1000);
+			return duration;
+		}
+		else
+		{
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not read demo duration!");
+			return 0;
+		}
+	}
+#pragma endregion
+	#pragma region Metadata
+	static int GetMetadataLength(vector<uint8_t>& tagsFileData)
 	{
 		try
 		{
-			if (!supressConsoleLog)
+			if (!suppressLogs)
 				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "1) Getting metadata footer subarray!");
-			std::vector<char> subarray(tagsFileData.end() - 0x12, tagsFileData.end()); //0x12 = 18 in dec
-			if (!supressConsoleLog)
+			std::vector<uint8_t> subarray(tagsFileData.end() - 0x12, tagsFileData.end()); //0x12 = 18 in dec
+			if (!suppressLogs)
 				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "2) Got metadata footer subarray!");
-			vector<char> defaultTagsFooter = { 0x0A, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-			vector<char> defaultTagsFooter2 = { 0x0A, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-			if (!supressConsoleLog)
+			vector<uint8_t> defaultTagsFooter = { 0x0A, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+			vector<uint8_t> defaultTagsFooter2 = { 0x0A, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+			if (!suppressLogs)
 				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Comparing metadata footers!");
 			if (subarray == defaultTagsFooter || subarray == defaultTagsFooter2)
 			{
-				if (!supressConsoleLog)
+				if (!suppressLogs)
 					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo tags file has no metadata!");
-				return false;
+				return 0;
 			}
 			else
 			{
-				if (!supressConsoleLog)
+				if (!suppressLogs)
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DEMOHANDLER", "Demo tags file has metadata!");
+				//Reading metadata length
+				std::vector<unsigned char> subarray2(tagsFileData.end() - 12, tagsFileData.end() - 8);
+				int customMetaDataSize = bytesToInt(subarray2);
+				return customMetaDataSize;
+			}
+		}
+		catch (const std::exception& e)
+		{
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not get demo metadata: %s", e.what());
+			return 0;
+		}
+	}
+	std::string T6SDK::DemoHandler::ReadDemoMetadata(vector<uint8_t>& tagsFileData)
+	{
+		try
+		{
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "1) Getting metadata footer subarray!");
+			std::vector<uint8_t> subarray(tagsFileData.end() - 0x12, tagsFileData.end()); //0x12 = 18 in dec
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "2) Got metadata footer subarray!");
+			vector<uint8_t> defaultTagsFooter = { 0x0A, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+			vector<uint8_t> defaultTagsFooter2 = { 0x0A, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Comparing metadata footers!");
+			if (subarray == defaultTagsFooter || subarray == defaultTagsFooter2)
+			{
+				if (!suppressLogs)
+					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo tags file has no metadata!");
+				return std::string("");
+			}
+			else
+			{
+				if (!suppressLogs)
 					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DEMOHANDLER", "Demo tags file has metadata!");
 				//Reading metadata length
 				std::vector<unsigned char> subarray2(tagsFileData.end() - 12, tagsFileData.end() - 8);
 				int customMetaDataSize = bytesToInt(subarray2);
 				//Reading actual metadata text
-				std::vector<char> MedataDataBytes(tagsFileData.end() - customMetaDataSize, tagsFileData.end() - 12);
+				std::vector<uint8_t> MedataDataBytes(tagsFileData.end() - customMetaDataSize, tagsFileData.end() - 12);
 				std::string outPut{};
 				for (int i = 0; i < MedataDataBytes.size(); i++)
 				{
@@ -248,49 +333,82 @@ namespace T6SDK
 						outPut += MedataDataBytes[i];
 					}
 				}
-				customMetaData = outPut;
-				return true;
+				return outPut;
 			}
 		}
 		catch (const std::exception& e)
 		{
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not get demo metadata: %s", e.what());
-			return false;
+			return std::string("");
 		}
 	}
-	bool T6SDK::DemoHandler::ReadDemoAuthor(vector<char> thumbnailFileData, std::string& author, bool supressConsoleLog)
+	#pragma endregion
+	#pragma region Author
+	std::string T6SDK::DemoHandler::ReadDemoAuthor(vector<uint8_t>& thumbnailFileData)
 	{
 		std::string authorString;
-		std::vector<char> subarray(thumbnailFileData.begin()+0x30, thumbnailFileData.end());
-		if (DecodeString(subarray, authorString))
+		if (DecodeString(thumbnailFileData, 0x30, authorString))
 		{
-			author = authorString.c_str();
-			if (!supressConsoleLog)
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo author: %s", author.c_str());
-			return true;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo author: %s", authorString.c_str());
+			return authorString;
 		}
 		else
 		{
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not read demo author!");
-			return false;
+			return std::string("^1Unknown^7");
 		}
 	}
-	bool T6SDK::DemoHandler::ReadDemoName(vector<char> thumbnailFileData, std::string& demoName, bool supressConsoleLog)
+	#pragma endregion
+	#pragma region Description
+	std::string T6SDK::DemoHandler::ReadDemoDescription(vector<uint8_t >& thumbnailFileData)
 	{
-		std::string demonameString;
-		std::vector<char> subarray(thumbnailFileData.begin() + 0x60, thumbnailFileData.end());
-		if (DecodeString(subarray, demonameString))
+		// Check if there's enough data for 0xA0 offset
+		if (thumbnailFileData.size() < 0xA0)
 		{
-			demoName = demonameString.c_str();
-			if (!supressConsoleLog)
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo name: %s", demoName.c_str());
-			return true;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Thumbnail data too small for demo description!");
+			return std::string("^9Description not provided^7");
+		}
+
+		// Verify the subarray won't cause overflow
+		size_t remainingSize = thumbnailFileData.size() - 0xA0;
+		if (remainingSize > 0x5F)
+		{
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Suspiciously large description data");
+		}
+
+		std::string demodescriptionString{};
+		if (DecodeString(thumbnailFileData, 0xA0, demodescriptionString))
+		{
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo description: %s", demodescriptionString.c_str());
+			return demodescriptionString;
 		}
 		else
 		{
-			if (!supressConsoleLog)
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not read demo description!");
+			return std::string("^9Description not provided^7");
+		}
+	}
+	#pragma endregion
+	#pragma region DemoName
+	std::string T6SDK::DemoHandler::ReadDemoName(vector<uint8_t >& thumbnailFileData)
+	{
+		std::string demonameString;
+		if (DecodeString(thumbnailFileData, 0x60, demonameString))
+		{
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo name: %s", demonameString.c_str());
+			return demonameString;
+		}
+		else
+		{
+			if (!suppressLogs)
 				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not read demo name!");
-			return false;
+			return std::string("^1Unknown^7");
 		}
 	}
 	bool T6SDK::DemoHandler::SetDemoName(std::string& demoPath, std::string& name)
@@ -299,13 +417,13 @@ namespace T6SDK
 		if (std::filesystem::exists(thumbnailPath))
 		{
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnail file exists! Setting it's name...");
-			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
+			vector<uint8_t> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			std::ofstream file;
 			file.open(thumbnailPath, std::ios::binary | std::ios::in | std::ios::out);
 			if (file.is_open())
 			{
 				file.seekp(0x60, std::ios_base::beg);
-				vector<char> encodedString{};
+				vector<uint8_t> encodedString{};
 				if (EncodeString(name, encodedString))
 				{
 					file.write(reinterpret_cast<const char*>(encodedString.data()), name.length());
@@ -332,29 +450,17 @@ namespace T6SDK
 			return false;
 		}
 	}
-	bool T6SDK::DemoHandler::ReadDemoDuration(vector<char> thumbnailFileData, uint32_t* duration, bool supressConsoleLog)
+	#pragma endregion
+	#pragma region CreateDate
+	int T6SDK::DemoHandler::ReadDemoCreateDate(std::string& path, vector<uint8_t>& thumbnailFileData)
 	{
-		std::vector<char> subarray(thumbnailFileData.begin() + 0xDF, thumbnailFileData.begin() + 0xDF+0x04);
-		if (DecodeCODUint32((uint8_t*)subarray.data(), duration))
+		std::vector<uint8_t> subarray(thumbnailFileData.begin() + 0xE3, thumbnailFileData.begin() + 0xE3 + 0x08);
+		int createDate = 0;
+		if (DecodeCODUint64((uint8_t*)subarray.data(), (uint64_t*)&createDate))
 		{
-			if (!supressConsoleLog)
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo duration: %i -> %02i:%02i", *duration, *duration / 60000, *duration % 60000 / 1000);
-			return true;
-		}
-		else
-		{
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not read demo duration!");
-			return false;
-		}
-	}
-	bool T6SDK::DemoHandler::ReadDemoCreateDate(std::string path, vector<char> thumbnailFileData, int* createDate, bool supressConsoleLog)
-	{
-		std::vector<char> subarray(thumbnailFileData.begin() + 0xE3, thumbnailFileData.begin() + 0xE3 + 0x08);
-		if (DecodeCODUint64((uint8_t*)subarray.data(), (uint64_t*)createDate))
-		{
-			if (*createDate == 0)
+			if (createDate == 0)
 			{
-				if (!supressConsoleLog)
+				if (!suppressLogs)
 					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Demo create date is 0! Trying to get date from somewhere else...");
 				auto ftime = std::filesystem::last_write_time(path);
 				// Convert to system_clock time_point
@@ -363,10 +469,10 @@ namespace T6SDK
 				std::time_t tt = std::chrono::system_clock::to_time_t(sctp);
 				if (tt != -1)
 				{
-					*createDate = static_cast<int>(tt);
-					if (!supressConsoleLog)
+					createDate = static_cast<int>(tt);
+					if (!suppressLogs)
 						T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Got the date. Writing it to the file...");
-					uint64_t encodedTime = (uint64_t)*createDate * (uint64_t)2048;
+					uint64_t encodedTime = (uint64_t)createDate * (uint64_t)2048;
 					std::ofstream file;
 					file.open(path, std::ios::binary | std::ios::in | std::ios::out);
 					if (file.is_open())
@@ -375,123 +481,58 @@ namespace T6SDK
 						file.write(reinterpret_cast<const char*>(&encodedTime), sizeof(encodedTime));
 						file.close();
 					}
-					if (!supressConsoleLog)
-						T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo create date: %i -> %s", *createDate, T6SDK::InternalFunctions::FormatUnixTime(*createDate).c_str());
-					return true;
+					if (!suppressLogs)
+						T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo create date: %i -> %s", createDate, T6SDK::InternalFunctions::FormatUnixTime(createDate).c_str());
+					return createDate;
 				}
 				else
 				{
 					T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not get demo create date!");
-					return false;
+					return 0;
 				}
 			}
-			if (!supressConsoleLog)
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo create date: %i -> %s", *createDate, T6SDK::InternalFunctions::FormatUnixTime(*createDate).c_str());
-			return true;
+			if (!suppressLogs)
+				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo create date: %i -> %s", createDate, T6SDK::InternalFunctions::FormatUnixTime(createDate).c_str());
+			return createDate;
 		}
 		else
 		{
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Could not read demo create date!");
-			return false;
+			return 0;
 		}
 	}
+	#pragma endregion
 
 	T6SDK::DemoBriefData T6SDK::DemoHandler::GetDemoBriefData(const char* demoPath)
 	{
 		if (!suppressLogs)
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Getting demo brief data of %s", demoPath);
-		T6SDK::DemoBriefData demoData{};
-
-		//Setting demo path
-		demoData.DemoPath = demoPath;
-
-		//Getting map name
-		std::string mapName{};
-		std::string mapFriendlyName{};
-		std::string mapUiSelect{};
-		vector<char> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
-		if (T6SDK::DemoHandler::ReadMapName(tagsData, mapName, mapFriendlyName, mapUiSelect, suppressLogs))
-		{
-			demoData.Map = mapName.c_str();
-			demoData.MapUiSelect = mapUiSelect.c_str();
-			demoData.MapFriendlyName = mapFriendlyName.c_str();
-		}
-		else
-		{
-			demoData.Map = "mp_raid";
-			demoData.MapUiSelect = "^1Unknown";
-			demoData.MapFriendlyName = "^1Unknown";
-		}
-		//Getting game mode
-		std::string gameMode{};
-		std::string gameModeFriendlyName{};
-		if (T6SDK::DemoHandler::ReadDemoGameMode(tagsData, gameMode, gameModeFriendlyName, suppressLogs))
-		{
-			demoData.GameMode = gameModeFriendlyName.c_str();
-		}
-		else
-		{
-			demoData.GameMode = "^1Unknown";
-		}
-		//Getting metadata info
-		std::string customMetaData{};
-		if (T6SDK::DemoHandler::DemoTagsHasMetadata(tagsData, customMetaData, suppressLogs))
-		{
-			demoData.HasMetadata = true;
-			demoData.Metadata = customMetaData;
-		}
-		else
-		{
-			demoData.HasMetadata = false;
-		}
-		//Getting data from thumbnail
+		vector<uint8_t> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
 		std::string thumbnailPath = std::string(demoPath) + ".thumbnail";
-		vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
-		//Getting author info
-		std::string authorString{};
-		if (T6SDK::DemoHandler::ReadDemoAuthor(thumbnailData, authorString, suppressLogs))
-		{
-			demoData.Author = authorString.c_str();
-		}
-		else
-		{
-			demoData.Author = "^1Unknown";
-		}
-		//Getting demo name
-		std::string demoNameString{};
-		if (T6SDK::DemoHandler::ReadDemoName(thumbnailData, demoNameString, suppressLogs))
-		{
-			demoData.DemoName = demoNameString.c_str();
-		}
-		else
-		{
-			demoData.DemoName = "^1Unknown";
-		}
-		//Getting duration info
-		uint32_t duration{};
-		if (T6SDK::DemoHandler::ReadDemoDuration(thumbnailData, &duration, suppressLogs))
-		{
-			demoData.Duration = duration;
-		}
-		else
-		{
-			demoData.Duration = 0;
-		}
-		//Getting create date info
-		int createDate{};
-		if (T6SDK::DemoHandler::ReadDemoCreateDate(thumbnailPath, thumbnailData, &createDate, suppressLogs))
-		{
-			demoData.CreateDate = createDate;
-		}
-		else
-		{
-			demoData.CreateDate = 0;
-		}
-		
-		
-		return demoData;
-	}
+		vector<uint8_t> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".thumbnail");
+		std::string path(demoPath);
 
+		int duration = T6SDK::DemoHandler::ReadDemoDuration(thumbnailData);
+		int createDate = T6SDK::DemoHandler::ReadDemoCreateDate(thumbnailPath, thumbnailData);
+		std::string mapName = T6SDK::DemoHandler::ReadMapName(tagsData);
+		std::string mapUiSelect = T6SDK::DemoHandler::ReadMapMenuSelectMaterial(tagsData);
+		std::string mapFriendlyName = T6SDK::DemoHandler::ReadMapFriendlyName(tagsData);
+		std::string gameModeFriendlyName = T6SDK::DemoHandler::ReadDemoGameMode(tagsData);
+		std::string authorString = T6SDK::DemoHandler::ReadDemoAuthor(thumbnailData);
+		std::string demoNameString = T6SDK::DemoHandler::ReadDemoName(thumbnailData);
+		std::string desc = T6SDK::DemoHandler::ReadDemoDescription(thumbnailData);
+		std::string customMetaData = T6SDK::DemoHandler::ReadDemoMetadata(tagsData);
+		bool hasMetadata = !customMetaData.empty();
+		if(!suppressLogs)
+		{
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Got demo brief data");
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "DEMOHANDLER", "BRIEF:\n%s\n%s\n%s\n%s\n%s\n%i\n%i\n%s\n%s\n%s\n%s\n%s",
+				path.c_str(), mapName.c_str(), mapUiSelect.c_str(), mapFriendlyName.c_str(), gameModeFriendlyName.c_str(),
+				duration, createDate,
+				authorString.c_str(), demoNameString.c_str(), desc.c_str(), hasMetadata ? "METADATA FOUND" : "NO METADATA", customMetaData.c_str());
+		}
+		return DemoBriefData(path, mapName, mapUiSelect, mapFriendlyName, gameModeFriendlyName, duration, createDate, authorString, demoNameString, desc, hasMetadata, customMetaData);
+	}
 	bool T6SDK::DemoHandler::TryGetDemoBriefData(const char* demoPath, T6SDK::DemoBriefData* demoDataOut)
 	{
 		try
@@ -505,13 +546,12 @@ namespace T6SDK
 		}
 		return false;
 	}
-
 	bool T6SDK::DemoHandler::LoadDemoFromBriefData(T6SDK::DemoBriefData& briefData)
 	{
 		std::string cmd = std::string("ui_mapname ") + briefData.Map;
 		T6SDK::Dvars::cbuf_AddText(cmd.c_str());
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "ui_mapname command sent!");
-		vector<char> demoData = T6SDK::InternalFunctions::readBytesSimple(briefData.DemoPath);
+		vector<uint8_t> demoData = T6SDK::InternalFunctions::readBytesSimple(briefData.DemoPath);
 		if (!suppressLogs)
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo data read!");
 		if (T6SDK::DemoHandler::allocatedMemory)
@@ -533,12 +573,12 @@ namespace T6SDK
 		std::string thumbnailPath = std::string(briefData.DemoPath) + ".thumbnail";
 		if (std::filesystem::exists(thumbnailPath))
 		{
-			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
+			vector<uint8_t> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
 			if (T6SDK::Addresses::DemoThumbnailAddress2 != 0)
 				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
-			vector<char>().swap(thumbnailData);
+			vector<uint8_t>().swap(thumbnailData);
 		}
 		else
 		{
@@ -560,21 +600,15 @@ namespace T6SDK
 	}
 	bool T6SDK::DemoHandler::LoadDemoFromFile(const char* demoPath)
 	{
+		std::string filename = T6SDK::InternalFunctions::getFilenameFromPath(std::string(demoPath));
+		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "filename -> %s", filename.c_str());
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, false, "DEMOHANDLER", "Demo file loaded!");
-		vector<char> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
-		std::string mapName{};
-		std::string mapFriendlyName{};
-		std::string mapUiSelect{};
-		if (!T6SDK::DemoHandler::ReadMapName(tagsData, mapName, mapFriendlyName, mapUiSelect, false))
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Could not read demo map name!");
-		else
-			mapName = "mp_raid";
-		std::string cmd = "ui_mapname " + mapName;
+		vector<uint8_t> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
+		std::string cmd = "ui_mapname " + T6SDK::DemoHandler::ReadMapName(tagsData);
 		T6SDK::Dvars::cbuf_AddText(cmd.c_str());
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "ui_mapname command sent!");
 		//Loading demo data
-
-		vector<char> demoData = T6SDK::InternalFunctions::readBytesSimple(demoPath);
+		vector<uint8_t> demoData = T6SDK::InternalFunctions::readBytesSimple(demoPath);
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo data read!");
 		if (T6SDK::DemoHandler::allocatedMemory)
 		{
@@ -595,105 +629,13 @@ namespace T6SDK
 		if (std::filesystem::exists(thumbnailPath))
 		{
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnail file exists!");
-			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Thumbnail size: %i", thumbnailData.size());
-			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
-			if(T6SDK::Addresses::DemoThumbnailAddress2 != 0)
-				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
-			std::string authorString{};
-			std::string demoNameString{};
-			uint32_t duration{};
-			int createDate{};
-			T6SDK::DemoHandler::ReadDemoAuthor(thumbnailData, authorString, false);
-			T6SDK::DemoHandler::ReadDemoName(thumbnailData, demoNameString, false);
-			T6SDK::DemoHandler::ReadDemoDuration(thumbnailData, &duration, false);
-			T6SDK::DemoHandler::ReadDemoCreateDate(thumbnailPath, thumbnailData, &createDate, false);
-			//Getting metadata info
-			std::string customMetaData{};
-			if(T6SDK::DemoHandler::DemoTagsHasMetadata(tagsData, customMetaData, false))
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Metadata: %s", customMetaData.c_str());
-			vector<char>().swap(thumbnailData);
-		}
-		else
-		{
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, false, "DEMOHANDLER", "Demo thumbnail file does not exist!");
-			return false;
-		}
-
-		//TODO: add summary
-
-		//Bypass errors
-		T6SDK::Addresses::DemoLoadPatch.Value() = (BYTE)0xEB;
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo load patch applied!");
-		//Start demo
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Attempting to start demo!");
-		T6SDK::Dvars::cbuf_AddText("demo_play demo;");
-		T6SDK::Dvars::cbuf_AddText("demo_play demo;");
-		vector<char>().swap(tagsData);
-
-		return true;
-	}
-	bool T6SDK::DemoHandler::LoadDemoFromFile(const char* demoPath, bool* hasMetadata, std::string& metadata)
-	{
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, false, "DEMOHANDLER", "Demo file loaded!");
-		vector<char> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
-		std::string mapName{};
-		std::string mapFriendlyName{};
-		std::string mapUiSelect{};
-		if (!T6SDK::DemoHandler::ReadMapName(tagsData, mapName, mapFriendlyName, mapUiSelect, false))
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Could not read demo map name!");
-		else
-			mapName = "mp_raid";
-		std::string cmd = "ui_mapname " + mapName;
-		T6SDK::Dvars::cbuf_AddText(cmd.c_str());
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "ui_mapname command sent!");
-		//Loading demo data
-
-		vector<char> demoData = T6SDK::InternalFunctions::readBytesSimple(demoPath);
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo data read!");
-		if (T6SDK::DemoHandler::allocatedMemory)
-		{
-			free(allocatedMemory);
-		}
-		allocatedMemory = malloc(demoData.size());
-		T6SDK::Memory::MemoryCopySafe(allocatedMemory, demoData.data(), demoData.size());
-
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo data size: %i.", demoData.size());
-		T6SDK::Addresses::DemoAddress1.Value() = (int)allocatedMemory;
-		T6SDK::Addresses::DemoAddress2.Value() = (int)allocatedMemory;
-		*(int*)(T6SDK::Addresses::DemoAddress1.EndPointerAddress() + 0x04) = demoData.size();
-		*(int*)(T6SDK::Addresses::DemoAddress2.EndPointerAddress() + 0x04) = demoData.size();
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo address set: 0x%X", (int)allocatedMemory);
-		//Loading thumbnail
-		std::string thumbnailPath = std::string(demoPath) + ".thumbnail";
-		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnail path: %s", thumbnailPath.c_str());
-		if (std::filesystem::exists(thumbnailPath))
-		{
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnail file exists!");
-			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
+			vector<uint8_t> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Thumbnail size: %i", thumbnailData.size());
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
 			if (T6SDK::Addresses::DemoThumbnailAddress2 != 0)
 				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
-			std::string authorString{};
-			std::string demoNameString{};
-			uint32_t duration{};
-			int createDate{};
-			T6SDK::DemoHandler::ReadDemoAuthor(thumbnailData, authorString, false);
-			T6SDK::DemoHandler::ReadDemoName(thumbnailData, demoNameString, false);
-			T6SDK::DemoHandler::ReadDemoDuration(thumbnailData, &duration, false);
-			T6SDK::DemoHandler::ReadDemoCreateDate(thumbnailPath, thumbnailData, &createDate, false);
-			//Getting metadata info
-			std::string customMetaData{};
-			if (T6SDK::DemoHandler::DemoTagsHasMetadata(tagsData, customMetaData, false))
-			{
-				T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Metadata: %s", customMetaData.c_str());
-				*hasMetadata = true;
-				metadata = customMetaData;
-			}
-			vector<char>().swap(thumbnailData);
+			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "demoBriefData almost set!");
 		}
 		else
 		{
@@ -710,44 +652,29 @@ namespace T6SDK
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Attempting to start demo!");
 		T6SDK::Dvars::cbuf_AddText("demo_play demo;");
 		T6SDK::Dvars::cbuf_AddText("demo_play demo;");
-		vector<char>().swap(tagsData);
-
 		return true;
 	}
-
 	bool T6SDK::DemoHandler::LoadDemoFromFile(const char* demoPath, T6SDK::DemoBriefData* demoBriefData)
 	{
 		demoBriefData->DemoPath = std::string(demoPath);
 		std::string filename = T6SDK::InternalFunctions::getFilenameFromPath(std::string(demoPath));
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "filename -> %s", filename.c_str());
-		//T6SDK::Addresses::DemoName = filename.c_str();
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, false, "DEMOHANDLER", "Demo file loaded!");
-		vector<char> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
-		std::string mapName{};
-		std::string mapFriendlyName{};
-		std::string mapUiSelect{};
-		if (!T6SDK::DemoHandler::ReadMapName(tagsData, mapName, mapFriendlyName, mapUiSelect, false))
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "DEMOHANDLER", "Could not read demo map name!");
-		else
-			mapName = "mp_raid";
-		std::string cmd = "ui_mapname " + mapName;
-		demoBriefData->Map = mapName;
-		demoBriefData->MapFriendlyName = mapFriendlyName;
-		demoBriefData->MapUiSelect = mapUiSelect;
+		vector<uint8_t> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
+		
+		demoBriefData->Map = T6SDK::DemoHandler::ReadMapName(tagsData);
+		demoBriefData->MapFriendlyName = T6SDK::DemoHandler::ReadMapFriendlyName(tagsData);
+		demoBriefData->MapUiSelect = T6SDK::DemoHandler::ReadMapMenuSelectMaterial(tagsData);
+		std::string cmd = "ui_mapname " + T6SDK::DemoHandler::ReadMapName(tagsData);
 		T6SDK::Dvars::cbuf_AddText(cmd.c_str());
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "ui_mapname command sent!");
 
 		//Getting metadata info
-		std::string customMetaData{};
-		if (T6SDK::DemoHandler::DemoTagsHasMetadata(tagsData, customMetaData, false))
-		{
-			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Metadata: %s", customMetaData.c_str());
-			demoBriefData->HasMetadata = true;
-			demoBriefData->Metadata = customMetaData;
-		}
+		demoBriefData->Metadata = T6SDK::DemoHandler::ReadDemoMetadata(tagsData);
+		demoBriefData->HasMetadata = !demoBriefData->Metadata.empty();
 
 		//Loading demo data
-		vector<char> demoData = T6SDK::InternalFunctions::readBytesSimple(demoPath);
+		vector<uint8_t> demoData = T6SDK::InternalFunctions::readBytesSimple(demoPath);
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo data read!");
 		if (T6SDK::DemoHandler::allocatedMemory)
 		{
@@ -768,27 +695,18 @@ namespace T6SDK
 		if (std::filesystem::exists(thumbnailPath))
 		{
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnail file exists!");
-			vector<char> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
+			vector<uint8_t> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(thumbnailPath);
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Thumbnail size: %i", thumbnailData.size());
 			T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress, thumbnailData.data(), thumbnailData.size());
 			if (T6SDK::Addresses::DemoThumbnailAddress2 != 0)
 				T6SDK::Memory::MemoryCopySafe((void*)T6SDK::Addresses::DemoThumbnailAddress2, thumbnailData.data(), thumbnailData.size());
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Demo thumbnails set!");
-			std::string authorString{};
-			std::string demoNameString{};
-			uint32_t duration{};
-			int createDate{};
-			T6SDK::DemoHandler::ReadDemoAuthor(thumbnailData, authorString, false);
-			T6SDK::DemoHandler::ReadDemoName(thumbnailData, demoNameString, false);
-			T6SDK::DemoHandler::ReadDemoDuration(thumbnailData, &duration, false);
-			T6SDK::DemoHandler::ReadDemoCreateDate(thumbnailPath, thumbnailData, &createDate, false);
 
-			demoBriefData->Author = authorString;
-			demoBriefData->DemoName = demoNameString;
-			demoBriefData->Duration = duration;
-			demoBriefData->CreateDate = createDate;
+			demoBriefData->Author = T6SDK::DemoHandler::ReadDemoAuthor(thumbnailData);
+			demoBriefData->DemoName = T6SDK::DemoHandler::ReadDemoName(thumbnailData);
+			demoBriefData->Duration = T6SDK::DemoHandler::ReadDemoDuration(thumbnailData);
+			demoBriefData->CreateDate = T6SDK::DemoHandler::ReadDemoCreateDate(thumbnailPath, thumbnailData);
 			T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "demoBriefData almost set!");
-			vector<char>().swap(thumbnailData);
 		}
 		else
 		{
@@ -805,19 +723,30 @@ namespace T6SDK
 		T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Attempting to start demo!");
 		T6SDK::Dvars::cbuf_AddText("demo_play demo;");
 		T6SDK::Dvars::cbuf_AddText("demo_play demo;");
-		vector<char>().swap(tagsData);
 		demoBriefData->Inited = true;
-		//T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "DEMOHANDLER", "Brief data inited! Author: %s\nMap: %s\nDuration: %i\nCreateDate: %i\nPath: %s\n", demoBriefData->Author.c_str(), demoBriefData->MapFriendlyName.c_str(), demoBriefData->Duration, demoBriefData->CreateDate, demoPath);
 		return true;
 	}
-	
 	bool T6SDK::DemoHandler::WriteTagsMetadata(const char* demoPath, std::string& metadata, uint64_t magicNumber)
 	{
 		std::ofstream file;
 		try
 		{
+			//Remove old metadata
 			std::string fullPath = std::string(demoPath) + ".tags";
-
+			vector<uint8_t> tagsData = T6SDK::InternalFunctions::readBytesSimple(fullPath);
+			int oldMetadataSize = GetMetadataLength(tagsData);
+			if (oldMetadataSize > 0)
+			{
+				// Get current file size
+				uintmax_t size = std::filesystem::file_size(fullPath);
+				if (size <= 5)
+				{
+					// Handle case where file is too small
+					std::filesystem::resize_file(fullPath, 0);
+				}
+				// Truncate file
+				std::filesystem::resize_file(fullPath, size - oldMetadataSize);
+			}
 			// Open file in binary append mode
 			file.open(fullPath, std::ios::binary | std::ios::app);
 			if (!file.is_open())

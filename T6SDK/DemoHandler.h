@@ -7,42 +7,25 @@ namespace T6SDK
     {
     public:
         bool Inited = false;
-        std::string DemoPath{};
-        std::string Map{};
-        std::string MapUiSelect{};
-        std::string MapFriendlyName{};
-        std::string GameMode{};
-        int Duration{};
-        int CreateDate{};
-        std::string Author{};
-        std::string DemoName{};
-        bool HasMetadata{};
-        std::string Metadata{};
-        DemoBriefData()
-        {
+        std::string DemoPath = std::string("");
+        std::string Map = std::string("");
+        std::string MapUiSelect = std::string("");
+        std::string MapFriendlyName = std::string("");
+        std::string GameMode = std::string("");
+        int Duration = 0;
+        int CreateDate = 0;
+        std::string Author = std::string("");
+        std::string DemoName = std::string("");
+        std::string Description = std::string("");
+        bool HasMetadata = false;
+        std::string Metadata = std::string("");
 
-        }
-        //// Regular copy constructor
+        DemoBriefData() = default;
         DemoBriefData(const DemoBriefData&) = default;
-
-        // Copy assignment
+        DemoBriefData(DemoBriefData&&) = default;
         DemoBriefData& operator=(const DemoBriefData&) = default;
-        /*DemoBriefData(DemoBriefData& data)
-        {
-            this->Author = data.Author;
-			this->CreateDate = data.CreateDate;
-			this->DemoName = data.DemoName;
-			this->DemoPath = data.DemoPath;
-			this->Duration = data.Duration;
-			this->GameMode = data.GameMode;
-			this->HasMetadata = data.HasMetadata;
-			this->Map = data.Map;
-			this->MapFriendlyName = data.MapFriendlyName;
-			this->MapUiSelect = data.MapUiSelect;
-			this->Metadata = data.Metadata;
-			Inited = true;
-        }*/
-        DemoBriefData(std::string& demoPath, std::string& mapName, std::string& mapUiSelect, std::string& mapFriendlyName, std::string& gameMode, int duration, int createDate, std::string& author, std::string& demoName, bool hasMetadata, std::string metadata)
+        DemoBriefData& operator=(DemoBriefData&&) = default;
+        DemoBriefData(std::string& demoPath, std::string& mapName, std::string& mapUiSelect, std::string& mapFriendlyName, std::string& gameMode, int duration, int createDate, std::string& author, std::string& demoName, std::string& description, bool hasMetadata, std::string metadata)
         {
             this->DemoPath = demoPath;
 			this->Map = mapName;
@@ -53,6 +36,7 @@ namespace T6SDK
 			this->CreateDate = createDate;
 			this->Author = author;
 			this->DemoName = demoName;
+            this->Description = description;
 			this->HasMetadata = hasMetadata;
 			this->Metadata = metadata;
             Inited = true;
@@ -68,6 +52,7 @@ namespace T6SDK
 			CreateDate = 0;
 			Author = std::string("");
 			DemoName = std::string("");
+			Description = std::string("");
 			HasMetadata = false;
 			Metadata = std::string("");
             Inited = false;
@@ -153,21 +138,68 @@ namespace T6SDK
 			GameModeStrings("shrp", "Sharpshooter"),
 			GameModeStrings("sas", "Sticks and Stones")
         };
-		static bool ReadMapName(vector<char> tagsFileData, std::string& mapName, std::string& friendlyName, std::string& uiSelectImage, bool supressConsoleLog);
-        
-		static bool ReadDemoGameMode(vector<char> tagsFileData, std::string& gameMode, std::string& friendlyName, bool supressConsoleLog);
-		static bool DemoTagsHasMetadata(vector<char> tagsFileData, std::string& customMetaData, bool supressConsoleLog);
-		static bool ReadDemoAuthor(vector<char> thumbnailFileData, std::string& author, bool supressConsoleLog);
-		static bool ReadDemoName(vector<char> thumbnailFileData, std::string& demoName, bool supressConsoleLog);
+
+        inline static const std::vector<MpMapsStrngs> ZmMaps = {
+            MpMapsStrngs("zm_transit", "Tranzit", "menu_zm_transit_zsurvival_transit"),
+            MpMapsStrngs("zm_transit_dr", "Diner", "menu_zm_transit_zsurvival_diner"),
+            MpMapsStrngs("zm_highrise", "Die Rise", "menu_zm_highrise_zclassic_rooftop"),
+            MpMapsStrngs("zm_nuked", "Nuketown", "menu_zm_nuketown_select"),
+            MpMapsStrngs("zm_prison", "Mob of the Dead", "menu_zm_prison_zclassic_prison"),
+            MpMapsStrngs("zm_buried", "Buried", "menu_zm_buried_zclassic_processing"),
+            MpMapsStrngs("zm_tomb", "Origins", "menu_zm_tomb_zclassic_tomb"),
+        };
+        inline static const std::vector<GameModeStrings> ZmGameModes = {
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode"),
+			 GameModeStrings("Unknown", "^1Unknown mode")
+        };
+
+        //map
+		static std::string ReadMapName(vector<uint8_t>& tagsFileData);
+		static std::string ReadMapFriendlyName(vector<uint8_t>& tagsFileData);
+		static std::string ReadMapMenuSelectMaterial(vector<uint8_t>& tagsFileData);
+        //game mode
+		static std::string ReadDemoGameMode(vector<uint8_t>& tagsFileData);
+        //duration
+        static uint32_t ReadDemoDuration(vector<uint8_t>& thumbnailFileData);
+        //metadata
+        static std::string ReadDemoMetadata(vector<uint8_t>& tagsFileData);
+        //author
+		static std::string ReadDemoAuthor(vector<uint8_t>& thumbnailFileData);
+        //description
+        static std::string ReadDemoDescription(vector<uint8_t >& thumbnailFileData);
+        //demo name
+		static std::string ReadDemoName(vector<uint8_t >& thumbnailFileData);
         static bool SetDemoName(std::string& demoPath, std::string& name);
-		static bool ReadDemoDuration(vector<char> thumbnailFileData, uint32_t* duration, bool supressConsoleLog);
-		static bool ReadDemoCreateDate(std::string path, vector<char> thumbnailFileData, int* createDate, bool supressConsoleLog);
+		//create date
+		static int ReadDemoCreateDate(std::string& path, vector<uint8_t>& thumbnailFileData);
+
+        
         static DemoBriefData GetDemoBriefData(const char* demoPath);
         static bool TryGetDemoBriefData(const char* demoPath, DemoBriefData* briefData);
         static bool LoadDemoFromBriefData(T6SDK::DemoBriefData& briefData);
         static bool LoadDemoFromFile(const char* demoPath);
         static bool LoadDemoFromFile(const char* demoPath, T6SDK::DemoBriefData* briefData);
-        static bool LoadDemoFromFile(const char* demoPath, bool* hasMetadata, std::string& metadata);
         static bool WriteTagsMetadata(const char* demoPath, std::string& metadata, uint64_t magicNumber);
 	};
 }

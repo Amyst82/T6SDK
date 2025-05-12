@@ -1109,7 +1109,7 @@ namespace T6SDK
 			return text;
 		}
 
-		static std::vector<char> readBytesSimple(const std::string& filename) 
+		static std::vector<uint8_t > readBytesSimple(const std::string& filename)
 		{
 			// Open file in binary mode
 			std::ifstream file(filename, std::ios::binary);
@@ -1123,12 +1123,15 @@ namespace T6SDK
 			file.seekg(0, std::ios::end);
 			std::streampos fileSize = file.tellg();
 			file.seekg(0, std::ios::beg);
+			// Read into vector
+			std::vector<unsigned char> buffer(fileSize);
+			file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
 
-			// Read file contents into vector
-			std::vector<char> fileData(fileSize);
-			file.read(fileData.data(), fileSize);
+			if (!file) {
+				throw std::runtime_error("Error reading file: " + filename);
+			}
 
-			return fileData;
+			return buffer;
 		}
 		static std::string removeExtension(std::filesystem::path filepath) 
 		{
