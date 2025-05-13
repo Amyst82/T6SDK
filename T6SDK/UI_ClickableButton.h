@@ -9,7 +9,7 @@ namespace T6SDK::Drawing
 
 		float fadingX = 0.0f;
 		bool hoverSoundPlayed = false;
-
+		std::function<void()> OkFunction;
 		bool Hovered = false;
 		bool Pressed = false;
 		bool Clicked = false;
@@ -63,6 +63,16 @@ namespace T6SDK::Drawing
 			Function = function;
 			this->anchorPoint = anchorPoint;
 		}
+		UI_ClickableButton(const char* text, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, std::function<void()> OkFunc)
+		{
+			Text = text;
+			X = x;
+			Y = y;
+			DrawRelative = drawRelative;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
+			this->anchorPoint = anchorPoint;
+		}
 		UI_ClickableButton(const char* text, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, uintptr_t function, bool cyclingFading)
 		{
 			Text = text;
@@ -70,6 +80,17 @@ namespace T6SDK::Drawing
 			Y = y;
 			DrawRelative = drawRelative;
 			Function = function;
+			this->anchorPoint = anchorPoint;
+			this->cyclingFading = cyclingFading;
+		}
+		UI_ClickableButton(const char* text, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, std::function<void()> OkFunc, bool cyclingFading)
+		{
+			Text = text;
+			X = x;
+			Y = y;
+			DrawRelative = drawRelative;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
 			this->anchorPoint = anchorPoint;
 			this->cyclingFading = cyclingFading;
 		}
@@ -89,12 +110,31 @@ namespace T6SDK::Drawing
 			Function = function;
 			this->anchorPoint = anchorPoint;
 		}
+		UI_ClickableButton(const char* text, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, std::function<void()> OkFunc)
+		{
+			Text = text;
+			GridColumn = gridColumn;
+			GridRow = gridRow;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
+			this->anchorPoint = anchorPoint;
+		}
 		UI_ClickableButton(const char* text, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, uintptr_t function, bool cyclingFading)
 		{
 			Text = text;
 			GridColumn = gridColumn;
 			GridRow = gridRow;
 			Function = function;
+			this->anchorPoint = anchorPoint;
+			this->cyclingFading = cyclingFading;
+		}
+		UI_ClickableButton(const char* text, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, std::function<void()> OkFunc, bool cyclingFading)
+		{
+			Text = text;
+			GridColumn = gridColumn;
+			GridRow = gridRow;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
 			this->anchorPoint = anchorPoint;
 			this->cyclingFading = cyclingFading;
 		}
@@ -143,6 +183,8 @@ namespace T6SDK::Drawing
 							//T6SDK::ConsoleLog::Log("Clicked!");
 							Clicked = true;
 							T6SDK::InternalFunctions::PlaySound("uin_main_pause");
+							if (OkFunction)
+								OkFunction();
 							if (Function)
 							{
 								func* f = (func*)Function;

@@ -25,7 +25,7 @@ namespace T6SDK::Drawing
 		float X = 0.0f;
 		float Y = 0.0f;
 		bool internalCheckedValue = false;
-
+		std::function<void(bool)> OkFunction;
 		float* GetFadingColor(tColor color)
 		{
 			if (!cyclingFading)
@@ -74,6 +74,18 @@ namespace T6SDK::Drawing
 			this->isChecked = value ? value : &this->internalCheckedValue;
 			DrawRelative = drawRelative;
 		}
+		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, bool* value, std::function<void(bool)> OkFunc)
+		{
+			UnCheckedText = uncheckedtext;
+			CheckedText = checkedtext;
+			X = x;
+			Y = y;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
+			this->anchorPoint = anchorPoint;
+			this->isChecked = value ? value : &this->internalCheckedValue;
+			DrawRelative = drawRelative;
+		}
 		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, bool* value, uintptr_t function, bool cyclingFading)
 		{
 			UnCheckedText = uncheckedtext;
@@ -81,6 +93,19 @@ namespace T6SDK::Drawing
 			X = x;
 			Y = y;
 			Function = function;
+			this->anchorPoint = anchorPoint;
+			this->isChecked = value ? value : &this->internalCheckedValue;
+			DrawRelative = drawRelative;
+			this->cyclingFading = cyclingFading;
+		}
+		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, float x, float y, bool drawRelative, T6SDK::AnchorPoint anchorPoint, bool* value, std::function<void(bool)> OkFunc, bool cyclingFading)
+		{
+			UnCheckedText = uncheckedtext;
+			CheckedText = checkedtext;
+			X = x;
+			Y = y;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
 			this->anchorPoint = anchorPoint;
 			this->isChecked = value ? value : &this->internalCheckedValue;
 			DrawRelative = drawRelative;
@@ -106,11 +131,35 @@ namespace T6SDK::Drawing
 			this->anchorPoint = anchorPoint;
 			this->isChecked = value ? value : &this->internalCheckedValue;
 		}
+		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, bool* value, std::function<void(bool)> OkFunc)
+		{
+			UnCheckedText = uncheckedtext;
+			CheckedText = checkedtext;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
+			GridColumn = gridColumn;
+			GridRow = gridRow;
+			this->anchorPoint = anchorPoint;
+			this->isChecked = value ? value : &this->internalCheckedValue;
+		}
 		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, float size, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, bool* value, uintptr_t function, bool cyclingFading)
 		{
 			UnCheckedText = uncheckedtext;
 			CheckedText = checkedtext;
 			Function = function;
+			GridColumn = gridColumn;
+			GridRow = gridRow;
+			this->anchorPoint = anchorPoint;
+			this->isChecked = value ? value : &this->internalCheckedValue;
+			this->cyclingFading = cyclingFading;
+			this->size = size;
+		}
+		UI_CheckBoxButton(const char* uncheckedtext, const char* checkedtext, float size, int gridColumn, int gridRow, T6SDK::AnchorPoint anchorPoint, bool* value, std::function<void(bool)> OkFunc, bool cyclingFading)
+		{
+			UnCheckedText = uncheckedtext;
+			CheckedText = checkedtext;
+			this->OkFunction = OkFunc;
+			this->Function = 0;
 			GridColumn = gridColumn;
 			GridRow = gridRow;
 			this->anchorPoint = anchorPoint;
@@ -161,6 +210,8 @@ namespace T6SDK::Drawing
 							if(!ValueReadOnly)
 								*isChecked = !*isChecked;
 							
+							if (OkFunction)
+								OkFunction(*isChecked);
 							if (Function)
 							{
 								func* f = (func*)Function;

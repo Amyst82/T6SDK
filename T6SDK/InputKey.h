@@ -16,6 +16,8 @@ namespace T6SDK::Input
         char KeyChar = '\0';
 		char UpperCasedKeyChar = '\0';
 		bool Printable = false;
+        std::string KeyName = "";
+        bool CanBeUsedAsKeybind = false;
         InputKey(DWORD baseAddress, BYTE keycode, char keyChar, char upperCasedKeyChar, bool printable)
         {
             BaseAddress = baseAddress;
@@ -24,6 +26,17 @@ namespace T6SDK::Input
             UpperCasedKeyChar = upperCasedKeyChar;
             Printable = printable;
             T6SDK::MAIN::CharKeys.emplace(keycode, (int)this);
+        }
+        InputKey(DWORD baseAddress, BYTE keycode, char keyChar, char upperCasedKeyChar, bool printable, std::string keyName, bool canBeUsedAsKeybind)
+        {
+            BaseAddress = baseAddress;
+            KeyCode = keycode;
+            KeyChar = keyChar;
+            UpperCasedKeyChar = upperCasedKeyChar;
+            Printable = printable;
+            T6SDK::MAIN::CharKeys.emplace(keycode, (int)this);
+			KeyName = keyName;
+			CanBeUsedAsKeybind = canBeUsedAsKeybind;
         }
 #pragma region CrossVersion 
         InputKey(DWORD v43BaseAddress, DWORD mpBaseAddress, DWORD v41BaseAddress, DWORD zmBaseAddress, BYTE keycode, char keyChar, char upperCasedKeyChar, bool printable)
