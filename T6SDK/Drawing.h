@@ -160,7 +160,7 @@ namespace T6SDK
 			float width = (float)T6SDK::Typedefs::R_TextWidth(0, Text, MaxLength, normalFont) * scale;
 			float height = (float)normalFont->pixelHeight * scale;
 			vec2_t coords = EvaluateAnchorPoint(anchorPoint, X, Y, width, height);
-			T6SDK::Typedefs::R_AddCmdDrawTextInternal(Text, MaxLength, normalFont, coords.x, coords.y + height, scale, scale, 0, Color, 0);
+			T6SDK::Typedefs::R_AddCmdDrawTextInternal(Text, MaxLength, normalFont, coords.x, coords.y + height, scale, scale, 0, Color, 3); // 3 is for outline
 			if(TextRect)
 			{
 				TextRect->left = coords.x;
