@@ -7,14 +7,15 @@
 #include <cctype>   
 namespace T6SDK::Dvars
 {
+
     class DvarTrieNode 
     {
     public:
         std::unordered_map<char, DvarTrieNode*> children;
         bool isEndOfWord = false;
-        dvar_s* dvar{};
+        DevConsoleItem item{};
 
-        DvarTrieNode() : isEndOfWord(false), dvar(nullptr) {}
+        DvarTrieNode() : isEndOfWord(false), item() {}
     };
 
     class DvarTrie 
@@ -38,26 +39,51 @@ namespace T6SDK::Dvars
             current->isEndOfWord = true;
         }
         void insert(dvar_s* dvar)
-        {
-            
-            DvarTrieNode* current = root;
+        {        
             std::string word = dvar->dvarName;
             std::transform(word.begin(), word.end(), word.begin(), ::tolower);
-            for (char ch : word)
+            for (int i = 0; i < word.length(); i++)
             {
-                if (current->children.find(ch) == current->children.end())
+                DvarTrieNode* current = root;
+                std::string currentWord = word.substr(i, word.length() - i);
+                for (char ch : currentWord)
                 {
-                    current->children[ch] = new DvarTrieNode();
+                    if (current->children.find(ch) == current->children.end())
+                    {
+                        current->children[ch] = new DvarTrieNode();
+                    }
+                    current = current->children[ch];
                 }
-                current = current->children[ch];
+                current->isEndOfWord = true;
+                current->item.dvar = dvar;
+                current->item.isFunction = false;
             }
-            current->isEndOfWord = true;
-            current->dvar = dvar;
+        }
+        void insert(cmd_function_s* func)
+        {       
+            std::string word = func->name;
+            std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+            for (int i = 0; i < word.length(); i++)
+            {
+                DvarTrieNode* current = root;
+                std::string currentWord = word.substr(i, word.length() - i);
+                for (char ch : currentWord)
+                {
+                    if (current->children.find(ch) == current->children.end())
+                    {
+                        current->children[ch] = new DvarTrieNode();
+                    }
+                    current = current->children[ch];
+                }
+                current->isEndOfWord = true;
+                current->item.function = func;
+                current->item.isFunction = true;
+            }
         }
 
-        std::vector<dvar_s*> searchByPrefix(const std::string& prefix)
+        std::vector<DevConsoleItem> searchByPrefix(const std::string& prefix)
         {
-            std::vector<dvar_s*> result;
+            std::vector<DevConsoleItem> result;
             DvarTrieNode* current = root;
 
             // Traverse to the end of the prefix
@@ -78,11 +104,11 @@ namespace T6SDK::Dvars
     private:
         DvarTrieNode* root;
 
-        void dfs(DvarTrieNode* node, std::string currentWord, std::vector<dvar_s*>& result)
+        void dfs(DvarTrieNode* node, std::string currentWord, std::vector<DevConsoleItem>& result)
         {
             if (node->isEndOfWord) 
             {
-                result.push_back(node->dvar);
+                result.push_back(node->item);
             }
 
             for (auto& pair : node->children) 

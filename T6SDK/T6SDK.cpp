@@ -594,7 +594,6 @@ namespace T6SDK
             mov[ediTMP], edi
             mov[espTMP], esp
             mov[ebpTMP], ebp
-
         }
         if (T6SDK::MAIN::ENABLED)
         {
@@ -648,47 +647,6 @@ namespace T6SDK
         T6SDK::Events::RegisterListener(T6SDK::EventType::OnEndFrameDrawn, (uintptr_t)&T6SDK::DevConsole::DrawConsole);
         T6SDK::Events::RegisterListener(T6SDK::EventType::OnKeyPressed, (uintptr_t)&T6SDK::DevConsole::OnInputKey);
 
-    }
-
-    void HandleGameModeChanged(int mode)
-    {
-        if (mode == 32)
-        {
-            T6SDK::MAIN::ENABLED = true;
-            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Entered theater mode!");
-        }
-		else
-        {
-            T6SDK::MAIN::ENABLED = false;
-            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "T6SDK", "Exit theater mode. All MVM features will be disabled.");
-        }
-
-        T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnGameModeChanged, mode);
-    }
-    __declspec(naked) void Com_GameMode_SetMode()
-    {
-        _asm
-        {
-            mov eax, 0x1
-            shl eax, cl
-            mov[eaxTMP], eax
-            mov[edxTMP], edx
-            mov[ecxTMP], ecx
-            mov[esiTMP], esi
-            mov[ediTMP], edi
-            mov[espTMP], esp
-            mov[ebpTMP], ebp
-            push eax
-            call HandleGameModeChanged
-            mov eax, [eaxTMP]
-            mov edx, [edxTMP]
-            mov ecx, [ecxTMP]
-            mov esi, [esiTMP]
-            mov edi, [ediTMP]
-            mov esp, [espTMP]
-            mov ebp, [ebpTMP]
-            jmp[T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.JumpBackAddress]
-        }
     }
 
     __declspec(naked) void OnDemoPlaybackInited()
@@ -944,6 +902,98 @@ namespace T6SDK
             }
         }
     }
+
+
+
+
+
+    void HookThread()
+    {
+        if (T6SDK::MAIN::ENABLED)
+        {
+            T6SDK::Addresses::HookAddresses::h_TheaterControlsDrawn.Hook(TheaterControlsDrawn);
+            T6SDK::Addresses::HookAddresses::h_CG_DrawActiveFrame.Hook(CGDrawActiveFrame);
+            T6SDK::Addresses::HookAddresses::h_Demo_AddDollyCamMarker.Hook(Demo_AddDollyCamMarker);
+            T6SDK::Addresses::HookAddresses::h_FreeCameraModeChanged.Hook(FreeCameraModeChanged);
+            T6SDK::Addresses::HookAddresses::h_Demo_SwitchCameraMode.Hook(Demo_CameraModeSwitched);
+            T6SDK::Addresses::HookAddresses::h_NearClipping.Hook(NearClippingPatch);
+            T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.Hook(UnlockGunAngles);
+            T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.Hook(UnlockCameraRoll);
+            T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
+            T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.Hook(OnAxisToAngles);
+            T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.Hook(OnDemoPlaybackInited);
+            T6SDK::Addresses::HookAddresses::h_SunInited.Hook(OnSunInited);
+            T6SDK::Addresses::HookAddresses::h_CG_Item.Hook(OnCG_Item);
+            T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.Hook(OnCG_ProcessEntity);
+            T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.Hook(OnCGCalcEntityLerpPositions);
+            //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Hooks set!");
+            T6SDK::Addresses::Patches::DisableRedactedConsole.Patch();
+        }
+        else
+        {
+            T6SDK::Addresses::HookAddresses::h_TheaterControlsDrawn.UnHook();
+            T6SDK::Addresses::HookAddresses::h_CG_DrawActiveFrame.UnHook();
+            T6SDK::Addresses::HookAddresses::h_Demo_AddDollyCamMarker.UnHook();
+            T6SDK::Addresses::HookAddresses::h_FreeCameraModeChanged.UnHook();
+            T6SDK::Addresses::HookAddresses::h_Demo_SwitchCameraMode.UnHook();
+            T6SDK::Addresses::HookAddresses::h_NearClipping.UnHook();
+            T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.UnHook();
+            T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.UnHook();
+            T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.UnHook();
+            T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.UnHook();
+            T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.UnHook();
+            T6SDK::Addresses::HookAddresses::h_SunInited.UnHook();
+            T6SDK::Addresses::HookAddresses::h_CG_Item.UnHook();
+            T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.UnHook();
+            T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.UnHook();
+            //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Hooks unset!");
+            T6SDK::Addresses::Patches::DisableRedactedConsole.UnPatch();
+        }
+        T6SDK::Input::PreventScoreboardOpen(T6SDK::MAIN::ENABLED);
+
+    }
+    void HandleGameModeChanged(int mode)
+    {
+        if (mode == 32)
+        {
+            T6SDK::MAIN::ENABLED = true;
+            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Entered theater mode! MVM features will be enabled.");
+        }
+		else
+        {
+            T6SDK::MAIN::ENABLED = false;
+            T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_WARNING, false, "T6SDK", "Exit theater mode. All MVM features will be disabled.");
+        }
+        HookThread();
+        T6SDK::Events::InvokeIntParam(T6SDK::EventType::OnGameModeChanged, mode);
+    }
+    __declspec(naked) void Com_GameMode_SetMode()
+    {
+        _asm
+        {
+            mov eax, 0x1
+            shl eax, cl
+            mov[eaxTMP], eax
+            mov[edxTMP], edx
+            mov[ecxTMP], ecx
+            mov[esiTMP], esi
+            mov[ediTMP], edi
+            mov[espTMP], esp
+            mov[ebpTMP], ebp
+            push eax
+            call HandleGameModeChanged
+            mov eax, [eaxTMP]
+            mov edx, [edxTMP]
+            mov ecx, [ecxTMP]
+            mov esi, [esiTMP]
+            mov edi, [ediTMP]
+            mov esp, [espTMP]
+            mov ebp, [ebpTMP]
+            jmp[T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.JumpBackAddress]
+        }
+    }
+
+
 	void T6SDK::MAIN::Initialize()
 	{
         T6SDK::Drawing::normalFont = T6SDK::Typedefs::R_RegisterFont_FastFile("fonts/720/normalFont", 1);
@@ -957,27 +1007,28 @@ namespace T6SDK
         T6SDK::Drawing::LightDef = T6SDK::InternalFunctions::DB_FindXAssetHeader(T6SDK::XAssetType::LIGHT_DEF, "light_dynamic");
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Light Def: 0x%X", T6SDK::Drawing::LightDef);
         T6SDK::Drawing::FxCameraSelect = T6SDK::InternalFunctions::DB_FindXAssetHeader(T6SDK::XAssetType::FX, "misc/fx_theater_mode_camera_head_select");
-       
-        T6SDK::Addresses::HookAddresses::h_TheaterControlsDrawn.Hook(TheaterControlsDrawn);
+
+        T6SDK::Addresses::HookAddresses::h_TheaterControlsDrawn.SetOutFunc((DWORD)&TheaterControlsDrawn);
         T6SDK::Addresses::HookAddresses::h_Com_EventLoopKeyEvent.Hook(IngameKeyPressed);
-        T6SDK::Addresses::HookAddresses::h_CG_DrawActiveFrame.Hook(CGDrawActiveFrame);
-        T6SDK::Addresses::HookAddresses::h_Demo_AddDollyCamMarker.Hook(Demo_AddDollyCamMarker);
-        T6SDK::Addresses::HookAddresses::h_FreeCameraModeChanged.Hook(FreeCameraModeChanged);
-        T6SDK::Addresses::HookAddresses::h_AspectRatioChanged.Hook(AspectRatioChanged);
-        T6SDK::Addresses::HookAddresses::h_Demo_SwitchCameraMode.Hook(Demo_CameraModeSwitched);
-        T6SDK::Addresses::HookAddresses::h_NearClipping.Hook(NearClippingPatch);
-        T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.Hook(UnlockGunAngles);
-        T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.Hook(UnlockCameraRoll);
-        T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.Hook(PovCamoWriting);
+        T6SDK::Addresses::HookAddresses::h_CG_DrawActiveFrame.SetOutFunc((DWORD)&CGDrawActiveFrame);
+        T6SDK::Addresses::HookAddresses::h_Demo_AddDollyCamMarker.SetOutFunc((DWORD)&Demo_AddDollyCamMarker);
+        T6SDK::Addresses::HookAddresses::h_FreeCameraModeChanged.SetOutFunc((DWORD)&FreeCameraModeChanged);
+        T6SDK::Addresses::HookAddresses::h_AspectRatioChanged.SetOutFunc((DWORD)&AspectRatioChanged);
+        T6SDK::Addresses::HookAddresses::h_Demo_SwitchCameraMode.SetOutFunc((DWORD)&Demo_CameraModeSwitched);
+        T6SDK::Addresses::HookAddresses::h_NearClipping.SetOutFunc((DWORD)&NearClippingPatch);
+        T6SDK::Addresses::HookAddresses::h_UnlockGunAngles.SetOutFunc((DWORD)&UnlockGunAngles);
+        T6SDK::Addresses::HookAddresses::h_UnlockCameraRollHook.SetOutFunc((DWORD)&UnlockCameraRoll);
+        T6SDK::Addresses::HookAddresses::h_PovCamoWritingHook.SetOutFunc((DWORD)&PovCamoWriting);
         T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.SetOutFunc((DWORD)&OnAxisToAngles);
-        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "T6SDK", "Hooking: 0x%X", T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.OutFunc);
-        T6SDK::Addresses::HookAddresses::h_AxisToAnglesHook.Hook(OnAxisToAngles);
-        T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.Hook(OnDemoPlaybackInited);
-        T6SDK::Addresses::HookAddresses::h_SunInited.Hook(OnSunInited);
-        T6SDK::Addresses::HookAddresses::h_CG_Item.Hook(OnCG_Item);
-        T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.Hook(OnCG_ProcessEntity);
-        T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.Hook(OnCGCalcEntityLerpPositions);
-        T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_INFO, false, "T6SDK", "Hooks set!");
+        T6SDK::Addresses::HookAddresses::h_InitDemoPlaybackData.SetOutFunc((DWORD)&OnDemoPlaybackInited);
+        T6SDK::Addresses::HookAddresses::h_SunInited.SetOutFunc((DWORD)&OnSunInited);
+        T6SDK::Addresses::HookAddresses::h_CG_Item.SetOutFunc((DWORD)&OnCG_Item);
+        T6SDK::Addresses::HookAddresses::h_CG_ProcessEntity.SetOutFunc((DWORD)&OnCG_ProcessEntity);
+        T6SDK::Addresses::HookAddresses::h_CG_CalcEntityLerpPositions.SetOutFunc((DWORD)&OnCGCalcEntityLerpPositions);
+        T6SDK::Addresses::HookAddresses::h_AspectRatioChanged.Hook(AspectRatioChanged);
+        T6SDK::Addresses::HookAddresses::h_EndFrameDrawn.Hook(EndFrameDrawn);
+        T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.Hook(Com_GameMode_SetMode);
+
         //Detours
         T6SDK::Addresses::DetoursAddresses::DetouredSwitchCameraHook.Hook(T6SDK::Theater::DetouredSwitchCamera);
         T6SDK::Addresses::DetoursAddresses::DetouredUI_SafeTranslateStringHook.Hook(DetouredSafeStringTranslate);
@@ -989,8 +1040,6 @@ namespace T6SDK
         T6SDK::Addresses::Patches::AllowRollPatch.Patch();
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch.Patch();
         T6SDK::Addresses::Patches::Demo_IsAnyMoveCameraPatch2.Patch();
-        T6SDK::Addresses::HookAddresses::h_EndFrameDrawn.Hook(EndFrameDrawn);
-        T6SDK::Addresses::HookAddresses::h_Com_GameMode_SetMode.Hook(Com_GameMode_SetMode);
         T6SDK::Addresses::Patches::DisableDvarsLimitsPatch.Patch();
         T6SDK::Addresses::Patches::DisableDvarProtectionPatch.Patch();
         T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_SUCCESS, true, "T6SDK", "Dvars limits disabled");

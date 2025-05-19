@@ -82,6 +82,13 @@ typedef struct cmd_function_s
 	void* autoCompleteExt;
 	void* function;
 } cmd_function_s;
+
+typedef struct DevConsoleItem
+{
+	bool isFunction;
+	cmd_function_s* function;
+	dvar_s* dvar;
+};
 #pragma endregion
 
 #pragma region Vectors

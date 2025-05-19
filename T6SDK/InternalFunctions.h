@@ -1109,8 +1109,9 @@ namespace T6SDK
 			return text;
 		}
 
-		static std::vector<uint8_t > readBytesSimple(const std::string& filename)
+		static std::vector<uint8_t> readBytesSimple(const std::string& filename)
 		{
+			if(std::filesystem::exists(filename) == false) return std::vector<uint8_t>(); // Check if file exists (in files)
 			// Open file in binary mode
 			std::ifstream file(filename, std::ios::binary);
 

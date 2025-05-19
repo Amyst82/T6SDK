@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "StdInclude.h"
+#include "T6SDK.h"
 
 namespace T6SDK
 {
@@ -12,11 +13,13 @@ namespace T6SDK
         std::vector<BYTE> OriginalOpcodes{};
         BYTE* OriginalBytes{};
 	public:
+
 		MemoryPatch(DWORD baseAddress, std::vector<BYTE> opcodes)
 		{
 			BaseAddress = baseAddress;
 			Opcodes = opcodes;
             OriginalBytes = T6SDK::Memory::StoreOldBytes(BaseAddress, Opcodes.size());
+            T6SDK::MAIN::PatchList.push_back((int)this);
 		}
         MemoryPatch(DWORD v43BaseAddress, DWORD mpBaseAddress, DWORD v41BaseAddress, DWORD zmBaseAddress, std::vector<BYTE> opcodes)
         {
@@ -37,6 +40,7 @@ namespace T6SDK
             }
             Opcodes = opcodes;
             OriginalBytes = T6SDK::Memory::StoreOldBytes(BaseAddress, Opcodes.size());
+            T6SDK::MAIN::PatchList.push_back((int)this);
         }
         bool IsValid()
         {

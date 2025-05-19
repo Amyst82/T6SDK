@@ -510,6 +510,10 @@ namespace T6SDK
 		vector<uint8_t> tagsData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".tags");
 		std::string thumbnailPath = std::string(demoPath) + ".thumbnail";
 		vector<uint8_t> thumbnailData = T6SDK::InternalFunctions::readBytesSimple(std::string(demoPath) + ".thumbnail");
+		if (thumbnailData.size() == 0)
+		{
+			return T6SDK::DemoBriefData();
+		}
 		std::string path(demoPath);
 
 		int duration = T6SDK::DemoHandler::ReadDemoDuration(thumbnailData);

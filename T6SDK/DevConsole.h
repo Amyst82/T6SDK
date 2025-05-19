@@ -19,7 +19,7 @@ namespace T6SDK
 		inline static int CaretIndex = 0;
 		inline static float charWidth = 8.0f;
 
-		static std::vector<dvar_s*> FoundDvars{};
+		static std::vector<DevConsoleItem> FoundDvars{};
 		static float ContentXOffset = 105.0f;
 		static float bgHeight = 25.0f;
 		static float bgY = 10.0f;
@@ -133,7 +133,7 @@ namespace T6SDK
 				{
 					if (FoundDvars.size() > 0)
 					{
-						inputBuffer = std::string(FoundDvars[SelectedLine]->dvarName) + std::string(" ");
+						inputBuffer = FoundDvars[SelectedLine].isFunction ? std::string(FoundDvars[SelectedLine].function->name) : std::string(FoundDvars[SelectedLine].dvar->dvarName) + std::string(" ");
 						SelectedLine = 0;
 						CaretIndex = inputBuffer.length();
 					}
@@ -293,14 +293,16 @@ namespace T6SDK
 					char nameBuffer[256];
 					if(SelectedLine == i)
 					{
-						sprintf(nameBuffer, "^5%s", FoundDvars[i]->dvarName);
+						sprintf(nameBuffer, "^5%s", FoundDvars[i].isFunction ? FoundDvars[i].function->name : FoundDvars[i].dvar->dvarName);
 						T6SDK::Drawing::DrawRectAbsolute(bgRect.left + 1.0f, foundDvarsY - 20.0f, bgRect.right - bgRect.left - 2.0f, 25.0f, tColor{ 0.19f, 0.21f, 0.26f, 0.7f }, T6SDK::AnchorPoint::TopLeft, 0x00);
 					}
 					else
-						sprintf(nameBuffer, "^7%s", FoundDvars[i]->dvarName);
+						sprintf(nameBuffer, "^7%s", FoundDvars[i].isFunction ? FoundDvars[i].function->name : FoundDvars[i].dvar->dvarName);
 					char buffer[256];
-					sprintf(buffer, "%s\t\t\t\t^9Type: ^3%s\t\t\t\t^9Current: ^3%s\t\t\t\t^9%s", nameBuffer, T6SDK::Dvars::GetTypeAsString(FoundDvars[i]), T6SDK::Dvars::GetCurrentValueAsString(FoundDvars[i]).c_str(), FoundDvars[i]->dvarDesc);
-
+					if(!FoundDvars[i].isFunction)
+						sprintf(buffer, "%s\t\t\t\t^9Type: ^3%s\t\t\t\t^9Current: ^3%s\t\t\t\t^9%s", nameBuffer, T6SDK::Dvars::GetTypeAsString(FoundDvars[i].dvar), T6SDK::Dvars::GetCurrentValueAsString(FoundDvars[i].dvar).c_str(), FoundDvars[i].dvar->dvarDesc);
+					else
+						sprintf(buffer, "%s\t\t\t\t^2function", nameBuffer);
 					RECT selectedLineRect{};
 					if (T6SDK::Drawing::DrawRectAbsolute(bgRect.left+1.0f, foundDvarsY - 20.0f, bgRect.right - bgRect.left-2.0f, 25.0f, tColor{ 0.09f, 0.11f, 0.16f, 0.0f }, T6SDK::AnchorPoint::TopLeft, &selectedLineRect))
 					{
@@ -313,7 +315,7 @@ namespace T6SDK
 							else if (T6SDK::Input::Keys::RMB.Pressed())
 							{
 								SelectedLine = i;
-								inputBuffer = std::string(FoundDvars[i]->dvarName) + std::string(" ");
+								inputBuffer = FoundDvars[i].isFunction ? std::string(FoundDvars[i].function->name) : std::string(FoundDvars[i].dvar->dvarName) + std::string(" ");
 								CaretIndex = inputBuffer.length();
 							}
 						}
@@ -346,7 +348,14 @@ namespace T6SDK
 					//T6SDK::ConsoleLog::LogFormatted(CONSOLETEXTGREEN, "Dvar inserted!");
 				}
 			}
-			
+			//Add functions to dvar trie
+			cmd_function_s* currentFunction = *(cmd_function_s**)T6SDK::Addresses::cmdFunctionsPool;
+			while (currentFunction != nullptr)
+			{
+				T6SDK::Dvars::_DvarTrie.insert(currentFunction);
+				currentFunction = currentFunction->next;
+			}
+		
 		}
 		
 	}

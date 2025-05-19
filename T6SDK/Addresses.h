@@ -263,6 +263,7 @@ namespace T6SDK::Addresses
     inline static DWORD PlayerStates = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2CFE400, T6SDK::Addresses::t6mp + 0x2D1F400, T6SDK::Addresses::t6zmv41 + 0x2CCE480, T6SDK::Addresses::t6zm + 0x2CF4B00).GetValue();
     //Sig is too fucking long. Find with "Can't create dvar '%s': %i dvars already exist" in IDA.
     inline static DWORD dvarPool = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x261FC48, T6SDK::Addresses::t6mp + 0x261FC48, T6SDK::Addresses::t6zmv41 + 0x25EFF48, T6SDK::Addresses::t6zm + 0x25F5548).GetValue();
+    inline static DWORD cmdFunctionsPool = T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2138B54, T6SDK::Addresses::t6mp + FILLIN, T6SDK::Addresses::t6zmv41 + FILLIN, T6SDK::Addresses::t6zm + FILLIN).GetValue();
     inline static int* g_dvarCount = (int*)T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x0267FC4C, T6SDK::Addresses::t6mp + 0x2267FC4C, T6SDK::Addresses::t6zmv41 + 0x264FF4C, T6SDK::Addresses::t6zm + 0x265554C).GetValue();
     
     inline static T6SDK::MemoryAddress<demoPlayback*> DemoPlayback(T6SDK::CrossVersion::CrossValue<DWORD>(T6SDK::Addresses::t6mpv43 + 0x2D83A00, T6SDK::Addresses::t6mp + 0x2DA4A00,

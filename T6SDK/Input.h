@@ -10,6 +10,7 @@ namespace T6SDK
 		inline static float MouseWheelDelta = 0.0f;
 		static void PreventScoreboardOpen(bool state)
 		{
+			//T6SDK::Addresses::Patches::PreventDemoScoreboardOpen.IsActive = state;
 			state ? T6SDK::Addresses::Patches::PreventDemoScoreboardOpen.Patch() : T6SDK::Addresses::Patches::PreventDemoScoreboardOpen.UnPatch();
 		}
 		static void SetInputLocked(bool state)

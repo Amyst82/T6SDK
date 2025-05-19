@@ -80,8 +80,31 @@ namespace T6SDK
         {
             try
             {
-                OriginalBytes = T6SDK::Memory::Hook_o((void*)BaseAddress, outFunc, Length);
+                auto bytes = T6SDK::Memory::Hook_o((void*)BaseAddress, outFunc, Length);
                 return true;
+            }
+            catch (const char* errorMessage)
+            {
+                T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", errorMessage);
+                return false;
+            }
+        }
+        bool Hook()
+        {
+            try
+            {
+                //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Rehook func address: 0x%X", OutFunc);
+                if (OutFunc == 0x00)
+                {
+                    T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", "Rehook failed! OutFunc was not set");
+                    return false;
+                }
+                bool res = Hook((void*)OutFunc);
+                //if (res)
+                    //T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_DEBUG, false, "MEMORYHOOK", "Rehooked!");
+                if (!res)
+                    T6SDK::ConsoleLog::LogTagged(T6SDK::ConsoleLog::C_ERROR, true, "MEMORYHOOK", "Rehook failed!");
+                return res;
             }
             catch (const char* errorMessage)
             {
